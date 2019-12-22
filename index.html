@@ -81,5 +81,62 @@ td, th {
 <td><a href=https://es.wiktionary.org/wiki/dar#Conjugaci%C3%B3n>[w]</a>
 <td><a href=https://es.wiktionary.org/wiki/leer#Conjugaci%C3%B3n>[w]</a>
 </table>
+<script>
+const verbForms=[
+	['Inf.','Infinitivo'],
+	['Ger.','Gerundio'],
+	['yo'],
+	['tú'],
+	['él','él, ella, usted'],
+	['nosotros','nosotros, nosotras'],
+	['vosotros','vosotros, vosotras'],
+	['ellos','ellos, ellas, ustedes'],
+]
+const verbs=[
+	['hablar',['habl|ar','habl|ando','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],['говорить']],
+	['comer',['com|er','com|iendo','com|o','com|es','com|e','com|emos','com|éis','com|en'],['есть']],
+	['vivir',['viv|ir','viv|iendo','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],['жить']],
+]
+const $body=document.getElementsByTagName('body')[0]
+const $table=document.createElement('table')
+$table.insertRow().innerHTML="<th><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
+for (const [i,[text,note]] of verbForms.entries()) {
+	const $row=$table.insertRow()
+	let cellHtml=text
+	if (note) {
+		cellHtml="<abbr title='"+note+"'>"+text+"</abbr>"
+	}
+	const $cell=document.createElement('th')
+	$cell.innerHTML=cellHtml
+	$row.appendChild($cell)
+	for (const [verb,forms] of verbs) {
+		const form=forms[i]
+		const [stem,end]=form.split('|')
+		$row.insertCell().innerHTML=stem+"<span class=end>"+end+"</span>"
+	}
+}
+if (true) {
+	const $row=$table.insertRow()
+	$row.setAttribute('lang','ru')
+	const $cell=document.createElement('th')
+	$row.appendChild($cell)
+	for (const [verb,forms,[translation,translationNote]] of verbs) {
+		let cellHtml=translation
+		if (translationNote) {
+			cellHtml="<abbr title='"+translationNote+"'>"+translation+"</abbr>"
+		}
+		$row.insertCell().innerHTML=cellHtml
+	}
+}
+if (true) {
+	const $row=$table.insertRow()
+	const $cell=document.createElement('th')
+	$row.appendChild($cell)
+	for (const [verb] of verbs) {
+		$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
+	}
+}
+$body.appendChild($table)
+</script>
 </body>
 </html>
