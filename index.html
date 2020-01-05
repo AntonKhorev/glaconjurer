@@ -24,8 +24,12 @@ td, th {
 .end-2 {
 	border-color: red;
 }
-.end em {
+.stem-1 em, .end-1 em {
 	color: green;
+	font-style: normal;
+}
+.stem-2 em, .end-2 em {
+	color: red;
 	font-style: normal;
 }
 /* legacy */
@@ -102,6 +106,7 @@ const verbs=[
 	['comer',['com|er','com|iendo','com|o','com|es','com|e','com|emos','com|éis','com|en'],['есть']],
 	['vivir',['viv|ir','viv|iendo','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],['жить']],
 	['estar',['est|ar','est|ando','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
+	['ser',['s|er','s|iendo','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'],['быть','быть постоянно, быть в указанный момент времени']],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
@@ -117,9 +122,14 @@ for (const [i,[text,note]] of verbForms.entries()) {
 	$row.appendChild($cell)
 	for (const [verb,forms] of verbs) {
 		const form=forms[i]
-		const [stem,end]=form.split('|')
+		let variant=1
+		let [stem,end]=form.split('|')
+		if (!end) {
+			variant=2
+			;[stem,end]=form.split('#')
+		}
 		const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
-		$row.insertCell().innerHTML="<span class=stem>"+mark(stem)+"</span>"+"<span class=end>"+mark(end)+"</span>"
+		$row.insertCell().innerHTML=`<span class=stem-${variant}>${mark(stem)}</span><span class=end-${variant}>${mark(end)}</span>`
 	}
 }
 if (true) {
