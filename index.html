@@ -24,6 +24,11 @@ td, th {
 .end-2 {
 	border-color: red;
 }
+.end em {
+	color: green;
+	font-style: normal;
+}
+/* legacy */
 .ex {
 	color: green;
 }
@@ -96,6 +101,7 @@ const verbs=[
 	['hablar',['habl|ar','habl|ando','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],['говорить']],
 	['comer',['com|er','com|iendo','com|o','com|es','com|e','com|emos','com|éis','com|en'],['есть']],
 	['vivir',['viv|ir','viv|iendo','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],['жить']],
+	['estar',['est|ar','est|ando','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
@@ -112,7 +118,8 @@ for (const [i,[text,note]] of verbForms.entries()) {
 	for (const [verb,forms] of verbs) {
 		const form=forms[i]
 		const [stem,end]=form.split('|')
-		$row.insertCell().innerHTML=stem+"<span class=end>"+end+"</span>"
+		const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
+		$row.insertCell().innerHTML="<span class=stem>"+mark(stem)+"</span>"+"<span class=end>"+mark(end)+"</span>"
 	}
 }
 if (true) {
