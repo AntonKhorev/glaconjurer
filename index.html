@@ -14,6 +14,13 @@ td, th {
 	padding: .1em .2em;
 	font-weight: normal;
 }
+th.group {
+	min-width: 1em;
+}
+th.group span {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+}
 td[title], th[title] {
 	text-decoration: underline dotted;
 }
@@ -50,9 +57,9 @@ const verbFormGroups=[
 	['Pretérito',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
 ]
 const verbForms={
-	inf: ['Inf.','Infinitivo'],
-	ger: ['Ger.','Gerundio: для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
-	par: ['Par.','Participio: страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
+	inf: ['Infinitivo','инфинитив'],
+	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
 	pres1s: ['yo','1-е лицо единственного числа'],
 	pres2s: ['tú','2-е лицо единственного числа'],
 	pres3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
@@ -96,7 +103,8 @@ for (const [formGroupName,formGroupMembers] of verbFormGroups) {
 		if (firstInGroup && formGroupName) {
 			const $formGroupCell=document.createElement('th')
 			$row.appendChild($formGroupCell)
-			$formGroupCell.innerHTML=formGroupName
+			$formGroupCell.innerHTML='<span>'+formGroupName+'</span>'
+			$formGroupCell.classList.add('group')
 			$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
 		}
 		firstInGroup=false
