@@ -44,57 +44,90 @@ td[title], th[title] {
 </head>
 <body>
 <script>
-const verbForms=[
-	['Inf.','Infinitivo'],
-	['Ger.','Gerundio: для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
-	['Part.','Participio: страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
-	['yo','1-е лицо единственного числа'],
-	['tú','2-е лицо единственного числа'],
-	['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
-	['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
-	['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
-	['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
+const verbFormGroups=[
+	['',['inf','ger','par']],
+	['Presente',['pres1s','pres2s','pres3s','pres1p','pres2p','pres3p']],
+	['Pretérito',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
 ]
+const verbForms={
+	inf: ['Inf.','Infinitivo'],
+	ger: ['Ger.','Gerundio: для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+	par: ['Par.','Participio: страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
+	pres1s: ['yo','1-е лицо единственного числа'],
+	pres2s: ['tú','2-е лицо единственного числа'],
+	pres3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
+	pres1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
+	pres2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
+	pres3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
+	pret1s: ['yo','1-е лицо единственного числа'],
+	pret2s: ['tú','2-е лицо единственного числа'],
+	pret3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
+	pret1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
+	pret2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
+	pret3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
+}
+const v1=(...a)=>[
+	'inf','ger','par',
+	'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
+	'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p'
+].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 const verbs=[
-	['hablar',['habl|ar','habl|ando','habl|ado','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],'говорить'],
-	['comer',['com|er','com|iendo','com|ido','com|o','com|es','com|e','com|emos','com|éis','com|en'],'есть'],
-	['vivir',['viv|ir','viv|iendo','viv|ido','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],'жить'],
-	['estar',['est|ar','est|ando','est|ado','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
-	['ser',['s|er','s|iendo','s|ido','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'],['быть','быть постоянно, быть в указанный момент времени']],
-	['ir',['#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'],'идти'],
-	['dar',['d|ar','d|ando','d|ado','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'],'давать'],
-	['leer',['le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do','le|o','le|es','le|e','le|emos','le|éis','le|en'],'читать'],
+	['hablar',v1(
+		'habl|ar','habl|ando','habl|ado',
+		'habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an',
+		'habl|é','habl|aste','habl|ó','habl|amos','habl|asteis','habl|aron'
+	),'говорить'],
+	['comer',v1('com|er','com|iendo','com|ido','com|o','com|es','com|e','com|emos','com|éis','com|en'),'есть'],
+	['vivir',v1('viv|ir','viv|iendo','viv|ido','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'),'жить'],
+	['estar',v1('est|ar','est|ando','est|ado','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'),['быть','быть временно, быть в указанном месте']],
+	['ser',v1('s|er','s|iendo','s|ido','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'),['быть','быть постоянно, быть в указанный момент времени']],
+	['ir',v1('#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'),'идти'],
+	['dar',v1('d|ar','d|ando','d|ado','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'),'давать'],
+	['leer',v1('le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do','le|o','le|es','le|e','le|emos','le|éis','le|en'),'читать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
-$table.insertRow().innerHTML="<th><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
+$table.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
-for (const [i,formData] of verbForms.entries()) {
-	const $row=$table.insertRow()
-	const [text,note]=readPair(formData)
-	const $cell=document.createElement('th')
-	$row.appendChild($cell)
-	$cell.innerHTML=text
-	if (note) $cell.setAttribute('title',note)
-	for (const [verb,forms] of verbs) {
-		const [form,formNote]=readPair(forms[i])
-		let variant=1
-		let [stem,end]=form.split('|')
-		if (!end) {
-			variant=2
-			;[stem,end]=form.split('#')
+for (const [formGroupName,formGroupMembers] of verbFormGroups) {
+	let firstInGroup=true
+	for (formId of formGroupMembers) {
+		const $row=$table.insertRow()
+		if (firstInGroup && formGroupName) {
+			const $formGroupCell=document.createElement('th')
+			$row.appendChild($formGroupCell)
+			$formGroupCell.innerHTML=formGroupName
+			$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
 		}
-		const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
-		const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
-		const $cell=$row.insertCell()
-		$cell.innerHTML=makeSpan('stem',stem)+makeSpan('end',end)
-		if (formNote) $cell.setAttribute('title',formNote)
+		firstInGroup=false
+		const [formText,formNote]=verbForms[formId]
+		const $formCell=document.createElement('th')
+		if (!formGroupName) $formCell.setAttribute('colspan',2)
+		$row.appendChild($formCell)
+		$formCell.innerHTML=formText
+		$formCell.setAttribute('title',formNote)
+		for (const [verb,forms] of verbs) {
+			const [form,formNote]=readPair(forms[formId])
+			const $cell=$row.insertCell()
+			if (!forms[formId]) continue
+			let variant=1
+			let [stem,end]=form.split('|')
+			if (!end) {
+				variant=2
+				;[stem,end]=form.split('#')
+			}
+			const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
+			const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
+			$cell.innerHTML=makeSpan('stem',stem)+makeSpan('end',end)
+			if (formNote) $cell.setAttribute('title',formNote)
+		}
 	}
 }
 if (true) {
 	const $row=$table.insertRow()
 	$row.setAttribute('lang','ru')
 	const $cell=document.createElement('th')
+	$cell.setAttribute('colspan',2)
 	$row.appendChild($cell)
 	for (const [verb,forms,translationData] of verbs) {
 		const [translation,translationNote]=readPair(translationData)
@@ -106,6 +139,7 @@ if (true) {
 if (true) {
 	const $row=$table.insertRow()
 	const $cell=document.createElement('th')
+	$cell.setAttribute('colspan',2)
 	$row.appendChild($cell)
 	for (const [verb] of verbs) {
 		$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
