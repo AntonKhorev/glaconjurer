@@ -14,12 +14,13 @@ td, th {
 	padding: .1em .2em;
 	font-weight: normal;
 }
-[class|=end] {
+/*[class|=stem] + */[class|=end] {
 	font-weight: bold;
 	border-left: solid .05em green;
 	display: inline-block;
 	padding: .1em 0 .1em .05em;
 	margin: -.1em 0 -.1em .05em;
+	/*min-height: 1em;*/
 }
 .end-2 {
 	border-color: red;
@@ -107,6 +108,10 @@ const verbs=[
 	['vivir',['viv|ir','viv|iendo','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],['жить']],
 	['estar',['est|ar','est|ando','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
 	['ser',['s|er','s|iendo','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'],['быть','быть постоянно, быть в указанный момент времени']],
+	['ir',['#ir','#[y]endo','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'],['идти']],
+	['dar',['d|ar','d|ando','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'],['давать']],
+	//['leer',['le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|o','le|es','le|e','le|emos','le|éis','le|en'],['читать']],
+	['leer',['le|er','le|[y]endo','le|o','le|es','le|e','le|emos','le|éis','le|en'],['читать']],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
@@ -129,7 +134,8 @@ for (const [i,[text,note]] of verbForms.entries()) {
 			;[stem,end]=form.split('#')
 		}
 		const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
-		$row.insertCell().innerHTML=`<span class=stem-${variant}>${mark(stem)}</span><span class=end-${variant}>${mark(end)}</span>`
+		const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
+		$row.insertCell().innerHTML=makeSpan('stem',stem)+makeSpan('end',end)
 	}
 }
 if (true) {
