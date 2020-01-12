@@ -14,8 +14,8 @@ td, th {
 	padding: .1em .2em;
 	font-weight: normal;
 }
-td[title] {
-	text-decoration: underline;
+td[title], th[title] {
+	text-decoration: underline dotted;
 }
 [class|=stem] {
 	border-right: solid .05em green;
@@ -46,13 +46,13 @@ td[title] {
 <script>
 const verbForms=[
 	['Inf.','Infinitivo'],
-	['Ger.','Gerundio'],
-	['yo'],
-	['tú'],
-	['él','él, ella, usted'],
-	['nosotros','nosotros, nosotras'],
-	['vosotros','vosotros, vosotras'],
-	['ellos','ellos, ellas, ustedes'],
+	['Ger.','Gerundio: для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+	['yo','1-е лицо единственного числа'],
+	['tú','2-е лицо единственного числа'],
+	['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
+	['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
+	['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
+	['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
 ]
 const verbs=[
 	['hablar',['habl|ar','habl|ando','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],'говорить'],
@@ -68,15 +68,13 @@ const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
 $table.insertRow().innerHTML="<th><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
-for (const [i,[text,note]] of verbForms.entries()) {
+for (const [i,formData] of verbForms.entries()) {
 	const $row=$table.insertRow()
-	let cellHtml=text
-	if (note) {
-		cellHtml="<abbr title='"+note+"'>"+text+"</abbr>"
-	}
+	const [text,note]=readPair(formData)
 	const $cell=document.createElement('th')
-	$cell.innerHTML=cellHtml
 	$row.appendChild($cell)
+	$cell.innerHTML=text
+	if (note) $cell.setAttribute('title',note)
 	for (const [verb,forms] of verbs) {
 		const [form,formNote]=readPair(forms[i])
 		let variant=1
