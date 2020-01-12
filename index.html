@@ -47,6 +47,7 @@ td[title], th[title] {
 const verbForms=[
 	['Inf.','Infinitivo'],
 	['Ger.','Gerundio: для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+	['Part.','Participio: страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
 	['yo','1-е лицо единственного числа'],
 	['tú','2-е лицо единственного числа'],
 	['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
@@ -55,14 +56,14 @@ const verbForms=[
 	['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
 ]
 const verbs=[
-	['hablar',['habl|ar','habl|ando','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],'говорить'],
-	['comer',['com|er','com|iendo','com|o','com|es','com|e','com|emos','com|éis','com|en'],'есть'],
-	['vivir',['viv|ir','viv|iendo','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],'жить'],
-	['estar',['est|ar','est|ando','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
-	['ser',['s|er','s|iendo','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'],['быть','быть постоянно, быть в указанный момент времени']],
-	['ir',['#ir','#[y]endo','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'],'идти'],
-	['dar',['d|ar','d|ando','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'],'давать'],
-	['leer',['le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|o','le|es','le|e','le|emos','le|éis','le|en'],'читать'],
+	['hablar',['habl|ar','habl|ando','habl|ado','habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an'],'говорить'],
+	['comer',['com|er','com|iendo','com|ido','com|o','com|es','com|e','com|emos','com|éis','com|en'],'есть'],
+	['vivir',['viv|ir','viv|iendo','viv|ido','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'],'жить'],
+	['estar',['est|ar','est|ando','est|ado','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'],['быть','быть временно, быть в указанном месте']],
+	['ser',['s|er','s|iendo','s|ido','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'],['быть','быть постоянно, быть в указанный момент времени']],
+	['ir',['#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'],'идти'],
+	['dar',['d|ar','d|ando','d|ado','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'],'давать'],
+	['leer',['le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do','le|o','le|es','le|e','le|emos','le|éis','le|en'],'читать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
