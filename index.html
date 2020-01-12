@@ -15,17 +15,21 @@ td, th {
 	font-weight: normal;
 }
 td[title] {
-	border-bottom: dotted .05em black;
+	text-decoration: underline;
 }
-/*[class|=stem] + */[class|=end] {
+[class|=stem] {
+	border-right: solid .05em green;
+	padding: .15em .05em .15em 0;
+}
+[class|=end] {
 	font-weight: bold;
 	border-left: solid .05em green;
-	display: inline-block;
-	padding: .1em 0 .1em .05em;
-	margin: -.1em 0 -.1em .05em;
-	/*min-height: 1em;*/
+	padding: .15em 0 .15em .05em;
 }
-.end-2 {
+[class|=stem] + [class|=end] {
+	border: none;
+}
+.stem-2, .end-2 {
 	border-color: red;
 }
 .stem-1 em, .end-1 em {
