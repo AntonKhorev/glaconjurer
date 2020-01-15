@@ -58,6 +58,8 @@ const verbFormGroups=[
 	['',['inf','ger','par']],
 	['Presente',['pres1s','pres2s','pres3s','pres1p','pres2p','pres3p']],
 	['Pretérito',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
+	['<abbr title=Pretérito>Pr.</abbr> imperfecto',['imp1s','imp2s','imp3s','imp1p','imp2p','imp3p']],
+	['Imperativo',['im2s','im2vs','im1p','im2p','im2vp']],
 ]
 const verbForms={
 	inf: ['Infinitivo','инфинитив'],
@@ -75,17 +77,32 @@ const verbForms={
 	pret1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
 	pret2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
 	pret3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
+	imp1s: ['yo','1-е лицо единственного числа'],
+	imp2s: ['tú','2-е лицо единственного числа'],
+	imp3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
+	imp1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
+	imp2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
+	imp3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
+	im2s: ['tú','2-е лицо единственного числа; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
+	im2vs: ['usted','вежливое вы единственного числа; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
+	im1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
+	im2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
+	im2vp: ['ustedes','вежливое вы множественного числа'],
 }
 const v1=(...a)=>[
 	'inf','ger','par',
 	'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
-	'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p'
+	'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p',
+	'imp1s','imp2s','imp3s','imp1p','imp2p','imp3p',
+	'im2s','im2vs','im1p','im2p','im2vp'
 ].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 const verbs=[
 	['hablar',v1(
 		'habl|ar','habl|ando','habl|ado',
 		'habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an',
-		'habl|é','habl|aste','habl|ó','habl|amos','habl|asteis','habl|aron'
+		'habl|é','habl|aste','habl|ó','habl|amos','habl|asteis','habl|aron',
+		'habl|aba','habl|abas','habl|aba','habl|ábamos','habl|abais','habl|aban',
+		'habl|a','habl|e','habl|emos','habl|ad','habl|en'
 	),'говорить'],
 	['comer',v1('com|er','com|iendo','com|ido','com|o','com|es','com|e','com|emos','com|éis','com|en'),'есть'],
 	['vivir',v1('viv|ir','viv|iendo','viv|ido','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'),'жить'],
