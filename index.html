@@ -50,6 +50,16 @@ td[title], th[title] {
 	color: red;
 	font-style: normal;
 }
+.stem-1 em:empty, .end-1 em:empty {
+	display: inline-block;
+	width: 1ex;
+	border-bottom: solid 1px green;
+}
+.stem-2 em:empty, .end-2 em:empty {
+	display: inline-block;
+	width: 1ex;
+	border-bottom: solid 1px red;
+}
 </style>
 </head>
 <body>
@@ -121,8 +131,20 @@ const verbs=[
 		'viv|ía,viv|ías,viv|ía,viv|íamos,viv|íais,viv|ían',
 		'viv|e,viv|a,viv|amos,viv|id,viv|an',
 	),'жить'],
-	['estar',v1('est|ar','est|ando','est|ado','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'),['быть','быть временно, быть в указанном месте']],
-	['ser',v1('s|er','s|iendo','s|ido','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'),['быть','быть постоянно, быть в указанный момент времени']],
+	['estar',v1(
+		'est|ar,est|ando,est|ado',
+		'est|o[y],est|[á]s,est|[á],est|amos,est|áis,est|[á]n',
+		'est[uv]|[e],est[uv]|iste,est[uv]|[o],est[uv]|imos,est[uv]|isteis,est[uv]|ieron',
+		'est|aba,est|abas,est|aba,est|ábamos,est|abais,est|aban',
+		'est|[á],est|[é],est|emos,est|ad,est|[é]n',
+	),['быть','быть временно, быть в указанном месте']],
+	['ser',v1(
+		's|er,s|iendo,s|ido',
+		's|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n',
+		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
+		'er#[]a,er#[]as,er#[]a,[é]r#[]amos,er#[]ais,er#[]an',
+		's|[é],s|[e]a,s|[e]amos,s|ed,s|[e]an',
+	),['быть','быть постоянно, быть в указанный момент времени']],
 	['ir',v1('#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'),'идти'],
 	['dar',v1('d|ar','d|ando','d|ado','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'),'давать'],
 	['leer',v1('le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do','le|o','le|es','le|e','le|emos','le|éis','le|en'),'читать'],
