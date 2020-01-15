@@ -194,6 +194,13 @@ const verbs=[
 		v1imp('v[e]er'),
 		'v|e,v|[e]a,v|[e]amos,v|ed,v|[e]an',
 	),'видеть'],
+	['hacer',v1(
+		'hac|er,hac|iendo,h[e]|cho',
+		'ha[g]|o,hac|es,hac|e,hac|emos,hac|éis,hac|en',
+		'h[i]c|[e],h[i]c|iste,h[iz]|[o],h[i]c|imos,h[i]c|isteis,h[i]c|ieron',
+		v1imp('hacer'),
+		'ha[z]|,ha[g]|a,ha[g]|amos,hac|ed,ha[g]|an',
+	),'делать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
@@ -227,7 +234,7 @@ for (const [formGroupName,formGroupMembers] of verbFormGroups) {
 			if (!forms[formId]) continue
 			let variant=1
 			let [stem,end]=form.split('|')
-			if (!end) {
+			if (end===undefined) {
 				variant=2
 				;[stem,end]=form.split('#')
 			}
