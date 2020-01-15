@@ -161,7 +161,7 @@ const verbs=[
 	['estar',v1(
 		'est|ar,est|ando,est|ado',
 		'est|o[y],est|[á]s,est|[á],est|amos,est|áis,est|[á]n',
-		'est[uv]|[e],est[uv]|iste,est[uv]|[o],est[uv]|imos,est[uv]|isteis,est[uv]|ieron',
+		'estuv#[e],estuv#iste,estuv#[o],estuv#imos,estuv#isteis,estuv#ieron',
 		v1imp('estar'),
 		'est|[á],est|[é],est|emos,est|ad,est|[é]n',
 	),['быть','быть временно, быть в указанном месте']],
@@ -220,6 +220,20 @@ const verbs=[
 		v1imp('poner'),
 		'pon|[],pon[g]|a,pon[g]|amos,pon|ed,pon[g]|an',
 	),'ставить'],
+	['tener',v1(
+		'ten|er,ten|iendo,ten|ido',
+		'ten[g]|o,t[i]en|es,t[i]en|e,ten|emos,ten|éis,t[i]en|en',
+		'tuv#[e],tuv#iste,tuv#[o],tuv#imos,tuv#isteis,tuv#ieron',
+		v1imp('tener'),
+		'ten|[],ten[g]|a,ten[g]|amos,ten|ed,ten[g]|an',
+	),'иметь'],
+	['saber',v1(
+		'sab|er,sab|iendo,sab|ido',
+		's#[é],sab|es,sab|e,sab|emos,sab|éis,sab|en',
+		'sup#[e],sup#iste,sup#[o],sup#imos,sup#isteis,sup#ieron',
+		v1imp('saber'),
+		'sab|e,sep#a,sep#amos,sab|ed,sep#an',
+	),'знать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
