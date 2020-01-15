@@ -89,23 +89,38 @@ const verbForms={
 	im2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
 	im2vp: ['ustedes','вежливое вы множественного числа'],
 }
-const v1=(...a)=>[
-	'inf','ger','par',
-	'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
-	'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p',
-	'imp1s','imp2s','imp3s','imp1p','imp2p','imp3p',
-	'im2s','im2vs','im1p','im2p','im2vp'
-].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
+const v1=(...aa)=>{
+	const a=[].concat.apply([],aa.map(s=>Array.isArray(s)?[s]:s.split(',')))
+	return [
+		'inf','ger','par',
+		'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
+		'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p',
+		'imp1s','imp2s','imp3s','imp1p','imp2p','imp3p',
+		'im2s','im2vs','im1p','im2p','im2vp'
+	].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
+}
 const verbs=[
 	['hablar',v1(
-		'habl|ar','habl|ando','habl|ado',
-		'habl|o','habl|as','habl|a','habl|amos','habl|áis','habl|an',
-		'habl|é','habl|aste','habl|ó','habl|amos','habl|asteis','habl|aron',
-		'habl|aba','habl|abas','habl|aba','habl|ábamos','habl|abais','habl|aban',
-		'habl|a','habl|e','habl|emos','habl|ad','habl|en'
+		'habl|ar,habl|ando,habl|ado',
+		'habl|o,habl|as,habl|a,habl|amos,habl|áis,habl|an',
+		'habl|é,habl|aste,habl|ó,habl|amos,habl|asteis,habl|aron',
+		'habl|aba,habl|abas,habl|aba,habl|ábamos,habl|abais,habl|aban',
+		'habl|a,habl|e,habl|emos,habl|ad,habl|en',
 	),'говорить'],
-	['comer',v1('com|er','com|iendo','com|ido','com|o','com|es','com|e','com|emos','com|éis','com|en'),'есть'],
-	['vivir',v1('viv|ir','viv|iendo','viv|ido','viv|o','viv|es','viv|e','viv|imos','viv|ís','viv|en'),'жить'],
+	['comer',v1(
+		'com|er,com|iendo,com|ido',
+		'com|o,com|es,com|e,com|emos,com|éis,com|en',
+		'com|í,com|iste,com|ió,com|imos,com|isteis,com|ieron',
+		'com|ía,com|ías,com|ía,com|íamos,com|íais,com|ían',
+		'com|e,com|a,com|amos,com|ed,com|an',
+	),'есть'],
+	['vivir',v1(
+		'viv|ir,viv|iendo,viv|ido',
+		'viv|o,viv|es,viv|e,viv|imos,viv|ís,viv|en',
+		'viv|í,viv|iste,viv|ió,viv|imos,viv|isteis,viv|ieron',
+		'viv|ía,viv|ías,viv|ía,viv|íamos,viv|íais,viv|ían',
+		'viv|e,viv|a,viv|amos,viv|id,viv|an',
+	),'жить'],
 	['estar',v1('est|ar','est|ando','est|ado','est|o[y]','est|[á]s','est|[á]','est|amos','est|áis','est|[á]n'),['быть','быть временно, быть в указанном месте']],
 	['ser',v1('s|er','s|iendo','s|ido','s|o[y]','er#es','e[s]#','s|[o]mos','s|[o]is','s|[o]n'),['быть','быть постоянно, быть в указанный момент времени']],
 	['ir',v1('#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'),'идти'],
