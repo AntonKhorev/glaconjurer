@@ -36,6 +36,12 @@ td[title], th[title] {
 	border-left: solid 1px green;
 	padding: .15em 0 .15em .05em;
 }
+[class|=subend] {
+	color: #333;
+	font-weight: bold;
+	border-left: solid 1px #DDD;
+	padding: .15em 0 .15em .05em;
+}
 [class|=stem] + [class|=end] {
 	border: none;
 }
@@ -132,9 +138,9 @@ const v1pret=(inf)=>v1forms(inf,
 	'í,iste,ió,imos,isteis,ieron',
 )
 const v1imp=(inf)=>v1forms(inf,
-	'aba,abas,aba,ábamos,abais,aban',
-	'ía,ías,ía,íamos,íais,ían',
-	'ía,ías,ía,íamos,íais,ían',
+	'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an',
+	'í|a,í|as,í|a,í|amos,í|ais,í|an',
+	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 )
 const verbs=[
 	['hablar',v1(
@@ -163,14 +169,14 @@ const verbs=[
 		's|er,s|iendo,s|ido',
 		's|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n',
 		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
-		'er#[]a,er#[]as,er#[]a,[é]r#[]amos,er#[]ais,er#[]an',
+		'er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an',
 		's|[é],s|[e]a,s|[e]amos,s|ed,s|[e]an',
 	),['быть','быть постоянно, быть в указанный момент времени']],
 	['ir',v1(
 		'#ir,#[y]endo,#ido',
 		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
 		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
-		'ib#[]a,ib#[]as,ib#[]a,[í]b#[]amos,ib#[]ais,ib#[]an',
+		'ib#[]#a,ib#[]#as,ib#[]#a,[í]b#[]#amos,ib#[]#ais,ib#[]#an',
 		'v|e,v[ay]|a,v[ay]|amos,#id,v[ay]|an',
 	),'идти'],
 	['dar',v1(
@@ -233,14 +239,16 @@ for (const [formGroupName,formGroupMembers] of verbFormGroups) {
 			const $cell=$row.insertCell()
 			if (!forms[formId]) continue
 			let variant=1
-			let [stem,end]=form.split('|')
+			let [stem,end,subend]=form.split('|')
 			if (end===undefined) {
 				variant=2
-				;[stem,end]=form.split('#')
+				;[stem,end,subend]=form.split('#')
 			}
 			const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
 			const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
-			$cell.innerHTML=makeSpan('stem',stem)+makeSpan('end',end)
+			let t=makeSpan('stem',stem)+makeSpan('end',end)
+			if (subend!==undefined) t+=makeSpan('subend',subend)
+			$cell.innerHTML=t
 			if (formNote) $cell.setAttribute('title',formNote)
 		}
 	}
