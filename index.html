@@ -9,6 +9,9 @@ body {
 table {
 	border-collapse: collapse;
 }
+tbody {
+	border-top: solid 1px gray;
+}
 td, th {
 	text-align: left;
 	padding: .1em .2em;
@@ -25,12 +28,12 @@ td[title], th[title] {
 	text-decoration: underline dotted;
 }
 [class|=stem] {
-	border-right: solid .05em green;
+	border-right: solid 1px green;
 	padding: .15em .05em .15em 0;
 }
 [class|=end] {
 	font-weight: bold;
-	border-left: solid .05em green;
+	border-left: solid 1px green;
 	padding: .15em 0 .15em .05em;
 }
 [class|=stem] + [class|=end] {
@@ -94,12 +97,16 @@ const verbs=[
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
-$table.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
+const $thead=document.createElement('thead')
+$table.appendChild($thead)
+$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 for (const [formGroupName,formGroupMembers] of verbFormGroups) {
+	const $tbody=document.createElement('tbody')
+	$table.appendChild($tbody)
 	let firstInGroup=true
 	for (formId of formGroupMembers) {
-		const $row=$table.insertRow()
+		const $row=$tbody.insertRow()
 		if (firstInGroup && formGroupName) {
 			const $formGroupCell=document.createElement('th')
 			$row.appendChild($formGroupCell)
@@ -131,26 +138,30 @@ for (const [formGroupName,formGroupMembers] of verbFormGroups) {
 		}
 	}
 }
-if (true) {
-	const $row=$table.insertRow()
-	$row.setAttribute('lang','ru')
-	const $cell=document.createElement('th')
-	$cell.setAttribute('colspan',2)
-	$row.appendChild($cell)
-	for (const [verb,forms,translationData] of verbs) {
-		const [translation,translationNote]=readPair(translationData)
-		const $cell=$row.insertCell()
-		$cell.innerHTML=translation
-		if (translationNote) $cell.setAttribute('title',translationNote)
+{
+	const $tbody=document.createElement('tbody')
+	$table.appendChild($tbody)
+	{
+		const $row=$tbody.insertRow()
+		$row.setAttribute('lang','ru')
+		const $cell=document.createElement('th')
+		$cell.setAttribute('colspan',2)
+		$row.appendChild($cell)
+		for (const [verb,forms,translationData] of verbs) {
+			const [translation,translationNote]=readPair(translationData)
+			const $cell=$row.insertCell()
+			$cell.innerHTML=translation
+			if (translationNote) $cell.setAttribute('title',translationNote)
+		}
 	}
-}
-if (true) {
-	const $row=$table.insertRow()
-	const $cell=document.createElement('th')
-	$cell.setAttribute('colspan',2)
-	$row.appendChild($cell)
-	for (const [verb] of verbs) {
-		$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
+	{
+		const $row=$tbody.insertRow()
+		const $cell=document.createElement('th')
+		$cell.setAttribute('colspan',2)
+		$row.appendChild($cell)
+		for (const [verb] of verbs) {
+			$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
+		}
 	}
 }
 $body.appendChild($table)
