@@ -109,24 +109,35 @@ const v1=(...aa)=>{
 		'im2s','im2vs','im1p','im2p','im2vp'
 	].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
+const v1pres=(s)=>{
+	const [stem,end]=s.split(/(..)$/)
+	if (end=='ar') {
+		return `${stem}|o,${stem}|as,${stem}|a,${stem}|amos,${stem}|áis,${stem}|an`
+	} else if (end=='er') {
+		return `${stem}|o,${stem}|es,${stem}|e,${stem}|emos,${stem}|éis,${stem}|en`
+	} else if (end=='ir') {
+		return `${stem}|o,${stem}|es,${stem}|e,${stem}|imos,${stem}|ís,${stem}|en`
+	}
+	throw 'unrecognized verb form'
+}
 const verbs=[
 	['hablar',v1(
 		'habl|ar,habl|ando,habl|ado',
-		'habl|o,habl|as,habl|a,habl|amos,habl|áis,habl|an',
+		v1pres('hablar'),
 		'habl|é,habl|aste,habl|ó,habl|amos,habl|asteis,habl|aron',
 		'habl|aba,habl|abas,habl|aba,habl|ábamos,habl|abais,habl|aban',
 		'habl|a,habl|e,habl|emos,habl|ad,habl|en',
 	),'говорить'],
 	['comer',v1(
 		'com|er,com|iendo,com|ido',
-		'com|o,com|es,com|e,com|emos,com|éis,com|en',
+		v1pres('comer'),
 		'com|í,com|iste,com|ió,com|imos,com|isteis,com|ieron',
 		'com|ía,com|ías,com|ía,com|íamos,com|íais,com|ían',
 		'com|e,com|a,com|amos,com|ed,com|an',
 	),'есть'],
 	['vivir',v1(
 		'viv|ir,viv|iendo,viv|ido',
-		'viv|o,viv|es,viv|e,viv|imos,viv|ís,viv|en',
+		v1pres('vivir'),
 		'viv|í,viv|iste,viv|ió,viv|imos,viv|isteis,viv|ieron',
 		'viv|ía,viv|ías,viv|ía,viv|íamos,viv|íais,viv|ían',
 		'viv|e,viv|a,viv|amos,viv|id,viv|an',
@@ -161,7 +172,7 @@ const verbs=[
 	),'давать'],
 	['leer',v1(
 		'le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do',
-		'le|o,le|es,le|e,le|emos,le|éis,le|en',
+		v1pres('leer'),
 		'le|í,le|[í]ste,le|[y]ó,le|[í]mos,le|[í]steis,le|[y]eron',
 		'le|ía,le|ías,le|ía,le|íamos,le|íais,le|ían',
 		'le|e,le|a,le|amos,le|ed,le|an',
