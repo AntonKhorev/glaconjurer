@@ -170,7 +170,7 @@ const verbs=[
 		's|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n',
 		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
 		'er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an',
-		's|[é],s|[e]a,s|[e]amos,s|ed,s|[e]an',
+		's|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an',
 	),['быть','быть постоянно, быть в указанный момент времени']],
 	['ir',v1(
 		'#ir,#[y]endo,#ido',
@@ -195,11 +195,17 @@ const verbs=[
 	),'читать'],
 	['ver',v1(
 		'v|er,v|iendo,v|i[st]o',
-		'v|[e]o,v|es,v|e,v|emos,v|[e]is,v|en',
+		'v[e]|o,v|es,v|e,v|emos,v|[e]is,v|en',
 		'v|[i],v|iste,v|i[o],v|imos,v|isteis,v|ieron',
 		v1imp('v[e]er'),
-		'v|e,v|[e]a,v|[e]amos,v|ed,v|[e]an',
+		'v|e,v[e]|a,v[e]|amos,v|ed,v[e]|an',
 	),'видеть'],
+	['conocer',v1(
+		'conoc|er,conoc|iendo,conoc|ido',
+		'cono[z]c|o,conoc|es,conoc|e,conoc|emos,conoc|éis,conoc|en',
+		v1pret('conocer'),v1imp('conocer'),
+		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
+	),'знать'],
 	['hacer',v1(
 		'hac|er,hac|iendo,h[e]|cho',
 		'ha[g]|o,hac|es,hac|e,hac|emos,hac|éis,hac|en',
