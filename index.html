@@ -50,14 +50,14 @@ td[title], th[title] {
 	color: red;
 	font-style: normal;
 }
-.stem-1 em:empty, .end-1 em:empty {
+.stem-1 em:empty, .end-1 em:empty, .stem-2 em:empty, .end-2 em:empty {
 	display: inline-block;
-	width: 1ex;
+	width: .5ex;
+}
+.stem-1 em:empty, .end-1 em:empty {
 	border-bottom: solid 1px green;
 }
 .stem-2 em:empty, .end-2 em:empty {
-	display: inline-block;
-	width: 1ex;
 	border-bottom: solid 1px red;
 }
 </style>
@@ -145,9 +145,27 @@ const verbs=[
 		'er#[]a,er#[]as,er#[]a,[é]r#[]amos,er#[]ais,er#[]an',
 		's|[é],s|[e]a,s|[e]amos,s|ed,s|[e]an',
 	),['быть','быть постоянно, быть в указанный момент времени']],
-	['ir',v1('#ir','#[y]endo','#ido','v|o[y]','v|as','v|a','v|amos','v|[a]is','v|an'),'идти'],
-	['dar',v1('d|ar','d|ando','d|ado','d|o[y]','d|as','d|a','d|amos','d|[a]is','d|an'),'давать'],
-	['leer',v1('le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do','le|o','le|es','le|e','le|emos','le|éis','le|en'),'читать'],
+	['ir',v1(
+		'#ir,#[y]endo,#ido',
+		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
+		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
+		'ib#[]a,ib#[]as,ib#[]a,[í]b#[]amos,ib#[]ais,ib#[]an',
+		'v|e,v[ay]|a,v[ay]|amos,#id,v[ay]|an',
+	),'идти'],
+	['dar',v1(
+		'd|ar,d|ando,d|ado',
+		'd|o[y],d|as,d|a,d|amos,d|[a]is,d|an',
+		'd|[i],d|[i]ste,d|[io],d|[i]mos,d|[i]steis,d|[ie]ron',
+		'd|aba,d|abas,d|aba,d|ábamos,d|abais,d|aban',
+		'd|a,d|[é],d|emos,d|ad,d|en',
+	),'давать'],
+	['leer',v1(
+		'le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do',
+		'le|o,le|es,le|e,le|emos,le|éis,le|en',
+		'le|í,le|[í]ste,le|[y]ó,le|[í]mos,le|[í]steis,le|[y]eron',
+		'le|ía,le|ías,le|ía,le|íamos,le|íais,le|ían',
+		'le|e,le|a,le|amos,le|ed,le|an',
+	),'читать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
