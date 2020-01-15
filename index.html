@@ -207,12 +207,19 @@ const verbs=[
 		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
 	),'знать'],
 	['hacer',v1(
-		'hac|er,hac|iendo,h[e]|cho',
+		'hac|er,hac|iendo,h[e]|[ch]o',
 		'ha[g]|o,hac|es,hac|e,hac|emos,hac|éis,hac|en',
 		'h[i]c|[e],h[i]c|iste,h[iz]|[o],h[i]c|imos,h[i]c|isteis,h[i]c|ieron',
 		v1imp('hacer'),
-		'ha[z]|,ha[g]|a,ha[g]|amos,hac|ed,ha[g]|an',
+		'ha[z]|[],ha[g]|a,ha[g]|amos,hac|ed,ha[g]|an',
 	),'делать'],
+	['poner',v1(
+		'pon|er,pon|iendo,pu[e]s#[t]o',
+		'pon[g]|o,pon|es,pon|e,pon|emos,pon|éis,pon|en',
+		'pus#[e],pus#iste,pus#[o],pus#imos,pus#isteis,pus#ieron',
+		v1imp('poner'),
+		'pon|[],pon[g]|a,pon[g]|amos,pon|ed,pon[g]|an',
+	),'ставить'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
