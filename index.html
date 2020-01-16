@@ -145,6 +145,7 @@ const v1imp=(inf)=>v1forms(inf,
 	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 )
+const v1yendo=(stem)=>[`${stem}|[y]endo`,'после гласной -iendo меняется на -yendo']
 const verbs=[
 	['hablar',v1(
 		'habl|ar,habl|ando,habl|ado',
@@ -190,7 +191,7 @@ const verbs=[
 		'd|a,d|[é],d|emos,d|ad,d|en',
 	),'давать'],
 	['leer',v1(
-		'le|er',['le|[y]endo','после гласной -iendo меняется на -yendo'],'le|[í]do',
+		'le|er',v1yendo('le'),'le|[í]do',
 		v1pres('leer'),
 		'le|í,le|[í]ste,le|[y]ó,le|[í]mos,le|[í]steis,le|[y]eron',
 		v1imp('leer'),
@@ -244,6 +245,13 @@ const verbs=[
 		v1pret('conocer'),v1imp('conocer'),
 		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
 	),['знать','знать человека/место']],
+	['traer',v1(
+		'tra|er',v1yendo('tra'),'tra|ído',
+		'tra[ig]|o,tra|es,tra|e,tra|emos,tra|éis,tra|en',
+		'traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron',
+		v1imp('traer'),
+		'tra|e,tra[ig]|a,tra[ig]|amos,tra|ed,tra[ig]|an',
+	),'приносить'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
