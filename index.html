@@ -145,8 +145,8 @@ const v1imp=(inf)=>v1forms(inf,
 	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 )
-const v1yendo=(stem)=>[`${stem}|[y]endo`,'после гласной -iendo меняется на -yendo']
-const v1jo=(stem)=>[`${stem.slice(0,-1)}[j]|o`,'у -ger и -gir-глаголов вместо -go пишется -jo']
+const v1yendo=(inf)=>[`${inf.slice(0,-2)}|[y]endo`,'после гласной -iendo меняется на -yendo']
+const v1jo=(inf)=>[`${inf.slice(0,-3)}[j]|o`,'у -ger и -gir-глаголов вместо -go пишется -jo']
 const verbs=[
 	['hablar',v1(
 		'habl|ar,habl|ando,habl|ado',
@@ -192,7 +192,7 @@ const verbs=[
 		'd|a,d|[é],d|emos,d|ad,d|en',
 	),'давать'],
 	['leer',v1(
-		'le|er',v1yendo('le'),'le|[í]do',
+		'le|er',v1yendo('leer'),'le|[í]do',
 		v1pres('leer'),
 		'le|í,le|[í]ste,le|[y]ó,le|[í]mos,le|[í]steis,le|[y]eron',
 		v1imp('leer'),
@@ -247,7 +247,7 @@ const verbs=[
 		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
 	),['знать','знать человека/место']],
 	['traer',v1(
-		'tra|er',v1yendo('tra'),'tra|ído',
+		'tra|er',v1yendo('traer'),'tra|ído',
 		'tra[ig]|o,tra|es,tra|e,tra|emos,tra|éis,tra|en',
 		'traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron',
 		v1imp('traer'),
@@ -255,10 +255,17 @@ const verbs=[
 	),'приносить'],
 	['coger',v1( // considered regular
 		'cog|er,cog|iendo,cog|ido',
-		v1jo('cog'),'cog|es,cog|e,cog|emos,cog|éis,cog|en',
+		v1jo('coger'),'cog|es,cog|e,cog|emos,cog|éis,cog|en',
 		v1pret('coger'),v1imp('coger'),
 		'cog|e,co[j]|a,co[j]|amos,cog|ed,co[j]|an',
 	),'брать'],
+	['elegir',v1(
+		'eleg|ir,el[i]g|iendo,ele[c]|[t]o',
+		v1jo('el[i]gir'),'el[i]g|es,el[i]g|e,eleg|imos,eleg|ís,el[i]g|en',
+		'eleg|í,eleg|iste,el[i]g|ió,eleg|imos,eleg|isteis,el[i]g|ieron',
+		v1imp('elegir'),
+		'el[i]g|e,el[ij]|a,el[ij]|amos,eleg|id,el[ij]|an',
+	),'выбирать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
@@ -296,7 +303,7 @@ for (const [formGroupName,formGroupMembers] of verbFormGroups) {
 				variant=2
 				;[stem,end,subend]=form.split('#')
 			}
-			const mark=(s)=>s.replace(/\[(.*)\]/,'<em>$1</em>')
+			const mark=(s)=>s.replace(/\[(.*?)\]/g,'<em>$1</em>')
 			const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
 			let t=makeSpan('stem',stem)+makeSpan('end',end)
 			if (subend!==undefined) t+=makeSpan('subend',subend)
