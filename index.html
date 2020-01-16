@@ -84,29 +84,23 @@ const verbForms={
 	inf: ['Infinitivo','инфинитив'],
 	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
 	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
-	pres1s: ['yo','1-е лицо единственного числа'],
-	pres2s: ['tú','2-е лицо единственного числа'],
-	pres3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
-	pres1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
-	pres2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
-	pres3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
-	pret1s: ['yo','1-е лицо единственного числа'],
-	pret2s: ['tú','2-е лицо единственного числа'],
-	pret3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
-	pret1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
-	pret2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
-	pret3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
-	imp1s: ['yo','1-е лицо единственного числа'],
-	imp2s: ['tú','2-е лицо единственного числа'],
-	imp3s: ['él','3-е лицо единственного числа (él, ella); вежливое вы единственного числа (usted)'],
-	imp1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
-	imp2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
-	imp3p: ['ellos','3-е лицо множественного числа (ellos, ellas); вежливое вы множественного числа (ustedes)'],
 	im2s: ['tú','2-е лицо единственного числа; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
 	im2vs: ['usted','вежливое вы единственного числа; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
 	im1p: ['nosotros','1-е лицо множественного числа (nosotros, nosotras)'],
 	im2p: ['vosotros','2-е лицо множественного числа (vosotros, vosotras)'],
 	im2vp: ['ustedes','вежливое вы множественного числа'],
+}
+for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
+	['pres',['делаю','делаешь','делает','делает','делаем','делаете','делают']],
+	['pret',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+	['imp' ,['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+]) {
+	verbForms[prefix+'1s']=['yo',`yo: я ${v1s}`]
+	verbForms[prefix+'2s']=['tú',`tú: ты ${v2s}`]
+	verbForms[prefix+'3s']=['él',`él: он ${v3sm}; ella: она ${v3sf}; usted: (вежливое) вы ${v2p}`]
+	verbForms[prefix+'1p']=['nosotros',`nosotros, nosotras: мы ${v1p}`]
+	verbForms[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) вы ${v2p}`]
+	verbForms[prefix+'3p']=['ellos',`ellos, ellas: они ${v3p}; ustedes: (вежливое множественное) вы ${v2p}`]
 }
 const v1=(...aa)=>{
 	const a=[].concat.apply([],aa.map(s=>Array.isArray(s)?[s]:s.split(',')))
