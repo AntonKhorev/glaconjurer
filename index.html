@@ -146,6 +146,7 @@ const v1imp=(inf)=>v1forms(inf,
 	'í|a,í|as,í|a,í|amos,í|ais,í|an',
 )
 const v1yendo=(stem)=>[`${stem}|[y]endo`,'после гласной -iendo меняется на -yendo']
+const v1jo=(stem)=>[`${stem.slice(0,-1)}[j]|o`,'у -ger и -gir-глаголов вместо -go пишется -jo']
 const verbs=[
 	['hablar',v1(
 		'habl|ar,habl|ando,habl|ado',
@@ -252,6 +253,12 @@ const verbs=[
 		v1imp('traer'),
 		'tra|e,tra[ig]|a,tra[ig]|amos,tra|ed,tra[ig]|an',
 	),'приносить'],
+	['coger',v1( // considered regular
+		'cog|er,cog|iendo,cog|ido',
+		v1jo('cog'),'cog|es,cog|e,cog|emos,cog|éis,cog|en',
+		v1pret('coger'),v1imp('coger'),
+		'cog|e,co[j]|a,co[j]|amos,cog|ed,co[j]|an',
+	),'брать'],
 ]
 const $body=document.getElementsByTagName('body')[0]
 const $table=document.createElement('table')
