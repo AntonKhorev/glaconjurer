@@ -57,22 +57,22 @@ td[title], th[title] {
 .stem-2, .end-2 {
 	border-color: red;
 }
-.stem-1 em, .end-1 em {
+.stem-1 strong, .end-1 strong {
 	color: green;
 	font-style: normal;
 }
-.stem-2 em, .end-2 em {
+.stem-2 strong, .end-2 strong {
 	color: red;
 	font-style: normal;
 }
-.stem-1 em:empty, .end-1 em:empty, .stem-2 em:empty, .end-2 em:empty {
+.stem-1 strong:empty, .end-1 strong:empty, .stem-2 strong:empty, .end-2 strong:empty {
 	display: inline-block;
 	width: .5ex;
 }
-.stem-1 em:empty, .end-1 em:empty {
+.stem-1 strong:empty, .end-1 strong:empty {
 	border-bottom: solid 1px green;
 }
-.stem-2 em:empty, .end-2 em:empty {
+.stem-2 strong:empty, .end-2 strong:empty {
 	border-bottom: solid 1px red;
 }
 </style>
@@ -107,6 +107,11 @@ for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
 	verbForms[prefix+'1p']=['nosotros',`nosotros, nosotras: мы ${v1p}`]
 	verbForms[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) вы ${v2p}`]
 	verbForms[prefix+'3p']=['ellos',`ellos, ellas: они ${v3p}; ustedes: (вежливое множественное) вы ${v2p}`]
+}
+const compactableVerbForms={
+	pres3: ['él<em>los</em>',verbForms['pres3s'][1]+'; '+verbForms['pres3p'][1]],
+	imp3: ['él<em>los</em>',verbForms['imp3s'][1]+'; '+verbForms['imp3p'][1]],
+	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
 const v1=(...aa)=>{
 	const a=[].concat.apply([],aa.map(s=>Array.isArray(s)?[s]:s.split(',')))
@@ -296,7 +301,7 @@ const verbs=[
 	),'трогать'],
 ]
 
-const createTable=($container,personMajorSort)=>{
+const createTable=($container,sortType)=>{
 	while ($container.firstChild) $container.removeChild($container.firstChild)
 	const $table=document.createElement('table')
 	$table.setAttribute('lang','es')
@@ -312,7 +317,7 @@ const createTable=($container,personMajorSort)=>{
 		if (!Array.isArray(formGroupMembersOrPrefix)) {
 			formGroupMembers=[]
 			const prefix=formGroupMembersOrPrefix
-			if (personMajorSort) {
+			if (sortType!='number') {
 				for (const p of [1,2,3]) {
 					for (const n of ['s','p']) {
 						if (verbForms[prefix+p+n]) formGroupMembers.push(prefix+p+n)
@@ -328,9 +333,15 @@ const createTable=($container,personMajorSort)=>{
 		}
 		for (formId of formGroupMembers) {
 			const $row=$tbody.insertRow()
-			const number=formId.slice(-1)
-			if (personMajorSort && (number=='s' || number=='p')) {
-				$row.classList.add('number-'+number)
+			const formPreNumber=formId.slice(0,-1)
+			const formNumber=formId.slice(-1)
+			let compactRow=false
+			if (sortType=='person-compact' && formPreNumber in compactableVerbForms) {
+				compactRow=true
+				if (formId==formPreNumber+'p') continue
+			}
+			if (!compactRow && sortType!='number' && (formNumber=='s' || formNumber=='p')) {
+				$row.classList.add('number-'+formNumber)
 			}
 			if (firstInGroup && formGroupName) {
 				const $formGroupCell=document.createElement('th')
@@ -340,28 +351,43 @@ const createTable=($container,personMajorSort)=>{
 				$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
 			}
 			firstInGroup=false
-			const [formText,formNote]=verbForms[formId]
+			let [formText,formNote]=verbForms[formId]
+			if (compactRow) {
+				[formText,formNote]=compactableVerbForms[formPreNumber]
+			}
 			const $formCell=document.createElement('th')
 			if (!formGroupName) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
-			for (const [verb,forms] of verbs) {
-				const [form,formNote]=readPair(forms[formId])
-				const $cell=$row.insertCell()
-				if (!forms[formId]) continue
+			const getFormHtml=(form)=>{
 				let variant=1
 				let [stem,end,subend]=form.split('|')
 				if (end===undefined) {
 					variant=2
 					;[stem,end,subend]=form.split('#')
 				}
-				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<em>$1</em>')
+				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<strong>$1</strong>')
 				const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
 				let t=makeSpan('stem',stem)+makeSpan('end',end)
 				if (subend!==undefined) t+=makeSpan('subend',subend)
-				$cell.innerHTML=t
-				if (formNote) $cell.setAttribute('title',formNote)
+				return t
+			}
+			for (const [verb,forms] of verbs) {
+				const [form,formNote]=readPair(forms[formId])
+				const $cell=$row.insertCell()
+				if (!forms[formId]) continue
+				if (compactRow) {
+					const [form2]=readPair(forms[formPreNumber+'p'])
+					if (form2.startsWith(form)) {
+						$cell.innerHTML=getFormHtml(`${form}<em>${form2.slice(form.length)}</em>`)
+					} else {
+						$cell.innerHTML=getFormHtml(form)+" / "+getFormHtml(form2)
+					}
+				} else {
+					$cell.innerHTML=getFormHtml(form)
+					if (formNote) $cell.setAttribute('title',formNote)
+				}
 			}
 		}
 	}
@@ -397,15 +423,20 @@ const createTable=($container,personMajorSort)=>{
 const $body=document.getElementsByTagName('body')[0]
 const $tableContainer=document.createElement('div')
 $body.appendChild($tableContainer)
-createTable($tableContainer,false)
+createTable($tableContainer,'number')
 const $optionsContainer=document.createElement('details')
 $optionsContainer.innerHTML="<summary>Настройки</summary>"
-const $sortCheckboxLabel=document.createElement('label')
-$sortCheckboxLabel.innerHTML="<input type=checkbox /> Сгруппировать по лицу"
-$sortCheckboxLabel.addEventListener('change',(ev)=>{
-	createTable($tableContainer,ev.target.checked)
+const $groupingControls=document.createElement('div')
+$groupingControls.innerHTML="<label><input type=radio name=sort value=number checked /> Обычный порядок</label><label><input type=radio name=sort value=person /> Сгруппировать по лицу</label>"
+$groupingControls.innerHTML=[
+	['number checked','Обычный порядок'],
+	['person','Группировка по лицам'],
+	['person-compact','...с уплотнением'],
+].map(([id,text])=>`<label><input type=radio name=sort value=${id} /> ${text}</label>`).join('')
+$groupingControls.addEventListener('change',(ev)=>{
+	createTable($tableContainer,ev.target.value)
 })
-$optionsContainer.appendChild($sortCheckboxLabel)
+$optionsContainer.appendChild($groupingControls)
 $body.appendChild($optionsContainer)
 </script>
 </body>
