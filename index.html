@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='es'>
+<html lang='ru'>
 <head>
 <meta charset='utf-8' />
 <style>
@@ -76,9 +76,9 @@ td[title], th[title] {
 const verbFormGroups=[
 	['',['inf','ger','par']],
 	['Presente',['pres1s','pres2s','pres3s','pres1p','pres2p','pres3p']],
-	['<abbr title=Pretérito>Pret.</abbr> indefinido',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
-	['<abbr title=Pretérito>Pret.</abbr> imperfecto',['imp1s','imp2s','imp3s','imp1p','imp2p','imp3p']],
-	['Imperativo',['im2s','im3s','im1p','im2p','im3p']],
+	['<abbr title=Pretérito>Pret.</abbr> indefinido','pret'],
+	['<abbr title=Pretérito>Pret.</abbr> imperfecto','imp'],
+	['Imperativo','im'],
 ]
 const verbForms={
 	inf: ['Infinitivo','инфинитив'],
@@ -282,78 +282,114 @@ const verbs=[
 		'emp[i]ez|a,emp[i]e[c]|e,empe[c]|emos,empez|ad,emp[i]e[c]|en',
 	),'начинать'],
 ]
-const $body=document.getElementsByTagName('body')[0]
-const $table=document.createElement('table')
-const $thead=document.createElement('thead')
-$table.appendChild($thead)
-$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
-const readPair=(a)=>Array.isArray(a)?a:[a,'']
-for (const [formGroupName,formGroupMembers] of verbFormGroups) {
-	const $tbody=document.createElement('tbody')
-	$table.appendChild($tbody)
-	let firstInGroup=true
-	for (formId of formGroupMembers) {
-		const $row=$tbody.insertRow()
-		if (firstInGroup && formGroupName) {
-			const $formGroupCell=document.createElement('th')
-			$row.appendChild($formGroupCell)
-			$formGroupCell.innerHTML='<span>'+formGroupName+'</span>'
-			$formGroupCell.classList.add('group')
-			$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
-		}
-		firstInGroup=false
-		const [formText,formNote]=verbForms[formId]
-		const $formCell=document.createElement('th')
-		if (!formGroupName) $formCell.setAttribute('colspan',2)
-		$row.appendChild($formCell)
-		$formCell.innerHTML=formText
-		$formCell.setAttribute('title',formNote)
-		for (const [verb,forms] of verbs) {
-			const [form,formNote]=readPair(forms[formId])
-			const $cell=$row.insertCell()
-			if (!forms[formId]) continue
-			let variant=1
-			let [stem,end,subend]=form.split('|')
-			if (end===undefined) {
-				variant=2
-				;[stem,end,subend]=form.split('#')
+
+const createTable=($container,personMajorSort)=>{
+	while ($container.firstChild) $container.removeChild($container.firstChild)
+	const $table=document.createElement('table')
+	$table.setAttribute('lang','es')
+	const $thead=document.createElement('thead')
+	$table.appendChild($thead)
+	$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
+	const readPair=(a)=>Array.isArray(a)?a:[a,'']
+	for (const [formGroupName,formGroupMembersOrPrefix] of verbFormGroups) {
+		const $tbody=document.createElement('tbody')
+		$table.appendChild($tbody)
+		let firstInGroup=true
+		let formGroupMembers=formGroupMembersOrPrefix
+		if (!Array.isArray(formGroupMembersOrPrefix)) {
+			formGroupMembers=[]
+			const prefix=formGroupMembersOrPrefix
+			if (personMajorSort) {
+				for (const p of [1,2,3]) {
+					for (const n of ['s','p']) {
+						if (verbForms[prefix+p+n]) formGroupMembers.push(prefix+p+n)
+					}
+				}
+			} else {
+				for (const n of ['s','p']) {
+					for (const p of [1,2,3]) {
+						if (verbForms[prefix+p+n]) formGroupMembers.push(prefix+p+n)
+					}
+				}
 			}
-			const mark=(s)=>s.replace(/\[(.*?)\]/g,'<em>$1</em>')
-			const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
-			let t=makeSpan('stem',stem)+makeSpan('end',end)
-			if (subend!==undefined) t+=makeSpan('subend',subend)
-			$cell.innerHTML=t
-			if (formNote) $cell.setAttribute('title',formNote)
+		}
+		for (formId of formGroupMembers) {
+			const $row=$tbody.insertRow()
+			if (firstInGroup && formGroupName) {
+				const $formGroupCell=document.createElement('th')
+				$row.appendChild($formGroupCell)
+				$formGroupCell.innerHTML='<span>'+formGroupName+'</span>'
+				$formGroupCell.classList.add('group')
+				$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
+			}
+			firstInGroup=false
+			const [formText,formNote]=verbForms[formId]
+			const $formCell=document.createElement('th')
+			if (!formGroupName) $formCell.setAttribute('colspan',2)
+			$row.appendChild($formCell)
+			$formCell.innerHTML=formText
+			$formCell.setAttribute('title',formNote)
+			for (const [verb,forms] of verbs) {
+				const [form,formNote]=readPair(forms[formId])
+				const $cell=$row.insertCell()
+				if (!forms[formId]) continue
+				let variant=1
+				let [stem,end,subend]=form.split('|')
+				if (end===undefined) {
+					variant=2
+					;[stem,end,subend]=form.split('#')
+				}
+				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<em>$1</em>')
+				const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
+				let t=makeSpan('stem',stem)+makeSpan('end',end)
+				if (subend!==undefined) t+=makeSpan('subend',subend)
+				$cell.innerHTML=t
+				if (formNote) $cell.setAttribute('title',formNote)
+			}
 		}
 	}
-}
-{
-	const $tbody=document.createElement('tbody')
-	$table.appendChild($tbody)
 	{
-		const $row=$tbody.insertRow()
-		$row.setAttribute('lang','ru')
-		const $cell=document.createElement('th')
-		$cell.setAttribute('colspan',2)
-		$row.appendChild($cell)
-		for (const [verb,forms,translationData] of verbs) {
-			const [translation,translationNote]=readPair(translationData)
-			const $cell=$row.insertCell()
-			$cell.innerHTML=translation
-			if (translationNote) $cell.setAttribute('title',translationNote)
+		const $tbody=document.createElement('tbody')
+		$table.appendChild($tbody)
+		{
+			const $row=$tbody.insertRow()
+			$row.setAttribute('lang','ru')
+			const $cell=document.createElement('th')
+			$cell.setAttribute('colspan',2)
+			$row.appendChild($cell)
+			for (const [verb,forms,translationData] of verbs) {
+				const [translation,translationNote]=readPair(translationData)
+				const $cell=$row.insertCell()
+				$cell.innerHTML=translation
+				if (translationNote) $cell.setAttribute('title',translationNote)
+			}
+		}
+		{
+			const $row=$tbody.insertRow()
+			const $cell=document.createElement('th')
+			$cell.setAttribute('colspan',2)
+			$row.appendChild($cell)
+			for (const [verb] of verbs) {
+				$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
+			}
 		}
 	}
-	{
-		const $row=$tbody.insertRow()
-		const $cell=document.createElement('th')
-		$cell.setAttribute('colspan',2)
-		$row.appendChild($cell)
-		for (const [verb] of verbs) {
-			$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
-		}
-	}
+	$container.appendChild($table)
 }
-$body.appendChild($table)
+
+const $body=document.getElementsByTagName('body')[0]
+const $tableContainer=document.createElement('div')
+$body.appendChild($tableContainer)
+createTable($tableContainer,false)
+const $optionsContainer=document.createElement('details')
+$optionsContainer.innerHTML="<summary>Настройки</summary>"
+const $sortCheckboxLabel=document.createElement('label')
+$sortCheckboxLabel.innerHTML="<input type=checkbox /> Сгруппировать по числу"
+$sortCheckboxLabel.addEventListener('change',(ev)=>{
+	createTable($tableContainer,ev.target.checked)
+})
+$optionsContainer.appendChild($sortCheckboxLabel)
+$body.appendChild($optionsContainer)
 </script>
 </body>
 </html>
