@@ -14,11 +14,17 @@ tbody {
 }
 td, th {
 	text-align: left;
-	padding: .1em .2em;
+	padding: .2em;
 	font-weight: normal;
 }
 td {
 	white-space: nowrap;
+}
+tr.number-s td, tr.number-s th {
+	padding-bottom: 0;
+}
+tr.number-p:not(:first-child) td, tr.number-p:not(:first-child) th {
+	padding-top: 0;
 }
 th.group {
 	min-width: 1em;
@@ -32,18 +38,18 @@ td[title], th[title] {
 }
 [class|=stem] {
 	border-right: solid 1px green;
-	padding: .15em .05em .15em 0;
+	padding: .22em .05em .22em 0;
 }
 [class|=end] {
 	font-weight: bold;
 	border-left: solid 1px green;
-	padding: .15em 0 .15em .05em;
+	padding: .22em 0 .22em .05em;
 }
 [class|=subend] {
 	color: #333;
 	font-weight: bold;
 	border-left: solid 1px #DDD;
-	padding: .15em 0 .15em .05em;
+	padding: .22em 0 .22em .05em;
 }
 [class|=stem] + [class|=end] {
 	border: none;
@@ -75,7 +81,7 @@ td[title], th[title] {
 <script>
 const verbFormGroups=[
 	['',['inf','ger','par']],
-	['Presente',['pres1s','pres2s','pres3s','pres1p','pres2p','pres3p']],
+	['Presente','pres'],
 	['<abbr title=Pretérito>Pret.</abbr> indefinido','pret'],
 	['<abbr title=Pretérito>Pret.</abbr> imperfecto','imp'],
 	['Imperativo','im'],
@@ -322,6 +328,10 @@ const createTable=($container,personMajorSort)=>{
 		}
 		for (formId of formGroupMembers) {
 			const $row=$tbody.insertRow()
+			const number=formId.slice(-1)
+			if (personMajorSort && (number=='s' || number=='p')) {
+				$row.classList.add('number-'+number)
+			}
 			if (firstInGroup && formGroupName) {
 				const $formGroupCell=document.createElement('th')
 				$row.appendChild($formGroupCell)
@@ -391,7 +401,7 @@ createTable($tableContainer,false)
 const $optionsContainer=document.createElement('details')
 $optionsContainer.innerHTML="<summary>Настройки</summary>"
 const $sortCheckboxLabel=document.createElement('label')
-$sortCheckboxLabel.innerHTML="<input type=checkbox /> Сгруппировать по числу"
+$sortCheckboxLabel.innerHTML="<input type=checkbox /> Сгруппировать по лицу"
 $sortCheckboxLabel.addEventListener('change',(ev)=>{
 	createTable($tableContainer,ev.target.checked)
 })
