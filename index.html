@@ -76,19 +76,19 @@ td[title], th[title] {
 const verbFormGroups=[
 	['',['inf','ger','par']],
 	['Presente',['pres1s','pres2s','pres3s','pres1p','pres2p','pres3p']],
-	['Pretérito',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
-	['<abbr title=Pretérito>Pr.</abbr> imperfecto',['imp1s','imp2s','imp3s','imp1p','imp2p','imp3p']],
-	['Imperativo',['im2s','im2vs','im1p','im2p','im2vp']],
+	['<abbr title=Pretérito>Pret.</abbr> indefinido',['pret1s','pret2s','pret3s','pret1p','pret2p','pret3p']],
+	['<abbr title=Pretérito>Pret.</abbr> imperfecto',['imp1s','imp2s','imp3s','imp1p','imp2p','imp3p']],
+	['Imperativo',['im2s','im3s','im1p','im2p','im3p']],
 ]
 const verbForms={
 	inf: ['Infinitivo','инфинитив'],
 	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
 	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
 	im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
-	im2vs: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
+	im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
 	im1p: ['nosotros','nosotros, nosotras: давайте мы сделаем'],
 	im2p: ['vosotros','vosotros, vosotras: (множественное) вы сделайте'],
-	im2vp: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
+	im3p: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
 }
 for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
 	['pres',['делаю','делаешь','делает','делает','делаем','делаете','делают']],
@@ -109,7 +109,7 @@ const v1=(...aa)=>{
 		'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
 		'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p',
 		'imp1s','imp2s','imp3s','imp1p','imp2p','imp3p',
-		'im2s','im2vs','im1p','im2p','im2vp'
+		'im2s','im3s','im1p','im2p','im3p'
 	].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
 const v1forms=(inf,ar,er,ir)=>{
