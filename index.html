@@ -425,20 +425,21 @@ const createTable=($container,sortType)=>{
 	$container.appendChild($table)
 }
 
+const sort=localStorage.getItem('glaconjurer-sort') || 'number';
 const $body=document.getElementsByTagName('body')[0]
 const $tableContainer=document.createElement('div')
+createTable($tableContainer,sort)
 $body.appendChild($tableContainer)
-createTable($tableContainer,'number')
 const $optionsContainer=document.createElement('details')
 $optionsContainer.innerHTML="<summary>Настройки</summary>"
 const $groupingControls=document.createElement('div')
-$groupingControls.innerHTML="<label><input type=radio name=sort value=number checked /> Обычный порядок</label><label><input type=radio name=sort value=person /> Сгруппировать по лицу</label>"
 $groupingControls.innerHTML=[
-	['number checked','Обычный порядок'],
+	['number','Обычный порядок'],
 	['person','Группировка по лицам'],
 	['person-compact','...с уплотнением'],
-].map(([id,text])=>`<label><input type=radio name=sort value=${id} /> ${text}</label>`).join('')
+].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
 $groupingControls.addEventListener('change',(ev)=>{
+	localStorage.setItem('glaconjurer-sort',ev.target.value)
 	createTable($tableContainer,ev.target.value)
 })
 $optionsContainer.appendChild($groupingControls)
