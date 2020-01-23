@@ -355,11 +355,7 @@ function createTable($container,sortType) {
 			}
 			if (firstInGroup && formGroupId) {
 				const [formGroupName]=verbFormGroups[formGroupId]
-				const $formGroupCell=document.createElement('th')
-				$row.appendChild($formGroupCell)
-				$formGroupCell.innerHTML='<span>'+formGroupName+'</span>'
-				$formGroupCell.classList.add('group')
-				$formGroupCell.setAttribute('rowspan',formGroupMembers.length)
+				$row.insertAdjacentHTML('beforeend',`<th class=group rowspan=${formGroupMembers.length}><span>${formGroupName}</span>`)
 			}
 			firstInGroup=false
 			let [formText,formNote]=verbForms[formId]
