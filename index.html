@@ -83,13 +83,19 @@ td[title], th[title] {
 </head>
 <body>
 <script>
-const verbFormGroups=[
+const verbFormOrder=[
 	['',['inf','ger','par']],
-	['Presente','pres'],
-	['Pretérito','pret'],
-	['<abbr title=Pretérito>Pr.</abbr> imperfecto','imp'],
-	['Imperativo','im'],
+	['pres'],
+	['pret'],
+	['imp'],
+	['im'],
 ]
+const verbFormGroups={
+	pres: ['Presente','Presente'],
+	pret: ['Pretérito','Pretérito indefinido'],
+	imp: ['<abbr title=Pretérito>Pr.</abbr> imperfecto','Pretérito imperfecto'],
+	im: ['Imperativo','Imperativo'],
+}
 const verbForms={
 	inf: ['Infinitivo','инфинитив'],
 	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
@@ -315,24 +321,22 @@ function createTable($container,sortType) {
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
 	$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
-	for (const [formGroupName,formGroupMembersOrPrefix] of verbFormGroups) {
+	for (let [formGroupId,formGroupMembers] of verbFormOrder) {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		let firstInGroup=true
-		let formGroupMembers=formGroupMembersOrPrefix
-		if (!Array.isArray(formGroupMembersOrPrefix)) {
+		if (!formGroupMembers) {
 			formGroupMembers=[]
-			const prefix=formGroupMembersOrPrefix
 			if (sortType!='number') {
 				for (const p of [1,2,3]) {
 					for (const n of ['s','p']) {
-						if (verbForms[prefix+p+n]) formGroupMembers.push(prefix+p+n)
+						if (verbForms[formGroupId+p+n]) formGroupMembers.push(formGroupId+p+n)
 					}
 				}
 			} else {
 				for (const n of ['s','p']) {
 					for (const p of [1,2,3]) {
-						if (verbForms[prefix+p+n]) formGroupMembers.push(prefix+p+n)
+						if (verbForms[formGroupId+p+n]) formGroupMembers.push(formGroupId+p+n)
 					}
 				}
 			}
@@ -349,7 +353,8 @@ function createTable($container,sortType) {
 			if (!compactRow && sortType!='number' && (formNumber=='s' || formNumber=='p')) {
 				$row.classList.add('number-'+formNumber)
 			}
-			if (firstInGroup && formGroupName) {
+			if (firstInGroup && formGroupId) {
+				const [formGroupName]=verbFormGroups[formGroupId]
 				const $formGroupCell=document.createElement('th')
 				$row.appendChild($formGroupCell)
 				$formGroupCell.innerHTML='<span>'+formGroupName+'</span>'
@@ -362,7 +367,7 @@ function createTable($container,sortType) {
 				[formText,formNote]=compactableVerbForms[formPreNumber]
 			}
 			const $formCell=document.createElement('th')
-			if (!formGroupName) $formCell.setAttribute('colspan',2)
+			if (!formGroupId) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
@@ -497,12 +502,18 @@ function createGame() {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		const $infRow=$tbody.insertRow()
-		$infRow.appendChild(document.createElement('th'))
+		$infRow.insertAdjacentHTML('beforeend',"<th colspan=2>")
 		$infRow.insertCell().innerHTML=verb
 		const $formRow=$tbody.insertRow()
-		const $formTh=document.createElement('th')
-		$formTh.innerHTML=formId
-		$formRow.appendChild($formTh)
+		const [formGroupId,n,p]=formId.split(/(\d)/)
+		if (n) {
+			const [_,formGroupTitle]=verbFormGroups[formGroupId]
+			const [formTitle]=verbForms[formId]
+			$formRow.insertAdjacentHTML('beforeend',`<th>${formGroupTitle},<th>${formTitle}`)
+		} else {
+			const [formTitle]=verbForms[formId]
+			$formRow.insertAdjacentHTML('beforeend',`<th colspan=2>${formTitle}`)
+		}
 		const $formTd=$formRow.insertCell()
 		const $formInput=document.createElement('input')
 		$formTd.appendChild($formInput)
