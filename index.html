@@ -306,14 +306,15 @@ const verbs=[
 	),'трогать'],
 ]
 
-const createTable=($container,sortType)=>{
+const readPair=(a)=>Array.isArray(a)?a:[a,'']
+
+function createTable($container,sortType) {
 	while ($container.firstChild) $container.removeChild($container.firstChild)
 	const $table=document.createElement('table')
 	$table.setAttribute('lang','es')
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
 	$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
-	const readPair=(a)=>Array.isArray(a)?a:[a,'']
 	for (const [formGroupName,formGroupMembersOrPrefix] of verbFormGroups) {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
@@ -425,25 +426,108 @@ const createTable=($container,sortType)=>{
 	$container.appendChild($table)
 }
 
-const sort=localStorage.getItem('glaconjurer-sort') || 'number';
-const $body=document.getElementsByTagName('body')[0]
-const $tableContainer=document.createElement('div')
-createTable($tableContainer,sort)
-$body.appendChild($tableContainer)
-const $optionsContainer=document.createElement('details')
-$optionsContainer.innerHTML="<summary>Настройки</summary>"
-const $groupingControls=document.createElement('div')
-$groupingControls.innerHTML=[
-	['number','Обычный порядок'],
-	['person','Группировка по лицам'],
-	['person-compact','...с уплотнением'],
-].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
-$groupingControls.addEventListener('change',(ev)=>{
-	localStorage.setItem('glaconjurer-sort',ev.target.value)
-	createTable($tableContainer,ev.target.value)
-})
-$optionsContainer.appendChild($groupingControls)
-$body.appendChild($optionsContainer)
+function createTableAndOptions() {
+	const sort=localStorage.getItem('glaconjurer-sort') || 'number';
+	const $body=document.getElementsByTagName('body')[0]
+	const $tableContainer=document.createElement('div')
+	createTable($tableContainer,sort)
+	$body.appendChild($tableContainer)
+	const $optionsContainer=document.createElement('details')
+	$optionsContainer.innerHTML="<summary>Настройки</summary>"
+	const $groupingControls=document.createElement('div')
+	$groupingControls.innerHTML=[
+		['number','Обычный порядок'],
+		['person','Группировка по лицам'],
+		['person-compact','...с уплотнением'],
+	].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
+	$groupingControls.addEventListener('change',(ev)=>{
+		localStorage.setItem('glaconjurer-sort',ev.target.value)
+		createTable($tableContainer,ev.target.value)
+	})
+	$optionsContainer.appendChild($groupingControls)
+	const $gameControls=document.createElement('div')
+	const $gameButton=document.createElement('button')
+	$gameButton.innerHTML="Играть"
+	$gameButton.addEventListener('click',(ev)=>{
+		$body.removeChild($tableContainer)
+		$body.removeChild($optionsContainer)
+		createGame()
+	})
+	$gameControls.appendChild($gameButton)
+	$optionsContainer.appendChild($gameControls)
+	$body.appendChild($optionsContainer)
+}
+
+function createGame() {
+	const gameVerbs=[]
+	for (const [verb,forms] of verbs) {
+		for (formId in forms) {
+			if (formId=='inf') continue
+			const [form]=readPair(forms[formId])
+			gameVerbs.push([verb,formId,form.replace(/[|#[\]]/g,'')])
+		}
+	}
+	const shuffle=(a)=>{
+		let i=a.length
+		while (i>0) {
+			let j=Math.floor(Math.random()*i)
+			i-=1
+			;[a[i],a[j]]=[a[j],a[i]]
+		}
+	}
+	shuffle(gameVerbs)
+	let iCurrentGameVerb=0
+	const $body=document.getElementsByTagName('body')[0]
+	const $gameContainer=document.createElement('div')
+	const $table=document.createElement('table')
+	$gameContainer.appendChild($table)
+	const $buttonControls=document.createElement('div')
+	const $checkButton=document.createElement('button')
+	$checkButton.innerHTML='Завершить'
+	$checkButton.addEventListener('click',(ev)=>{
+		$body.removeChild($gameContainer)
+		createTableAndOptions()
+	})
+	$buttonControls.appendChild($checkButton)
+	$gameContainer.appendChild($buttonControls)
+	$body.appendChild($gameContainer)
+	const createNextQuestion=()=>{
+		if (iCurrentGameVerb>=gameVerbs.length) return
+		const [verb,formId,form]=gameVerbs[iCurrentGameVerb]
+		const $tbody=document.createElement('tbody')
+		$table.appendChild($tbody)
+		const $infRow=$tbody.insertRow()
+		$infRow.appendChild(document.createElement('th'))
+		$infRow.insertCell().innerHTML=verb
+		const $formRow=$tbody.insertRow()
+		const $formTh=document.createElement('th')
+		$formTh.innerHTML=formId
+		$formRow.appendChild($formTh)
+		const $formTd=$formRow.insertCell()
+		const $formInput=document.createElement('input')
+		$formTd.appendChild($formInput)
+		const $formButton=document.createElement('button')
+		$formButton.innerHTML='Проверить'
+		$formTd.appendChild($formButton)
+		$formButton.addEventListener('click',(ev)=>{
+			const userForm=$formInput.value
+			$formTd.removeChild($formInput)
+			$formTd.removeChild($formButton)
+			$formTd.insertAdjacentText('beforeend',userForm)
+			if (userForm==form) {
+				$formTd.insertAdjacentHTML('beforeend'," <span class=correct>Правильно</span>")
+			} else {
+				$formTd.insertAdjacentHTML('beforeend'," <span class=incorrect>Неправильно</span>")
+			}
+			iCurrentGameVerb++
+			createNextQuestion()
+		})
+	}
+	createNextQuestion()
+}
+
+createTableAndOptions()
+
 </script>
 </body>
 </html>
