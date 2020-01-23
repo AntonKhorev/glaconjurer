@@ -510,21 +510,22 @@ function createGame() {
 			const [formTitle]=verbForms[formId]
 			$formRow.insertAdjacentHTML('beforeend',`<th colspan=2>${formTitle}`)
 		}
-		const $formTd=$formRow.insertCell()
+		const $formInputTd=$formRow.insertCell()
 		const $formInput=document.createElement('input')
-		$formTd.appendChild($formInput)
+		$formInputTd.appendChild($formInput)
+		const $formButtonTd=$formRow.insertCell()
 		const $formButton=document.createElement('button')
 		$formButton.innerHTML='Проверить'
-		$formTd.appendChild($formButton)
+		$formButtonTd.appendChild($formButton)
 		$formButton.addEventListener('click',(ev)=>{
 			const userForm=$formInput.value
-			$formTd.removeChild($formInput)
-			$formTd.removeChild($formButton)
-			$formTd.insertAdjacentText('beforeend',userForm)
+			$formInputTd.removeChild($formInput)
+			$formButtonTd.removeChild($formButton)
+			$formInputTd.insertAdjacentText('beforeend',userForm)
 			if (userForm==form) {
-				$formTd.insertAdjacentHTML('beforeend'," <span class=correct>Правильно</span>")
+				$formButtonTd.insertAdjacentHTML('beforeend',"<span class=correct>Правильно</span>")
 			} else {
-				$formTd.insertAdjacentHTML('beforeend'," <span class=incorrect>Неправильно</span>")
+				$formButtonTd.insertAdjacentHTML('beforeend',"<span class=incorrect>Неправильно</span>")
 				$tbody.insertRow().innerHTML=`<th colspan=2>Правильный ответ<td>${form}`
 			}
 			iCurrentGameVerb++
