@@ -183,6 +183,8 @@ const v2=(inf)=>{
 		'im2s,im3s,im1p,im2p,im3p'
 	).split(',')
 	const formEndsFut=(e)=>`${e}|é,${e}|ás,${e}|á,${e}|emos,${e}|éis,${e}|án,`
+	const formEndsPretEir='í,iste,ió,imos,isteis,ieron,'
+	const formEndsImpEir='í|a,í|as,í|a,í|amos,í|ais,í|an,'
 	const formEnds={
 	ar:(
 		'ar,ando,ado,'+
@@ -191,23 +193,31 @@ const v2=(inf)=>{
 		'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an,'+
 		formEndsFut('ar')+
 		'a,e,emos,ad,en'
-	).split(',')
+	).split(','),
+	er:(
+		'er,iendo,ido,'+
+		'o,es,e,emos,éis,en,'+
+		formEndsPretEir+
+		formEndsImpEir+
+		formEndsFut('er')+
+		'e,a,amos,ed,an'
+	).split(','),
+	ir:(
+		'ir,iendo,ido,'+
+		'o,es,e,imos,ís,en,'+
+		formEndsPretEir+
+		formEndsImpEir+
+		formEndsFut('ir')+
+		'e,a,amos,id,an'
+	).split(','),
 	}
 	const a=formEnds[infEnd]
 	return formIds.reduce((o,k,i)=>({...o,[k]:stem+'|'+a[i]}),{})
 }
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
-	['comer',v1(
-		'com|er,com|iendo,com|ido',
-		v1pres('comer'),v1pret('comer'),v1imp('comer'),
-		'com|e,com|a,com|amos,com|ed,com|an',
-	),'есть'],
-	['vivir',v1(
-		'viv|ir,viv|iendo,viv|ido',
-		v1pres('vivir'),v1pret('vivir'),v1imp('vivir'),
-		'viv|e,viv|a,viv|amos,viv|id,viv|an',
-	),'жить'],
+	['comer',v2('comer'),'есть'],
+	['vivir',v2('vivir'),'жить'],
 	['estar',v1(
 		'est|ar,est|ando,est|ado',
 		'est|o[y],est|[á]s,est|[á],est|amos,est|áis,est|[á]n',
