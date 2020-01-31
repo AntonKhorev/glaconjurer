@@ -134,22 +134,27 @@ const v1=(...aa)=>{
 		'im2s','im3s','im1p','im2p','im3p'
 	].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
-const v1forms=(inf,ar,er,ir)=>{
+const v1forms=(inf,ar,er,ir,yoException)=>{
 	const [stem,end]=inf.split(/(..)$/)
-	const gen=a=>a.split(',').map(s=>`${stem}|${s}`).join(',')
+	const gen=a=>a.split(',').map(s=>`${stem}|${s}`)
+	let result
 	if (end=='ar') {
-		return gen(ar)
+		result=gen(ar)
 	} else if (end=='er') {
-		return gen(er)
+		result=gen(er)
 	} else if (end=='ir') {
-		return gen(ir)
+		result=gen(ir)
+	} else {
+		throw 'unrecognized verb form'
 	}
-	throw 'unrecognized verb form'
+	if (yoException) result[0]=yoException
+	return result.join(',')
 }
-const v1pres=(inf)=>v1forms(inf,
+const v1pres=(inf,yoException)=>v1forms(inf,
 	'o,as,a,amos,áis,an',
 	'o,es,e,emos,éis,en',
 	'o,es,e,imos,ís,en',
+	yoException
 )
 const v1pret=(inf)=>v1forms(inf,
 	'é,aste,ó,amos,asteis,aron',
@@ -230,14 +235,14 @@ const verbs=[
 	),'приходить'],
 	['hacer',v1(
 		'hac|er,hac|iendo,h[e]|[ch]o',
-		'ha[g]|o,hac|es,hac|e,hac|emos,hac|éis,hac|en',
+		v1pres('hacer','ha[g]|o'),
 		'h[i]c|[e],h[i]c|iste,h[iz]|[o],h[i]c|imos,h[i]c|isteis,h[i]c|ieron',
 		v1imp('hacer'),
 		'ha[z]|[],ha[g]|a,ha[g]|amos,hac|ed,ha[g]|an',
 	),'делать'],
 	['poner',v1(
 		'pon|er,pon|iendo,pu[e]s#[t]o',
-		'pon[g]|o,pon|es,pon|e,pon|emos,pon|éis,pon|en',
+		v1pres('poner','pon[g]|o'),
 		'pus#[e],pus#iste,pus#[o],pus#imos,pus#isteis,pus#ieron',
 		v1imp('poner'),
 		'pon|[],pon[g]|a,pon[g]|amos,pon|ed,pon[g]|an',
@@ -251,20 +256,20 @@ const verbs=[
 	),'иметь'],
 	['saber',v1(
 		'sab|er,sab|iendo,sab|ido',
-		's#[é],sab|es,sab|e,sab|emos,sab|éis,sab|en',
+		v1pres('saber','s#[é]'),
 		'sup#[e],sup#iste,sup#[o],sup#imos,sup#isteis,sup#ieron',
 		v1imp('saber'),
 		'sab|e,sep#a,sep#amos,sab|ed,sep#an',
 	),['знать','знать факт/навык']],
 	['conocer',v1(
 		'conoc|er,conoc|iendo,conoc|ido',
-		'cono[z]c|o,conoc|es,conoc|e,conoc|emos,conoc|éis,conoc|en',
+		v1pres('conocer','cono[z]c|o'),
 		v1pret('conocer'),v1imp('conocer'),
 		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
 	),['знать','знать человека/место']],
 	['traer',v1(
 		'tra|er',v1yendo('traer'),'tra|ído',
-		'tra[ig]|o,tra|es,tra|e,tra|emos,tra|éis,tra|en',
+		v1pres('traer','tra[ig]|o'),
 		'traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron',
 		v1imp('traer'),
 		'tra|e,tra[ig]|a,tra[ig]|amos,tra|ed,tra[ig]|an',
