@@ -329,13 +329,9 @@ const verbs=[
 		'sab|e,sep#a,sep#amos,sab|ed,sep#an',
 	),['знать','знать факт/навык']],
 	['conocer',v2yo('cono[z]c',v2('conocer')),['знать','знать человека/место']],
-	['traer',v1(
-		'tra|er',v1yendo('traer'),'tra|ído',
-		v1pres('traer','tra[ig]|o'),
-		'traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron',
-		v1imp('traer'),
-		'tra|e,tra[ig]|a,tra[ig]|amos,tra|ed,tra[ig]|an',
-	),'приносить'],
+	['traer',{...v2yo('tra[ig]',v2('traer')),
+		...v2repl('pret**','traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron'),
+	},'приносить'],
 	['coger',v1( // considered regular
 		'cog|er,cog|iendo,cog|ido',
 		v1jo('coger'),'cog|es,cog|e,cog|emos,cog|éis,cog|en',
