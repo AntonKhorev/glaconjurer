@@ -242,6 +242,13 @@ const v2replImp=(replacement)=>{ // temporary fn, derive from other forms
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
+const v2yo=(yoStem,dict)=>{
+	const result={...dict}
+	for (formId of ['pres1s','im3s','im1p','im3p']) {
+		result[formId]=result[formId].replace(/^.*?\|/,yoStem+'|')
+	}
+	return result
+}
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
@@ -321,12 +328,7 @@ const verbs=[
 		v1imp('saber'),
 		'sab|e,sep#a,sep#amos,sab|ed,sep#an',
 	),['знать','знать факт/навык']],
-	['conocer',v1(
-		'conoc|er,conoc|iendo,conoc|ido',
-		v1pres('conocer','cono[z]c|o'),
-		v1pret('conocer'),v1imp('conocer'),
-		'conoc|e,cono[z]c|a,cono[z]c|amos,conoc|ed,cono[z]c|an',
-	),['знать','знать человека/место']],
+	['conocer',v2yo('cono[z]c',v2('conocer')),['знать','знать человека/место']],
 	['traer',v1(
 		'tra|er',v1yendo('traer'),'tra|ído',
 		v1pres('traer','tra[ig]|o'),
