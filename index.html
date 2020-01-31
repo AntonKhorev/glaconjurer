@@ -242,13 +242,15 @@ const v2replImp=(replacement)=>{ // temporary fn, derive from other forms
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
-const v2yo=(yoStem,dict)=>{
+const v2yoHandler=(dict,replacementFn,note)=>{
 	const result={...dict}
 	for (formId of ['pres1s','im3s','im1p','im3p']) {
-		result[formId]=result[formId].replace(/^.*?\|/,yoStem+'|')
+		result[formId]=[replacementFn(result[formId]),note]
 	}
 	return result
 }
+const v2yo=(yoStem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,yoStem+'|'))
+const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/.\|/,'[j]|'),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
@@ -332,12 +334,7 @@ const verbs=[
 	['traer',{...v2yo('tra[ig]',v2('traer')),
 		...v2repl('pret**','traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron'),
 	},'приносить'],
-	['coger',v1( // considered regular
-		'cog|er,cog|iendo,cog|ido',
-		v1jo('coger'),'cog|es,cog|e,cog|emos,cog|éis,cog|en',
-		v1pret('coger'),v1imp('coger'),
-		'cog|e,co[j]|a,co[j]|amos,cog|ed,co[j]|an',
-	),'брать'],
+	['coger',v2yojo(v2('coger')),'брать'],
 	['elegir',v1(
 		'eleg|ir,el[i]g|iendo,ele[c]|[t]o',
 		v1jo('el[i]gir'),'el[i]g|es,el[i]g|e,eleg|imos,eleg|ís,el[i]g|en',
