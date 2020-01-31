@@ -214,17 +214,40 @@ const v2=(inf)=>{
 	const a=formEnds[infEnd]
 	return formIds.reduce((o,k,i)=>({...o,[k]:stem+'|'+a[i]}),{})
 }
+const v2repl=(pattern,replacement)=>{
+	const result={}
+	const a=replacement.split(',')
+	const [base,person,number]=pattern.split(/(.)(.)$/)
+	const subEnd=(person,number)=>{
+		result[base+person+number]=a.shift()
+	}
+	const subNumber=(person)=>{
+		if (number=='*') {
+			for (let n of 'sp') subEnd(person,n)
+		} else {
+			subEnd(person,number)
+		}
+	}
+	const subPerson=()=>{
+		if (person=='*') {
+			for (let p of '123') subNumber(p)
+		} else {
+			subNumber(person)
+		}
+	}
+	subPerson()
+	return result
+}
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
 	['vivir',v2('vivir'),'жить'],
-	['estar',v1(
-		'est|ar,est|ando,est|ado',
-		'est|o[y],est|[á]s,est|[á],est|amos,est|áis,est|[á]n',
-		'estuv#[e],estuv#iste,estuv#[o],estuv#imos,estuv#isteis,estuv#ieron',
-		v1imp('estar'),
-		'est|[á],est|[é],est|emos,est|ad,est|[é]n',
-	),['быть','быть временно, быть в указанном месте']],
+	['estar',{...v2('estar'),
+		...v2repl('pres*s','est|o[y],est|[á]s,est|[á]'),
+		pres3p:'est|[á]n',
+		...v2repl('pret**','estuv#[e],estuv#iste,estuv#[o],estuv#imos,estuv#isteis,estuv#ieron'),
+		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
+	},['быть','быть временно, быть в указанном месте']],
 	['ser',v1(
 		's|er,s|iendo,s|ido',
 		's|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n',
