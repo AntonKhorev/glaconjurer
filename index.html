@@ -221,22 +221,26 @@ const v2repl=(pattern,replacement)=>{
 	const subEnd=(person,number)=>{
 		result[base+person+number]=a.shift()
 	}
-	const subNumber=(person)=>{
-		if (number=='*') {
-			for (let n of 'sp') subEnd(person,n)
+	const subPerson=(number)=>{
+		if (person=='*') {
+			for (let p of '123') subEnd(p,number)
 		} else {
 			subEnd(person,number)
 		}
 	}
-	const subPerson=()=>{
-		if (person=='*') {
-			for (let p of '123') subNumber(p)
+	const subNumber=()=>{
+		if (number=='*') {
+			for (let n of 'sp') subPerson(n)
 		} else {
-			subNumber(person)
+			subPerson(number)
 		}
 	}
-	subPerson()
+	subNumber()
 	return result
+}
+const v2replImp=(replacement)=>{ // temporary fn, derive from other forms
+	const a=replacement.split(',')
+	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
@@ -248,13 +252,12 @@ const verbs=[
 		...v2repl('pret**','estuv#[e],estuv#iste,estuv#[o],estuv#imos,estuv#isteis,estuv#ieron'),
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 	},['быть','быть временно, быть в указанном месте']],
-	['ser',v1(
-		's|er,s|iendo,s|ido',
-		's|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n',
-		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
-		'er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an',
-		's|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an',
-	),['быть','быть постоянно, быть в указанный момент времени']],
+	['ser',{...v2('ser'),
+		...v2repl('pres**','s|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n'),
+		...v2repl('pret**','fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron'),
+		...v2repl('imp**','er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an'),
+		...v2replImp('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
+	},['быть','быть постоянно, быть в указанный момент времени']],
 	['ir',v1(
 		'#ir,#[y]endo,#ido',
 		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
