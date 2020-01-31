@@ -168,12 +168,29 @@ const v1imp=(inf)=>v1forms(inf,
 )
 const v1yendo=(inf)=>[`${inf.slice(0,-2)}|[y]endo`,'после гласной -iendo меняется на -yendo']
 const v1jo=(inf)=>[`${inf.slice(0,-3)}[j]|o`,'у -ger и -gir-глаголов вместо -go пишется -jo']
+const v2=(inf)=>{
+	const [stem,infEnd]=inf.split(/(..)$/)
+	const formIds=(
+		'inf,ger,par,'+
+		'pres1s,pres2s,pres3s,pres1p,pres2p,pres3p,'+
+		'pret1s,pret2s,pret3s,pret1p,pret2p,pret3p,'+
+		'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p,'+
+		'im2s,im3s,im1p,im2p,im3p'
+	).split(',')
+	const formEnds={
+	ar:(
+		'ar,ando,ado,'+
+		'o,as,a,amos,áis,an,'+
+		'é,aste,ó,amos,asteis,aron,'+
+		'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an,'+
+		'a,e,emos,ad,en'
+	).split(',')
+	}
+	const a=formEnds[infEnd]
+	return formIds.reduce((o,k,i)=>({...o,[k]:stem+'|'+a[i]}),{})
+}
 const verbs=[
-	['hablar',v1(
-		'habl|ar,habl|ando,habl|ado',
-		v1pres('hablar'),v1pret('hablar'),v1imp('hablar'),
-		'habl|a,habl|e,habl|emos,habl|ad,habl|en',
-	),'говорить'],
+	['hablar',v2('hablar'),'говорить'],
 	['comer',v1(
 		'com|er,com|iendo,com|ido',
 		v1pres('comer'),v1pret('comer'),v1imp('comer'),
