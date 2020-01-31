@@ -88,12 +88,14 @@ const verbFormOrder=[
 	['pres'],
 	['pret'],
 	['imp'],
+	['fut'],
 	['im'],
 ]
 const verbFormGroups={
 	pres: ['Presente','Presente'],
 	pret: ['Pretérito','Pretérito indefinido'],
 	imp: ['<abbr title=Pretérito>Pr.</abbr> imperfecto','Pretérito imperfecto'],
+	fut: ['Futuro','Futuro'],
 	im: ['Imperativo','Imperativo'],
 }
 const verbForms={
@@ -109,6 +111,7 @@ const verbForms={
 for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
 	['pres',['делаю','делаешь','делает','делает','делаем','делаете','делают']],
 	['pret',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+	['fut' ,['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
 	['imp' ,['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
 ]) {
 	verbForms[prefix+'1s']=['yo',`yo: я ${v1s}`]
@@ -175,14 +178,17 @@ const v2=(inf)=>{
 		'pres1s,pres2s,pres3s,pres1p,pres2p,pres3p,'+
 		'pret1s,pret2s,pret3s,pret1p,pret2p,pret3p,'+
 		'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p,'+
+		'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p,'+
 		'im2s,im3s,im1p,im2p,im3p'
 	).split(',')
+	const formEndsFut=(e)=>`${e}|é,${e}|ás,${e}|á,${e}|emos,${e}|éis,${e}|án,`
 	const formEnds={
 	ar:(
 		'ar,ando,ado,'+
 		'o,as,a,amos,áis,an,'+
 		'é,aste,ó,amos,asteis,aron,'+
 		'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an,'+
+		formEndsFut('ar')+
 		'a,e,emos,ad,en'
 	).split(',')
 	}
