@@ -246,7 +246,10 @@ const v2replIm=(replacement)=>{
 const v2vowel=(oldVowel,newVowel,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	const result={...dict}
 	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im2s','im3s','im3p']) {
-		result[formId]=result[formId].replace(oldVowel,newVowel) // TODO replace last occurrence
+		const [oldStem,end]=result[formId].split('|')
+		const i=oldStem.lastIndexOf(oldVowel)
+		const newStem=oldStem.slice(0,i)+newVowel+oldStem.slice(i+oldVowel.length)
+		result[formId]=newStem+'|'+end
 	}
 	return result
 }
@@ -278,6 +281,13 @@ const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/w
 		const [stem,end]=result[formId].split('|')
 		const strongEnd=(end==ends[i]) ? end : markEnds[i]
 		result[formId]=strongStem+'|'+strongEnd
+	}
+	return result
+}
+const v2pretYoZar=(dict)=>{
+	const result={...dict}
+	for (const formId of ['pret1s','im3s','im1p','im3p']) {
+		result[formId]=[result[formId].replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce']
 	}
 	return result
 }
@@ -399,13 +409,7 @@ const verbs=[
 		v1imp('poder'),
 		'p[ue]d|e,p[ue]d|a,pod|amos,pod|ed,p[ue]d|an',
 	),'мочь'],
-	['empezar',v1(
-		'empez|ar,empez|ando,empez|ado',
-		'emp[i]ez|o,emp[i]ez|as,emp[i]ez|a,empez|amos,empez|áis,emp[i]ez|an',
-		['empe[c]|é','у -zar-глаголов -zé меняется на -cé'],'empez|aste,empez|ó,empez|amos,empez|asteis,empez|aron',
-		v1imp('empezar'),
-		'emp[i]ez|a,emp[i]e[c]|e,empe[c]|emos,empez|ad,emp[i]e[c]|en',
-	),'начинать'],
+	['empezar',v2pretYoZar(v2vowel('e','[i]e',v2('empezar'))),'начинать'],
 	['tocar',v1(
 		'toc|ar,toc|ando,toc|ado',
 		v1pres('tocar'),
