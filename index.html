@@ -244,32 +244,50 @@ const v2replImp=(replacement)=>{ // temporary fn, derive from other forms
 }
 const v2yoHandler=(dict,replacementFn,note)=>{
 	const result={...dict}
-	for (formId of ['pres1s','im3s','im1p','im3p']) {
+	for (const formId of ['pres1s','im3s','im1p','im3p']) {
 		result[formId]=[replacementFn(result[formId]),note]
 	}
 	return result
 }
-const v2yo=(yoStem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,yoStem+'|'))
+const v2yo=(stem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,stem+'|'))
 const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/.\|/,'[j]|'),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
 const v2yendo=(dict)=>{
 	const result={...dict}
-	for (formId of ['ger','pret3s','pret3p']) {
+	for (const formId of ['ger','pret3s','pret3p']) {
 		result[formId]=result[formId].replace(/\|i/,'|[y]')
 	}
-	for (formId of ['par','pret2s','pret1p','pret2p']) {
+	for (const formId of ['par','pret2s','pret1p','pret2p']) {
 		result[formId]=result[formId].replace(/\|i/,'|[í]')
 	}
 	result['ger']=[result['ger'],'после гласной -iendo меняется на -yendo']
+	return result
+}
+const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
+	const result={...dict}
+	const formIds='pret1s,pret2s,pret3s,pret1p,pret2p,pret3p'.split(',')
+	const ends='e,iste,o,imos,isteis,ieron'.split(',')
+	const markEnds='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
+	for (const [i,formId] of formIds.entries()) {
+		const [stem,end]=result[formId].split('|')
+		const strongEnd=(end==ends[i]) ? end : markEnds[i]
+		result[formId]=strongStem+'|'+strongEnd
+	}
+	return result
+}
+const v2fut=(stem,dict)=>{
+	const result={...dict}
+	for (const formId of 'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p'.split(',')) {
+		result[formId]=result[formId].replace(/^.*\|.*\|/,`${stem}|[]r|`)
+	}
 	return result
 }
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
 	['vivir',v2('vivir'),'жить'],
-	['estar',{...v2('estar'),
+	['estar',{...v2pret('est[uv]',v2('estar')),
 		...v2repl('pres*s','est|o[y],est|[á]s,est|[á]'),
 		pres3p:'est|[á]n',
-		...v2repl('pret**','estuv#[e],estuv#iste,estuv#[o],estuv#imos,estuv#isteis,estuv#ieron'),
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 	},['быть','быть временно, быть в указанном месте']],
 	['ser',{...v2('ser'),
@@ -278,7 +296,13 @@ const verbs=[
 		...v2repl('imp**','er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an'),
 		...v2replImp('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
 	},['быть','быть постоянно, быть в указанный момент времени']],
-	//['ir',v2('ir'),'идти'],
+	/*
+	['ir',{...v2('ir'),
+		//'#ir,#[y]endo,#ido',
+		ger:'|[y]endo',
+		...v2repl('pres**','[v]|o[y],[v]|as,[v]|a,[v]|amos,[v]|[a]is,[v]|an'),
+	},'идти'],
+	*/
 	['ir',v1(
 		'#ir,#[y]endo,#ido',
 		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
@@ -315,6 +339,10 @@ const verbs=[
 		v1imp('hacer'),
 		'ha[z]|[],ha[g]|a,ha[g]|amos,hac|ed,ha[g]|an',
 	),'делать'],
+	['poner',{...v2fut('pon[d]',v2pret('p[us]',v2yo('pon[g]',v2('poner')))),
+		par:'p[ues]|[t]o',
+		im2s:'pon|[]',
+	},'ставить'],
 	['poner',v1(
 		'pon|er,pon|iendo,pu[e]s#[t]o',
 		v1pres('poner','pon[g]|o'),
@@ -337,8 +365,8 @@ const verbs=[
 		'sab|e,sep#a,sep#amos,sab|ed,sep#an',
 	),['знать','знать факт/навык']],
 	['conocer',v2yo('cono[z]c',v2('conocer')),['знать','знать человека/место']],
-	['traer',{...v2yo('tra[ig]',v2('traer')),
-		...v2repl('pret**','traj#[e],traj#iste,traj#[o],traj#imos,traj#isteis,traj#[]eron'),
+	['traer',{...v2pret('tra[j]',v2yo('tra[ig]',v2('traer'))),
+		pret3p:'traj|[]eron',
 	},'приносить'],
 	['coger',v2yojo(v2('coger')),'брать'],
 	['elegir',v1(
