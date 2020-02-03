@@ -274,6 +274,13 @@ const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/w
 	}
 	return result
 }
+const v2imp=(stem,dict)=>{
+	const result={...dict}
+	for (const formId of 'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p'.split(',')) {
+		result[formId]=result[formId].replace(/^.*?\|/,`${stem}|`)
+	}
+	return result
+}
 const v2fut=(stem,dict)=>{
 	const result={...dict}
 	for (const formId of 'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p'.split(',')) {
@@ -311,13 +318,12 @@ const verbs=[
 		im3s:'d|[é]',
 	},'давать'],
 	['leer',v2yendo(v2('leer')),'читать'],
-	['ver',v1(
-		'v|er,v|iendo,v|i[st]o',
-		'v[e]|o,v|es,v|e,v|emos,v|[e]is,v|en',
-		'v|[i],v|iste,v|i[o],v|imos,v|isteis,v|ieron',
-		v1imp('v[e]er'),
-		'v|e,v[e]|a,v[e]|amos,v|ed,v[e]|an',
-	),'видеть'],
+	['ver',{...v2imp('v[e]',v2yo('v[e]',v2('ver'))),
+		par:'v|i[st]o',
+		pres2p:'v|[e]is',
+		pret1s:'v|[i]',
+		pret3s:'v|i[o]',
+	},'видеть'],
 	['venir',v1(
 		'ven|ir,v[i]n|iendo,ven|ido',
 		'ven[g]|o,v[i]en|es,v[i]en|e,ven|imos,ven|ís,v[i]en|en',
