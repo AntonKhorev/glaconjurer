@@ -303,13 +303,13 @@ const verbs=[
 		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
 		...v2replIm('[v]|e,[vay]|a,[vay]|amos,|id,[vay]|an'),
 	},'идти'],
-	['dar',v1(
-		'd|ar,d|ando,d|ado',
-		'd|o[y],d|as,d|a,d|amos,d|[a]is,d|an',
-		'd|[i],d|[i]ste,d|[io],d|[i]mos,d|[i]steis,d|[ie]ron',
-		v1imp('dar'),
-		'd|a,d|[é],d|emos,d|ad,d|en',
-	),'давать'],
+	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
+		pres1s:'d|o[y]',
+		pres2p:'d|[a]is',
+		pret1s:'d|[i]',
+		pret3s:'d|[io]',
+		im3s:'d|[é]',
+	},'давать'],
 	['leer',v2yendo(v2('leer')),'читать'],
 	['ver',v1(
 		'v|er,v|iendo,v|i[st]o',
