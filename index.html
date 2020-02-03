@@ -243,9 +243,9 @@ const v2replIm=(replacement)=>{
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
-const v2vowel=(oldVowel,newVowel,dict)=>{
+const v2vowel=(oldVowel,newVowel,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	const result={...dict}
-	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im3s','im1p','im3p']) {
+	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im2s','im3s','im3p']) {
 		result[formId]=result[formId].replace(oldVowel,newVowel) // TODO replace last occurrence
 	}
 	return result
@@ -296,9 +296,11 @@ const v2fut=(stem,dict)=>{
 	return result
 }
 const verbs=[
+	// regular
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
 	['vivir',v2('vivir'),'жить'],
+	// helper
 	['estar',{...v2pret('est[uv]',v2('estar')),
 		...v2repl('pres*s','est|o[y],est|[á]s,est|[á]'),
 		pres3p:'est|[á]n',
@@ -317,6 +319,10 @@ const verbs=[
 		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
 		...v2replIm('[v]|e,[vay]|a,[vay]|amos,|id,[vay]|an'),
 	},'идти'],
+	// TODO haber
+	// single vowel change
+	['pensar',v2vowel('e','[i]e',v2('pensar')),'думать'],
+	// rest
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o[y]',
 		pres2p:'d|[a]is',
