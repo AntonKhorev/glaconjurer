@@ -243,6 +243,13 @@ const v2replIm=(replacement)=>{
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
+const v2vowel=(oldVowel,newVowel,dict)=>{
+	const result={...dict}
+	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im3s','im1p','im3p']) {
+		result[formId]=result[formId].replace(oldVowel,newVowel) // TODO replace last occurrence
+	}
+	return result
+}
 const v2yoHandler=(dict,replacementFn,note)=>{
 	const result={...dict}
 	for (const formId of ['pres1s','im3s','im1p','im3p']) {
@@ -324,13 +331,10 @@ const verbs=[
 		pret1s:'v|[i]',
 		pret3s:'v|i[o]',
 	},'видеть'],
-	['venir',v1(
-		'ven|ir,v[i]n|iendo,ven|ido',
-		'ven[g]|o,v[i]en|es,v[i]en|e,ven|imos,ven|ís,v[i]en|en',
-		'v[i]n|[e],v[i]n|iste,v[i]n|[o],v[i]n|imos,v[i]n|isteis,v[i]n|ieron',
-		v1imp('venir'),
-		'ven|[],ven[g]|a,ven[g]|amos,ven|id,ven[g]|an',
-	),'приходить'],
+	['venir',{...v2fut('ven[d]',v2pret('v[i]n',v2yo('ven[g]',v2vowel('e','[i]e',v2('venir'))))),
+		ger:'v[i]n|iendo',
+		im2s:'ven|[]',
+	},'приходить'],
 	['hacer',v1(
 		'hac|er,hac|iendo,h[e]|[ch]o',
 		v1pres('hacer','ha[g]|o'),
