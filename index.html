@@ -214,31 +214,32 @@ const v2=(inf)=>{
 	const a=formEnds[infEnd]
 	return formIds.reduce((o,k,i)=>({...o,[k]:stem+'|'+a[i]}),{})
 }
-const v2repl=(pattern,replacement)=>{
-	const result={}
-	const a=replacement.split(',')
+const v2formIds=(pattern)=>{
 	const [base,person,number]=pattern.split(/(.)(.)$/)
-	const subEnd=(person,number)=>{
-		result[base+person+number]=a.shift()
+	function* subEnd(person,number) {
+		yield base+person+number
 	}
-	const subPerson=(number)=>{
+	function* subPerson(number) {
 		if (person=='*') {
-			for (let p of '123') subEnd(p,number)
+			for (let p of '123') yield* subEnd(p,number)
 		} else {
-			subEnd(person,number)
+			yield* subEnd(person,number)
 		}
 	}
-	const subNumber=()=>{
+	function* subNumber() {
 		if (number=='*') {
-			for (let n of 'sp') subPerson(n)
+			for (let n of 'sp') yield* subPerson(n)
 		} else {
-			subPerson(number)
+			yield* subPerson(number)
 		}
 	}
-	subNumber()
-	return result
+	return Array.from(subNumber())
 }
-const v2replIm=(replacement)=>{ // temporary fn, derive from other forms
+const v2repl=(pattern,replacement)=>{
+	const a=replacement.split(',')
+	return v2formIds(pattern).reduce((o,k,i)=>({...o,[k]:a[i]}),{})
+}
+const v2replIm=(replacement)=>{
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
@@ -264,10 +265,9 @@ const v2yendo=(dict)=>{
 }
 const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
 	const result={...dict}
-	const formIds='pret1s,pret2s,pret3s,pret1p,pret2p,pret3p'.split(',')
 	const ends='e,iste,o,imos,isteis,ieron'.split(',')
 	const markEnds='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
-	for (const [i,formId] of formIds.entries()) {
+	for (const [i,formId] of v2formIds('pret**').entries()) {
 		const [stem,end]=result[formId].split('|')
 		const strongEnd=(end==ends[i]) ? end : markEnds[i]
 		result[formId]=strongStem+'|'+strongEnd
@@ -276,14 +276,14 @@ const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/w
 }
 const v2imp=(stem,dict)=>{
 	const result={...dict}
-	for (const formId of 'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p'.split(',')) {
+	for (const formId of v2formIds('imp**')) {
 		result[formId]=result[formId].replace(/^.*?\|/,`${stem}|`)
 	}
 	return result
 }
 const v2fut=(stem,dict)=>{
 	const result={...dict}
-	for (const formId of 'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p'.split(',')) {
+	for (const formId of v2formIds('fut**')) {
 		result[formId]=result[formId].replace(/^.*\|.*\|/,`${stem}|[]r|`)
 	}
 	return result
