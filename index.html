@@ -36,6 +36,9 @@ th.group span {
 td[title], th[title] {
 	background: linear-gradient(225deg, #8F8 .3em, white .3em);
 }
+th.long {
+	letter-spacing: -0.07em;
+}
 [class|=stem] {
 	border-right: solid 1px green;
 	padding: .22em .05em .22em 0;
@@ -474,6 +477,9 @@ function createTable($container,sortType) {
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
+			if (formGroupId && formText.replace(/<[^>]*>/g,'').length>5) {
+				$formCell.classList.add('long')
+			}
 			const getFormHtml=(form)=>{
 				let variant=1
 				let [stem,end,subend]=form.split('|')
