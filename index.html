@@ -251,6 +251,17 @@ const v2yoHandler=(dict,replacementFn,note)=>{
 }
 const v2yo=(yoStem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,yoStem+'|'))
 const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/.\|/,'[j]|'),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
+const v2yendo=(dict)=>{
+	const result={...dict}
+	for (formId of ['ger','pret3s','pret3p']) {
+		result[formId]=result[formId].replace(/\|i/,'|[y]')
+	}
+	for (formId of ['par','pret2s','pret1p','pret2p']) {
+		result[formId]=result[formId].replace(/\|i/,'|[í]')
+	}
+	result['ger']=[result['ger'],'после гласной -iendo меняется на -yendo']
+	return result
+}
 const verbs=[
 	['hablar',v2('hablar'),'говорить'],
 	['comer',v2('comer'),'есть'],
@@ -267,6 +278,7 @@ const verbs=[
 		...v2repl('imp**','er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an'),
 		...v2replImp('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
 	},['быть','быть постоянно, быть в указанный момент времени']],
+	//['ir',v2('ir'),'идти'],
 	['ir',v1(
 		'#ir,#[y]endo,#ido',
 		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
@@ -281,13 +293,7 @@ const verbs=[
 		v1imp('dar'),
 		'd|a,d|[é],d|emos,d|ad,d|en',
 	),'давать'],
-	['leer',v1(
-		'le|er',v1yendo('leer'),'le|[í]do',
-		v1pres('leer'),
-		'le|í,le|[í]ste,le|[y]ó,le|[í]mos,le|[í]steis,le|[y]eron',
-		v1imp('leer'),
-		'le|e,le|a,le|amos,le|ed,le|an',
-	),'читать'],
+	['leer',v2yendo(v2('leer')),'читать'],
 	['ver',v1(
 		'v|er,v|iendo,v|i[st]o',
 		'v[e]|o,v|es,v|e,v|emos,v|[e]is,v|en',
