@@ -238,7 +238,7 @@ const v2repl=(pattern,replacement)=>{
 	subNumber()
 	return result
 }
-const v2replImp=(replacement)=>{ // temporary fn, derive from other forms
+const v2replIm=(replacement)=>{ // temporary fn, derive from other forms
 	const a=replacement.split(',')
 	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
@@ -291,25 +291,18 @@ const verbs=[
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 	},['быть','быть временно, быть в указанном месте']],
 	['ser',{...v2('ser'),
-		...v2repl('pres**','s|o[y],er#es,e[s]#,s|[o]mos,s|[o]is,s|[o]n'),
-		...v2repl('pret**','fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron'),
-		...v2repl('imp**','er#[]#a,er#[]#as,er#[]#a,[é]r#[]#amos,er#[]#ais,er#[]#an'),
-		...v2replImp('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
+		...v2repl('pres**','s|o[y],[er]|es,[es]|[],s|[o]mos,s|[o]is,s|[o]n'),
+		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
+		...v2repl('imp**','[er]|[]|a,[er]|[]|as,[er]|[]|a,[ér]|[]|amos,[er]|[]|ais,[er]|[]|an'),
+		...v2replIm('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
 	},['быть','быть постоянно, быть в указанный момент времени']],
-	/*
 	['ir',{...v2('ir'),
-		//'#ir,#[y]endo,#ido',
 		ger:'|[y]endo',
 		...v2repl('pres**','[v]|o[y],[v]|as,[v]|a,[v]|amos,[v]|[a]is,[v]|an'),
+		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
+		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
+		...v2replIm('[v]|e,[vay]|a,[vay]|amos,|id,[vay]|an'),
 	},'идти'],
-	*/
-	['ir',v1(
-		'#ir,#[y]endo,#ido',
-		'v|o[y],v|as,v|a,v|amos,v|[a]is,v|an',
-		'fu#[i],fu#iste,fu#[e],fu#imos,fu#isteis,fu#eron',
-		'ib#[]#a,ib#[]#as,ib#[]#a,[í]b#[]#amos,ib#[]#ais,ib#[]#an',
-		'v|e,v[ay]|a,v[ay]|amos,#id,v[ay]|an',
-	),'идти'],
 	['dar',v1(
 		'd|ar,d|ando,d|ado',
 		'd|o[y],d|as,d|a,d|amos,d|[a]is,d|an',
