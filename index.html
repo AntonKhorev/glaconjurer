@@ -34,18 +34,24 @@ th.group span {
 	transform: rotate(180deg);
 }
 td[title], th[title] {
-	background: linear-gradient(225deg, #8F8 .3em, white .3em);
+	background: linear-gradient(225deg, #484 .3em, transparent .3em),
+		linear-gradient(182deg, #484 .05em, transparent .06em),
+		linear-gradient(268deg, #484 .05em, transparent .06em);
 }
 th.long {
 	letter-spacing: -0.07em;
 }
+th.very-long {
+	letter-spacing: -0.07em;
+	font-size: 0.8em;
+}
 .stem {
-	border-right: solid 1px green;
+	border-right: solid 1px #060;
 	padding: .22em .05em .22em 0;
 }
 .end {
 	font-weight: bold;
-	border-left: solid 1px green;
+	border-left: solid 1px #060;
 	padding: .22em 0 .22em .05em;
 }
 .subend {
@@ -59,16 +65,20 @@ th.long {
 }
 .stem strong {
 	font-weight: normal;
-	color: green;
+	color: #A00;
 }
 .end strong {
 	font-weight: bold;
-	color: green;
+	color: #A00;
 }
 .stem strong:empty, .end strong:empty {
 	display: inline-block;
 	width: .5ex;
-	border-bottom: solid 1px green;
+	border-bottom: solid 1px #A00;
+}
+th em, .end em, .subend em {
+	font-style: normal;
+	color: green;
 }
 </style>
 </head>
@@ -114,7 +124,7 @@ for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
 }
 const compactableVerbForms={
 	pres3: ['él<em>los</em>',verbForms['pres3s'][1]+'; '+verbForms['pres3p'][1]],
-	pret2: ['tú',verbForms['pret2s'][1]+'; '+verbForms['pret2p'][1]],
+	pret2: ['tú/<em>vosotros</em>',verbForms['pret2s'][1]+'; '+verbForms['pret2p'][1]],
 	imp3: ['él<em>los</em>',verbForms['imp3s'][1]+'; '+verbForms['imp3p'][1]],
 	fut3: ['él<em>los</em>',verbForms['fut3s'][1]+'; '+verbForms['fut3p'][1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
@@ -395,7 +405,10 @@ function createTable($container,sortType) {
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
-			if (formGroupId && formText.replace(/<[^>]*>/g,'').length>5) {
+			const formRawText=formText.replace(/<[^>]*>/g,'')
+			if (formGroupId && formRawText.length>10) {
+				$formCell.classList.add('very-long')
+			} else if (formGroupId && formRawText.length>5) {
 				$formCell.classList.add('long')
 			}
 			const getFormHtml=(form)=>{
