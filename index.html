@@ -131,50 +131,6 @@ const compactableVerbForms={
 	fut3: ['él<em>los</em>',verbForms['fut3s'][1]+'; '+verbForms['fut3p'][1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
-const v1=(...aa)=>{
-	const a=[].concat.apply([],aa.map(s=>Array.isArray(s)?[s]:s.split(',')))
-	return [
-		'inf','ger','par',
-		'pres1s','pres2s','pres3s','pres1p','pres2p','pres3p',
-		'pret1s','pret2s','pret3s','pret1p','pret2p','pret3p',
-		'imp1s','imp2s','imp3s','imp1p','imp2p','imp3p',
-		'im2s','im3s','im1p','im2p','im3p'
-	].reduce((o,k,i)=>({...o,[k]:a[i]}),{})
-}
-const v1forms=(inf,ar,er,ir,yoException)=>{
-	const [stem,end]=inf.split(/(..)$/)
-	const gen=a=>a.split(',').map(s=>`${stem}|${s}`)
-	let result
-	if (end=='ar') {
-		result=gen(ar)
-	} else if (end=='er') {
-		result=gen(er)
-	} else if (end=='ir') {
-		result=gen(ir)
-	} else {
-		throw 'unrecognized verb form'
-	}
-	if (yoException) result[0]=yoException
-	return result.join(',')
-}
-const v1pres=(inf,yoException)=>v1forms(inf,
-	'o,as,a,amos,áis,an',
-	'o,es,e,emos,éis,en',
-	'o,es,e,imos,ís,en',
-	yoException
-)
-const v1pret=(inf)=>v1forms(inf,
-	'é,aste,ó,amos,asteis,aron',
-	'í,iste,ió,imos,isteis,ieron',
-	'í,iste,ió,imos,isteis,ieron',
-)
-const v1imp=(inf)=>v1forms(inf,
-	'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an',
-	'í|a,í|as,í|a,í|amos,í|ais,í|an',
-	'í|a,í|as,í|a,í|amos,í|ais,í|an',
-)
-const v1yendo=(inf)=>[`${inf.slice(0,-2)}|[y]endo`,'после гласной -iendo меняется на -yendo']
-const v1jo=(inf)=>[`${inf.slice(0,-3)}[j]|o`,'у -ger и -gir-глаголов вместо -go пишется -jo']
 const v2=(inf)=>{
 	const [stem,infEnd]=inf.split(/(..)$/)
 	const formIds=(
