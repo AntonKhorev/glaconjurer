@@ -39,48 +39,36 @@ td[title], th[title] {
 th.long {
 	letter-spacing: -0.07em;
 }
-[class|=stem] {
+.stem {
 	border-right: solid 1px green;
 	padding: .22em .05em .22em 0;
 }
-[class|=end] {
+.end {
 	font-weight: bold;
 	border-left: solid 1px green;
 	padding: .22em 0 .22em .05em;
 }
-[class|=subend] {
+.subend {
 	color: #333;
 	font-weight: bold;
 	border-left: solid 1px #DDD;
 	padding: .22em 0 .22em .05em;
 }
-[class|=stem] + [class|=end] {
+.stem + .end {
 	border: none;
 }
-.stem-2, .end-2 {
-	border-color: red;
-}
-[class|=stem] strong {
+.stem strong {
 	font-weight: normal;
-}
-[class|=end] strong {
-	font-weight: bold;
-}
-.stem-1 strong, .end-1 strong {
 	color: green;
 }
-.stem-2 strong, .end-2 strong {
-	color: red;
+.end strong {
+	font-weight: bold;
+	color: green;
 }
-.stem-1 strong:empty, .end-1 strong:empty, .stem-2 strong:empty, .end-2 strong:empty {
+.stem strong:empty, .end strong:empty {
 	display: inline-block;
 	width: .5ex;
-}
-.stem-1 strong:empty, .end-1 strong:empty {
 	border-bottom: solid 1px green;
-}
-.stem-2 strong:empty, .end-2 strong:empty {
-	border-bottom: solid 1px red;
 }
 </style>
 </head>
@@ -411,14 +399,9 @@ function createTable($container,sortType) {
 				$formCell.classList.add('long')
 			}
 			const getFormHtml=(form)=>{
-				let variant=1
-				let [stem,end,subend]=form.split('|')
-				if (end===undefined) {
-					variant=2
-					;[stem,end,subend]=form.split('#')
-				}
+				const [stem,end,subend]=form.split('|')
 				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<strong>$1</strong>')
-				const makeSpan=(cls,s)=>s?`<span class=${cls}-${variant}>${mark(s)}</span>`:''
+				const makeSpan=(cls,s)=>s?`<span class=${cls}>${mark(s)}</span>`:''
 				let t=makeSpan('stem',stem)+makeSpan('end',end)
 				if (subend!==undefined) t+=makeSpan('subend',subend)
 				return t
