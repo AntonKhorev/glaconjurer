@@ -363,13 +363,9 @@ const verbs=[
 		par:'p[ues]|[t]o',
 		im2s:'pon|[]',
 	},'ставить'],
-	['tener',v1(
-		'ten|er,ten|iendo,ten|ido',
-		'ten[g]|o,t[i]en|es,t[i]en|e,ten|emos,ten|éis,t[i]en|en',
-		'tuv#[e],tuv#iste,tuv#[o],tuv#imos,tuv#isteis,tuv#ieron',
-		v1imp('tener'),
-		'ten|[],ten[g]|a,ten[g]|amos,ten|ed,ten[g]|an',
-	),'иметь'],
+	['tener',{...v2fut('ten[d]',v2pret('t[uv]',v2yo('ten[g]',v2vowel('e','[i]e',v2('tener'))))),
+		im2s:'ten|[]',
+	},'иметь'],
 	['saber',v1(
 		'sab|er,sab|iendo,sab|ido',
 		v1pres('saber','s#[é]'),
