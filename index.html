@@ -289,13 +289,15 @@ const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/w
 	}
 	return result
 }
-const v2pretYoZar=(dict)=>{
+const v2pretYoHandler=(dict,replacementFn,note)=>{
 	const result={...dict}
 	for (const formId of ['pret1s','im3s','im1p','im3p']) {
-		result[formId]=[result[formId].replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce']
+		result[formId]=[replacementFn(result[formId]),note]
 	}
 	return result
 }
+const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'[qu]|'),'у -car-глаголов -ce меняется на -que')
+const v2pretYoZar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce')
 const v2imp=(stem,dict)=>{
 	const result={...dict}
 	for (const formId of v2formIds('imp**')) {
@@ -391,13 +393,7 @@ const verbs=[
 		ger:'p[u]d|iendo',
 	},'мочь'],
 	['empezar',v2pretYoZar(v2vowel('e','[i]e',v2('empezar'))),'начинать'],
-	['tocar',v1(
-		'toc|ar,toc|ando,toc|ado',
-		v1pres('tocar'),
-		['to[qu]|é','у -car-глаголов -cé меняется на -qué'],'toc|aste,toc|ó,toc|amos,toc|asteis,toc|aron',
-		v1imp('tocar'),
-		'toc|a,to[qu]|e,to[qu]|emos,toc|ad,to[qu]|en',
-	),'трогать'],
+	['tocar',v2pretYoCar(v2('tocar')),'трогать'],
 ]
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
