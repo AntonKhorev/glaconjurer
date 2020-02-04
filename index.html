@@ -196,10 +196,6 @@ const v2repl=(pattern,replacement)=>{
 	const a=replacement.split(',')
 	return v2formIds(pattern).reduce((o,k,i)=>({...o,[k]:a[i]}),{})
 }
-const v2replIm=(replacement)=>{
-	const a=replacement.split(',')
-	return 'im2s,im3s,im1p,im2p,im3p'.split(',').reduce((o,k,i)=>({...o,[k]:a[i]}),{})
-}
 const v2vowel=(oldVowel,newVowel,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	const result={...dict}
 	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im2s','im3s','im3p']) {
@@ -277,18 +273,18 @@ const verbs=[
 		pres3p:'est|[á]n',
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 	},['быть','быть временно, быть в указанном месте']],
-	['ser',{...v2('ser'),
+	['ser',{...v2yo('s[e]',v2('ser')),
 		...v2repl('pres**','s|o[y],[er]|es,[es]|[],s|[o]mos,s|[o]is,s|[o]n'),
 		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
 		...v2repl('imp**','[er]|[]|a,[er]|[]|as,[er]|[]|a,[ér]|[]|amos,[er]|[]|ais,[er]|[]|an'),
-		...v2replIm('s|[é],s[e]|a,s[e]|amos,s|ed,s[e]|an'),
+		im2s:'s|[é]',
 	},['быть','быть постоянно, быть в указанный момент времени']],
-	['ir',{...v2('ir'),
+	['ir',{...v2yo('[vay]',v2('ir')),
 		ger:'|[y]endo',
-		...v2repl('pres**','[v]|o[y],[v]|as,[v]|a,[v]|amos,[v]|[a]is,[v]|an'),
+		...v2repl('pres**','[v]|o[y],[v]|[a]s,[v]|[a],[v]|[a]mos,[v]|[ai]s,[v]|[a]n'),
 		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
 		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
-		...v2replIm('[v]|e,[vay]|a,[vay]|amos,|id,[vay]|an'),
+		im2s:'[v]|e',
 	},'идти'],
 	['haber',{...v2fut('hab',v2pret('h[u]b',v2yo('ha[y]',v2('haber')))),
 		...v2repl('pres**','h[]|[e],h[]|[a]s,h[]|[a],h[]|emos,hab|éis,h[]|[a]n'),
