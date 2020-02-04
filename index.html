@@ -382,13 +382,11 @@ const verbs=[
 		pret3s:'el[i]g|ió',
 		pret3p:'el[i]g|ieron',
 	},'выбирать'],
-	['seguir',v1(
-		'segu|ir',['s[i]gu|iendo','-yendo нет, хотя -iendo предшествует гласная'],'segu|ido',
-		's[i]g[]|o,s[i]gu|es,s[i]gu|e,segu|imos,segu|ís,s[i]gu|en',
-		'segu|í,segu|iste,s[i]gu|ió,segu|imos,segu|isteis,s[i]gu|ieron',
-		v1imp('seguir'),
-		's[i]gu|e,s[i]g[]|a,s[i]g[]|amos,segu|id,s[i]g[]|an',
-	),'следовать'],
+	['seguir',{...v2yo('s[i]g[]',v2vowel('e','[i]',v2('seguir'))),
+		ger:['s[i]gu|iendo','-yendo нет, хотя -iendo предшествует гласная'],
+		pret3s:'s[i]gu|ió',
+		pret3p:'s[i]gu|ieron',
+	},'следовать'],
 	['poder',v1(
 		'pod|er,p[u]d|iendo,pod|ido',
 		'p[ue]d|o,p[ue]d|es,p[ue]d|e,pod|emos,pod|éis,p[ue]d|en',
