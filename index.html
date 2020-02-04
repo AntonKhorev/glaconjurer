@@ -290,7 +290,10 @@ const verbs=[
 		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
 		...v2replIm('[v]|e,[vay]|a,[vay]|amos,|id,[vay]|an'),
 	},'идти'],
-	// TODO haber
+	['haber',{...v2fut('hab',v2pret('h[u]b',v2yo('ha[y]',v2('haber')))),
+		...v2repl('pres**','h[]|[e],h[]|[a]s,h[]|[a],h[]|emos,hab|éis,h[]|[a]n'),
+		im2s:'h[]|e',
+	},['иметь','вспомогательный для сложных времён']],
 	// single vowel change
 	['pensar',v2vowel('e','[i]e',v2('pensar')),'думать'],
 	// rest
