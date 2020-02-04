@@ -348,6 +348,11 @@ const verbs=[
 	},'мочь'],
 	['empezar',v2pretYoZar(v2vowel('e','[i]e',v2('empezar'))),'начинать'],
 	['tocar',v2pretYoCar(v2('tocar')),'трогать'],
+	['oír',{...v2yendo(v2yo('o[ig]',v2vowel('o','o[y]',v2('oir')))),
+		inf:'o|[í]r',
+		pres1p:'o|[í]mos',
+		im2p:'o|[í]d',
+	},'слышать'],
 ]
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
