@@ -264,7 +264,9 @@ const v2yoHandler=(dict,replacementFn,note)=>{
 	return result
 }
 const v2yo=(stem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,stem+'|'))
-const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/.\|/,'[j]|'),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
+const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,
+	dict['pres1s'].split('|')[0].replace(/g$/,'[j]')+'|'
+),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
 const v2yendo=(dict)=>{
 	const result={...dict}
 	for (const formId of ['ger','pret3s','pret3p']) {
@@ -374,13 +376,12 @@ const verbs=[
 		pret3p:'traj|[]eron',
 	},'приносить'],
 	['coger',v2yojo(v2('coger')),'брать'],
-	['elegir',v1(
-		'eleg|ir,el[i]g|iendo,ele[c]|[t]o',
-		v1jo('el[i]gir'),'el[i]g|es,el[i]g|e,eleg|imos,eleg|ís,el[i]g|en',
-		'eleg|í,eleg|iste,el[i]g|ió,eleg|imos,eleg|isteis,el[i]g|ieron',
-		v1imp('elegir'),
-		'el[i]g|e,el[ij]|a,el[ij]|amos,eleg|id,el[ij]|an',
-	),'выбирать'],
+	['elegir',{...v2yojo(v2vowel('e','[i]',v2('elegir'))),
+		ger:'el[i]g|iendo',
+		par:'ele[c]|[t]o',
+		pret3s:'el[i]g|ió',
+		pret3p:'el[i]g|ieron',
+	},'выбирать'],
 	['seguir',v1(
 		'segu|ir',['s[i]gu|iendo','-yendo нет, хотя -iendo предшествует гласная'],'segu|ido',
 		's[i]g[]|o,s[i]gu|es,s[i]gu|e,segu|imos,segu|ís,s[i]gu|en',
