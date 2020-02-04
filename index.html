@@ -387,13 +387,9 @@ const verbs=[
 		pret3s:'s[i]gu|ió',
 		pret3p:'s[i]gu|ieron',
 	},'следовать'],
-	['poder',v1(
-		'pod|er,p[u]d|iendo,pod|ido',
-		'p[ue]d|o,p[ue]d|es,p[ue]d|e,pod|emos,pod|éis,p[ue]d|en',
-		'p[u]d|[e],p[u]d|iste,p[u]d|[o],p[u]d|imos,p[u]d|isteis,p[u]d|ieron',
-		v1imp('poder'),
-		'p[ue]d|e,p[ue]d|a,pod|amos,pod|ed,p[ue]d|an',
-	),'мочь'],
+	['poder',{...v2fut('pod',v2pret('p[u]d',v2vowel('o','[ue]',v2('poder')))),
+		ger:'p[u]d|iendo',
+	},'мочь'],
 	['empezar',v2pretYoZar(v2vowel('e','[i]e',v2('empezar'))),'начинать'],
 	['tocar',v1(
 		'toc|ar,toc|ando,toc|ado',
