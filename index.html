@@ -129,6 +129,9 @@ const compactableVerbForms={
 	fut3: ['él<em>los</em>',verbForms['fut3s'][1]+'; '+verbForms['fut3p'][1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
+// wiktionary templates:
+// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
+// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
 const v2=(inf)=>{
 	const [stem,infEnd]=inf.split(/(..)$/)
 	const formIds=(
@@ -290,8 +293,16 @@ const verbs=[
 		...v2repl('pres**','h[]|[e],h[]|[a]s,h[]|[a],h[]|emos,hab|éis,h[]|[a]n'),
 		im2s:'h[]|e',
 	},['иметь','вспомогательный для сложных времён']],
-	// single vowel change
-	['pensar',v2vowel('e','[i]e',v2('pensar')),'думать'],
+	// TODO orthographic
+	// vowel change
+	['mover',v2vowel('o','[ue]',v2('mover')),'двигать','o→ue'],
+	['pensar',v2vowel('e','[i]e',v2('pensar')),'думать','e→ie'],
+	['pedir',{...v2vowel('e','[i]',v2('pedir')),
+		ger:'p[i]d|iendo',
+		pret3s:'p[i]d|ió',
+		pret3p:'p[i]d|ieron',
+		im1p:'p[i]d|amos',
+	},'просить','e→i'],
 	// rest
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o[y]',
