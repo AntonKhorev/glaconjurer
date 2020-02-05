@@ -264,9 +264,9 @@ const v2fut=(stem,dict)=>{
 }
 const verbs=[
 	// regular
-	['hablar',v2('hablar'),'говорить'],
-	['comer',v2('comer'),'есть'],
-	['vivir',v2('vivir'),'жить'],
+	['hablar',v2('hablar'),'говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']],
+	['comer',v2('comer'),'есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']],
+	['vivir',v2('vivir'),'жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']],
 	// helper
 	['estar',{...v2pret('est[uv]',v2('estar')),
 		...v2repl('pres*s','est|o[y],est|[á]s,est|[á]'),
@@ -362,7 +362,17 @@ function createTable($container,sortType) {
 	$table.setAttribute('lang','es')
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
-	$thead.insertRow().innerHTML="<th colspan=2><th><abbr title='Primera conjugación'>1ª conj.</abbr><th><abbr title='Segunda conjugación'>2ª conj.</abbr><th><abbr title='Tercera conjugación'>3ª conj.</abbr>"
+	{
+		const $row=$thead.insertRow()
+		$row.innerHTML="<th colspan=2>"
+		for (const [verb,forms,translationData,titleData] of verbs) {
+			const [title,titleNote]=readPair(titleData)
+			const $cell=document.createElement('th')
+			$row.appendChild($cell)
+			if (title) $cell.innerHTML=title
+			if (titleNote) $cell.setAttribute('title',titleNote)
+		}
+	}
 	for (let [formGroupId,formGroupMembers] of verbFormOrder) {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
