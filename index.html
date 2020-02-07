@@ -267,6 +267,7 @@ const v2pretYoHandler=(dict,replacementFn,note)=>{
 	return result
 }
 const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'[qu]|'),'у -car-глаголов -ce меняется на -que')
+const v2pretYoGar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/g\|/,'g[u]|'),'у -gar-глаголов -ge меняется на -gue') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.gar
 const v2pretYoZar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.zar
 const v2imp=(stem,dict)=>{
 	const result={...dict}
@@ -370,6 +371,7 @@ const verbs=[
 		im2p:'o|[í]d',
 	},'слышать'], // {{es.v.conj.oír|o}}
 	['querer',v2fut('quer',v2pret('quis',v2vowel('e','ie',v2('querer')))),'хотеть'], // {{es.v.conj.querer}}
+	['llegar',v2pretYoGar(v2('llegar')),'прибывать'], // {{es.v.conj.gar|lle}}
 ]
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
