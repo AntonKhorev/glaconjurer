@@ -372,6 +372,9 @@ const verbs=[
 	},'слышать'], // {{es.v.conj.oír|o}}
 	['querer',v2fut('quer',v2pret('quis',v2vowel('e','ie',v2('querer')))),'хотеть'], // {{es.v.conj.querer}}
 	['llegar',v2pretYoGar(v2('llegar')),'прибывать'], // {{es.v.conj.gar|lle}}
+	['salir',{...v2fut('sal[d]',v2yo('sal[g]',v2('salir'))),
+		im2s:'sal|[]',
+	},'выходить'], // {{es.v.conj.salir}}
 ]
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
