@@ -312,9 +312,10 @@ const verbs=[
 	},['иметь','вспомогательный для сложных времён']],
 	// TODO orthographic
 	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
-	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→ue'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
 	['pensar',v2vowel('e','ie',v2('pensar')),'думать','e→ie'], // {{es.v.conj.-ie-ue-.ar|pens|piens}}
 	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→i'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
+	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→ue'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
+	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→ue,u'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
 	// rest
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o[y]',
