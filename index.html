@@ -210,18 +210,21 @@ const v2vowel=(oldVowel,newVowel,dict)=>{ // TODO replace with ar/er/ir versions
 	return result
 }
 const v2replaceLastStemVowel=(form,oldVowel,newVowel)=>{
+	if (oldVowel==newVowel) return
+	let replacement='['+newVowel+']'
+	if (newVowel=='i'+oldVowel) replacement='[i]'+oldVowel
 	const [oldStem,end]=form.split(/\|(.*)/)
 	const i=oldStem.lastIndexOf(oldVowel)
-	const newStem=oldStem.slice(0,i)+newVowel+oldStem.slice(i+oldVowel.length)
+	const newStem=oldStem.slice(0,i)+replacement+oldStem.slice(i+oldVowel.length)
 	return newStem+'|'+end
 }
 const v2vowelIr=(v,V,va,dict)=>{
 	const result={...dict}
 	for (const formId of ['pres1s','pres2s','pres3s','pres3p','im2s','im3s','im3p']) {
-		result[formId]=v2replaceLastStemVowel(result[formId],v,'['+V+']')
+		result[formId]=v2replaceLastStemVowel(result[formId],v,V)
 	}
 	for (const formId of ['ger','pret3s','pret3p','im1p']) {
-		result[formId]=v2replaceLastStemVowel(result[formId],v,'['+va+']')
+		result[formId]=v2replaceLastStemVowel(result[formId],v,va)
 	}
 	return result
 }
@@ -329,10 +332,9 @@ const verbs=[
 		pret1s:'v|[i]',
 		pret3s:'v|i[o]',
 	},'видеть'],
-	['venir',{...v2fut('ven[d]',v2pret('v[i]n',v2yo('ven[g]',v2vowel('e','[i]e',v2('venir'))))),
-		ger:'v[i]n|iendo',
+	['venir',{...v2fut('ven[d]',v2pret('v[i]n',v2yo('ven[g]',v2vowelIr('e','ie','i',v2('venir'))))),
 		im2s:'ven|[]',
-	},'приходить'],
+	},'приходить'], // {{es.v.conj.venir}}
 	['hacer',{...v2fut('ha[]',v2pret('h[i]c',v2yo('ha[g]',v2('hacer')))),
 		par:'h[e]|[ch]o',
 		pret3s:'h[iz]|[o]',
