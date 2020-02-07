@@ -210,7 +210,7 @@ const v2vowel=(oldVowel,newVowel,dict)=>{ // TODO replace with ar/er/ir versions
 	return result
 }
 const v2replaceLastStemVowel=(form,oldVowel,newVowel)=>{
-	if (oldVowel==newVowel) return
+	if (oldVowel==newVowel) return form
 	let replacement='['+newVowel+']'
 	if (newVowel=='i'+oldVowel) replacement='[i]'+oldVowel
 	const [oldStem,end]=form.split(/\|(.*)/)
@@ -355,12 +355,9 @@ const verbs=[
 		pret3p:'traj|[]eron',
 	},'приносить'],
 	['coger',v2yojo(v2('coger')),'брать'],
-	['elegir',{...v2yojo(v2vowel('e','[i]',v2('elegir'))),
-		ger:'el[i]g|iendo',
+	['elegir',{...v2yojo(v2vowelIr('e','i','i',v2('elegir'))),
 		par:'ele[c]|[t]o',
-		pret3s:'el[i]g|ió',
-		pret3p:'el[i]g|ieron',
-	},'выбирать'],
+	},'выбирать'], // {{es.v.conj.-ie-i-ue-u-.ir|ele|eli|eli|nexo=g|part=electo|part2=elegido}}
 	['seguir',{...v2yo('s[i]g[]',v2vowel('e','[i]',v2('seguir'))),
 		ger:['s[i]gu|iendo','-yendo нет, хотя -iendo предшествует гласная'],
 		pret3s:'s[i]gu|ió',
