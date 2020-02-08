@@ -226,7 +226,7 @@ const v2vowelIr=(v,V,va,dict)=>{ // https://es.wiktionary.org/wiki/Plantilla:es.
 	}
 	return result
 }
-const v2yoHandler=(dict,replacementFn,note)=>{
+const v2yoHandler=(dict,replacementFn,note)=>{ // TODO? yo -go-глаголы часто имеют im2s без окончания
 	const result={...dict}
 	for (const formId of ['pres1s','im3s','im1p','im3p']) {
 		result[formId]=[replacementFn(result[formId]),note]
@@ -337,12 +337,12 @@ const verbs=[
 		im2s:'ven|[]',
 	},'приходить'], // {{es.v.conj.venir}}
 	['hacer',{...v2fut('ha[]',v2pret('h[i]c',v2yo('ha[g]',v2('hacer')))),
-		par:'h[e]|[ch]o',
+		par:'h[e]c[h]|[]o',
 		pret3s:'h[iz]|[o]',
 		im2s:'ha[z]|[]',
 	},'делать'],
 	['poner',{...v2fut('pon[d]',v2pret('p[us]',v2yo('pon[g]',v2('poner')))),
-		par:'p[ues]|[t]o',
+		par:'p[uest]|[]o',
 		im2s:'pon|[]',
 	},'ставить'],
 	['tener',{...v2fut('ten[d]',v2pret('t[uv]',v2yo('ten[g]',v2vowel('e','ie',v2('tener'))))),
@@ -357,7 +357,7 @@ const verbs=[
 	},'приносить'],
 	['coger',v2yojo(v2('coger')),'брать'],
 	['elegir',{...v2yojo(v2vowelIr('e','i','i',v2('elegir'))),
-		par:'ele[c]|[t]o',
+		par:'ele[ct]|[]o',
 	},'выбирать'], // {{es.v.conj.-ie-i-ue-u-.ir|ele|eli|eli|nexo=g|part=electo|part2=elegido}}
 	['seguir',v2yo('s[i]g[]',v2vowelIr('e','i','i',v2('seguir'))),'следовать'], // {{es.v.conj.seguir}}
 	['poder',{...v2fut('pod',v2pret('p[u]d',v2vowel('o','ue',v2('poder')))),
@@ -375,6 +375,10 @@ const verbs=[
 	['salir',{...v2fut('sal[d]',v2yo('sal[g]',v2('salir'))),
 		im2s:'sal|[]',
 	},'выходить'], // {{es.v.conj.salir}}
+	['decir',{...v2fut('d[i]',v2pret('d[ij]',v2yo('d[ig]',v2vowelIr('e','i','i',v2('decir'))))),
+		im2s:'d[i]|[]',
+		par:'d[i]c[h]|[]o',
+	},'сказать'], // {{es.v.conj.decir}}
 ]
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
