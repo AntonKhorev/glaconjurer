@@ -123,10 +123,10 @@ for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
 	verbForms[prefix+'3p']=['ellos',`ellos, ellas: они ${v3p}; ustedes: (вежливое множественное) вы ${v2p}`]
 }
 const compactableVerbForms={
-	pres3: ['él<em>los</em>',verbForms['pres3s'][1]+'; '+verbForms['pres3p'][1]],
-	pret2: ['tú/<em>vosotros</em>',verbForms['pret2s'][1]+'; '+verbForms['pret2p'][1]],
-	imp3: ['él<em>los</em>',verbForms['imp3s'][1]+'; '+verbForms['imp3p'][1]],
-	fut3: ['él<em>los</em>',verbForms['fut3s'][1]+'; '+verbForms['fut3p'][1]],
+	pres3: ['él<em>los</em>',verbForms.pres3s[1]+'; '+verbForms.pres3p[1]],
+	pret2: ['tú/<em>vosotros</em>',verbForms.pret2s[1]+'; '+verbForms.pret2p[1]],
+	imp3: ['él<em>los</em>',verbForms.imp3s[1]+'; '+verbForms.imp3p[1]],
+	fut3: ['él<em>los</em>',verbForms.fut3s[1]+'; '+verbForms.fut3p[1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
 // wiktionary templates:
@@ -235,7 +235,7 @@ const v2yoHandler=(dict,replacementFn,note)=>{ // TODO? yo -go-глаголы ч
 }
 const v2yo=(stem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,stem+'|'))
 const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,
-	dict['pres1s'].split('|')[0].replace(/g$/,'[j]')+'|'
+	dict.pres1s.split('|')[0].replace(/g$/,'[j]')+'|'
 ),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
 const v2yendo=(dict)=>{
 	const result={...dict}
@@ -245,7 +245,7 @@ const v2yendo=(dict)=>{
 	for (const formId of ['par','pret2s','pret1p','pret2p']) {
 		result[formId]=result[formId].replace(/\|i/,'|[í]')
 	}
-	result['ger']=[result['ger'],'после гласной -iendo меняется на -yendo']
+	result.ger=[result.ger,'после гласной -iendo меняется на -yendo']
 	return result
 }
 const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
@@ -253,7 +253,7 @@ const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/w
 	const ends='e,iste,o,imos,isteis,ieron'.split(',')
 	const markEnds='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
 	for (const [i,formId] of v2formIds('pret**').entries()) {
-		const [stem,end]=result[formId].split('|')
+		const [,end]=result[formId].split('|')
 		const strongEnd=(end==ends[i]) ? end : markEnds[i]
 		result[formId]=strongStem+'|'+strongEnd
 	}
@@ -392,7 +392,7 @@ function createTable($container,sortType) {
 	{
 		const $row=$thead.insertRow()
 		$row.innerHTML="<th colspan=2>"
-		for (const [verb,forms,translationData,titleData] of verbs) {
+		for (const [,,,titleData] of verbs) {
 			const [title,titleNote]=readPair(titleData)
 			const $cell=document.createElement('th')
 			$row.appendChild($cell)
@@ -420,7 +420,7 @@ function createTable($container,sortType) {
 				}
 			}
 		}
-		for (formId of formGroupMembers) {
+		for (const formId of formGroupMembers) {
 			const $row=$tbody.insertRow()
 			const formPreNumber=formId.slice(0,-1)
 			const formNumber=formId.slice(-1)
@@ -460,7 +460,7 @@ function createTable($container,sortType) {
 				if (subend!==undefined) t+=makeSpan('subend',subend)
 				return t
 			}
-			for (const [verb,forms] of verbs) {
+			for (const [,forms] of verbs) {
 				const [form,formNote]=readPair(forms[formId])
 				const $cell=$row.insertCell()
 				if (!forms[formId]) continue
@@ -487,7 +487,7 @@ function createTable($container,sortType) {
 			const $cell=document.createElement('th')
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
-			for (const [verb,forms,translationData] of verbs) {
+			for (const [,,translationData] of verbs) {
 				const [translation,translationNote]=readPair(translationData)
 				const $cell=$row.insertCell()
 				$cell.innerHTML=translation
@@ -529,7 +529,7 @@ function createTableAndOptions() {
 	const $gameControls=document.createElement('div')
 	const $gameButton=document.createElement('button')
 	$gameButton.innerHTML="Играть"
-	$gameButton.addEventListener('click',(ev)=>{
+	$gameButton.addEventListener('click',()=>{
 		$body.removeChild($tableContainer)
 		$body.removeChild($optionsContainer)
 		createGame()
@@ -542,7 +542,7 @@ function createTableAndOptions() {
 function createGame() {
 	const gameVerbs=[]
 	for (const [verb,forms] of verbs) {
-		for (formId in forms) {
+		for (const formId in forms) {
 			if (formId=='inf') continue
 			const [form]=readPair(forms[formId])
 			gameVerbs.push([verb,formId,form.replace(/[|#[\]]/g,'')])
@@ -565,7 +565,7 @@ function createGame() {
 	const $buttonControls=document.createElement('div')
 	const $checkButton=document.createElement('button')
 	$checkButton.innerHTML='Завершить'
-	$checkButton.addEventListener('click',(ev)=>{
+	$checkButton.addEventListener('click',()=>{
 		$body.removeChild($gameContainer)
 		createTableAndOptions()
 	})
@@ -581,9 +581,9 @@ function createGame() {
 		$infRow.insertAdjacentHTML('beforeend',"<th colspan=2>")
 		$infRow.insertCell().innerHTML=verb
 		const $formRow=$tbody.insertRow()
-		const [formGroupId,n,p]=formId.split(/(\d)/)
+		const [formGroupId,n]=formId.split(/(\d)/)
 		if (n) {
-			const [_,formGroupTitle]=verbFormGroups[formGroupId]
+			const [,formGroupTitle]=verbFormGroups[formGroupId]
 			const [formTitle]=verbForms[formId]
 			$formRow.insertAdjacentHTML('beforeend',`<th>${formGroupTitle},<th>${formTitle}`)
 		} else {
@@ -597,7 +597,7 @@ function createGame() {
 		const $formButton=document.createElement('button')
 		$formButton.innerHTML='Проверить'
 		$formButtonTd.appendChild($formButton)
-		$formButton.addEventListener('click',(ev)=>{
+		$formButton.addEventListener('click',()=>{
 			const userForm=$formInput.value
 			$formInputTd.removeChild($formInput)
 			$formButtonTd.removeChild($formButton)
