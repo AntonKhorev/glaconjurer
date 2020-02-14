@@ -401,51 +401,46 @@ function createTable($container,sortType) {
 			if (titleNote) $cell.setAttribute('title',titleNote)
 		}
 	}
-	for (let [formGroupId,formGroupMembers] of verbFormOrder) {
+	for (const [formGroupId,formGroupMembers] of verbFormOrder) {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
-		let firstInGroup=true
-		if (!formGroupMembers) {
-			formGroupMembers=[]
+		let formGroupRows
+		if (formGroupMembers) {
+			formGroupRows=formGroupMembers.map(formGroupId=>[false,formGroupId])
+		} else {
+			formGroupRows=[]
 			if (sortType!='number') {
 				for (const p of [1,2,3]) {
+					if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
+						formGroupRows.push([true,formGroupId+p])
+						continue
+					}
 					for (const n of ['s','p']) {
-						if (verbForms[formGroupId+p+n]) formGroupMembers.push(formGroupId+p+n)
+						if (verbForms[formGroupId+p+n]) formGroupRows.push([false,formGroupId+p+n])
 					}
 				}
 			} else {
 				for (const n of ['s','p']) {
 					for (const p of [1,2,3]) {
-						if (verbForms[formGroupId+p+n]) formGroupMembers.push(formGroupId+p+n)
+						if (verbForms[formGroupId+p+n]) formGroupRows.push([false,formGroupId+p+n])
 					}
 				}
 			}
 		}
-		for (const formId of formGroupMembers) {
+		let firstInGroup=true
+		for (const [compactRow,formId] of formGroupRows) {
 			const $row=$tbody.insertRow()
-			const formPreNumber=formId.slice(0,-1)
-			const formNumber=formId.slice(-1)
-			let compactRow=false
-			if (sortType=='person-compact' && formPreNumber in compactableVerbForms) {
-				compactRow=true
-				if (formId==formPreNumber+'p') continue
-			}
-			if (!compactRow && sortType!='number' && (formNumber=='s' || formNumber=='p')) {
-				$row.classList.add('number-'+formNumber)
+			if (!compactRow && sortType!='number') {
+				$row.classList.add('number-'+formId.slice(-1))
 			}
 			if (firstInGroup && formGroupId) {
 				const [formGroupName]=verbFormGroups[formGroupId]
-				if (sortType=='person-compact' && formGroupId=='imp') { // hack
-					$row.insertAdjacentHTML('beforeend',`<th class='group long' rowspan=${formGroupMembers.length}><span>${formGroupName}</span>`)
-				} else {
-					$row.insertAdjacentHTML('beforeend',`<th class=group rowspan=${formGroupMembers.length}><span>${formGroupName}</span>`)
-				}
+				let cls='group'
+				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'"
+				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
 			}
 			firstInGroup=false
-			let [formText,formNote]=verbForms[formId]
-			if (compactRow) {
-				[formText,formNote]=compactableVerbForms[formPreNumber]
-			}
+			const [formText,formNote]=(compactRow?compactableVerbForms:verbForms)[formId]
 			const $formCell=document.createElement('th')
 			if (!formGroupId) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
@@ -479,11 +474,10 @@ function createTable($container,sortType) {
 				return [true,longForm.slice(0,i),longForm.slice(i,i+d),longForm.slice(i+d)]
 			}
 			for (const [,forms] of verbs) {
-				const [form,formNote]=readPair(forms[formId])
 				const $cell=$row.insertCell()
-				if (!forms[formId]) continue
 				if (compactRow) {
-					const [form2]=readPair(forms[formPreNumber+'p'])
+					const [form]=readPair(forms[formId+'s'])
+					const [form2]=readPair(forms[formId+'p'])
 					const [isCombined,preMarked,inMarked,postMarked]=combineForms(form,form2)
 					if (isCombined) {
 						$cell.innerHTML=getFormHtml(`${preMarked}<em>${inMarked}</em>${postMarked}`)
@@ -491,6 +485,7 @@ function createTable($container,sortType) {
 						$cell.innerHTML=getFormHtml(form)+" / "+getFormHtml(form2)
 					}
 				} else {
+					const [form,formNote]=readPair(forms[formId])
 					$cell.innerHTML=getFormHtml(form)
 					if (formNote) $cell.setAttribute('title',formNote)
 				}
