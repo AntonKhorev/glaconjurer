@@ -63,13 +63,15 @@ th.very-long {
 .stem + .end {
 	border: none;
 }
-.stem strong {
+strong {
 	font-weight: normal;
+	color: #608;
+}
+strong.insert {
 	color: #A00;
 }
 .end strong {
 	font-weight: bold;
-	color: #A00;
 }
 .stem strong:empty, .end strong:empty {
 	display: inline-block;
@@ -203,8 +205,7 @@ const v2repl=(pattern,replacement)=>{
 const v2replaceLastStemVowel=(form,oldVowel,newVowel)=>{
 	if (oldVowel==newVowel) return form
 	let replacement='['+newVowel+']'
-	if (newVowel=='i'+oldVowel) replacement='[i]'+oldVowel
-	if (newVowel==oldVowel+'y') replacement=oldVowel+'[y]'
+	if (oldVowel.length!=newVowel.length) replacement='{'+newVowel+'}'
 	const [oldStem,end]=form.split(/\|(.*)/)
 	const i=oldStem.lastIndexOf(oldVowel)
 	const newStem=oldStem.slice(0,i)+replacement+oldStem.slice(i+oldVowel.length)
@@ -252,10 +253,18 @@ const v2yendo=(dict)=>{
 const v2pret=(strongStem,dict)=>{ // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
 	const result={...dict}
 	const ends='e,iste,o,imos,isteis,ieron'.split(',')
-	const markEnds='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
+	const markEnds      ='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
+	const markInsertEnds='{e},{i}ste,{o},{i}mos,{i}steis,{ie}ron'.split(',')
 	for (const [i,formId] of v2formIds('pret**').entries()) {
 		const [,end]=result[formId].split('|')
-		const strongEnd=(end==ends[i]) ? end : markEnds[i]
+		let strongEnd=end
+		if (end!=ends[i]) {
+			if (end.length==ends[i].length) {
+				strongEnd=markEnds[i]
+			} else {
+				strongEnd=markInsertEnds[i]
+			}
+		}
 		result[formId]=strongStem+'|'+strongEnd
 	}
 	return result
@@ -267,8 +276,8 @@ const v2pretYoHandler=(dict,replacementFn,note)=>{
 	}
 	return result
 }
-const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'[qu]|'),'у -car-глаголов -ce меняется на -que')
-const v2pretYoGar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/g\|/,'g[u]|'),'у -gar-глаголов -ge меняется на -gue') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.gar
+const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'{qu}|'),'у -car-глаголов -ce меняется на -que')
+const v2pretYoGar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/g\|/,'g{u}|'),'у -gar-глаголов -ge меняется на -gue') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.gar
 const v2pretYoZar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.zar
 const v2imp=(stem,dict)=>{
 	const result={...dict}
@@ -280,7 +289,7 @@ const v2imp=(stem,dict)=>{
 const v2fut=(stem,dict)=>{
 	const result={...dict}
 	for (const formId of v2formIds('fut**')) {
-		result[formId]=result[formId].replace(/^.*\|.*\|/,`${stem}|[]r|`)
+		result[formId]=result[formId].replace(/^.*\|.*\|/,`${stem}|{}r|`)
 	}
 	return result
 }
@@ -290,97 +299,101 @@ const verbs=[
 	['comer',v2('comer'),'есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']],
 	['vivir',v2('vivir'),'жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']],
 	// helper
-	['estar',{...v2pret('est[uv]',v2('estar')),
-		...v2repl('pres*s','est|o[y],est|[á]s,est|[á]'),
+	['estar',{...v2pret('est{uv}',v2('estar')),
+		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
 		pres3p:'est|[á]n',
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 	},['быть','быть временно, быть в указанном месте']],
-	['ser',{...v2yo('s[e]',v2('ser')),
-		...v2repl('pres**','s|o[y],[er]|es,[es]|[],s|[o]mos,s|[o]is,s|[o]n'),
-		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
-		...v2repl('imp**','[er]|[]|a,[er]|[]|as,[er]|[]|a,[ér]|[]|amos,[er]|[]|ais,[er]|[]|an'),
+	['ser',{...v2yo('s{e}',v2('ser')),
+		...v2repl('pres**','s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n'),
+		...v2repl('pret**','{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron'),
+		...v2repl('imp**','{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an'),
 		im2s:'s|[é]',
 	},['быть','быть постоянно, быть в указанный момент времени']],
-	['ir',{...v2yo('[vay]',v2('ir')),
+	['ir',{...v2yo('{vay}',v2('ir')),
 		ger:'|[y]endo',
-		...v2repl('pres**','[v]|o[y],[v]|[a]s,[v]|[a],[v]|[a]mos,[v]|[ai]s,[v]|[a]n'),
-		...v2repl('pret**','[fu]|[i],[fu]|iste,[fu]|[e],[fu]|imos,[fu]|isteis,[fu]|[]eron'),
-		...v2repl('imp**','[ib]|[]|a,[ib]|[]|as,[ib]|[]|a,[íb]|[]|amos,[ib]|[]|ais,[ib]|[]|an'),
-		im2s:'[v]|e',
+		...v2repl('pres**','{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n'),
+		...v2repl('pret**','{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron'),
+		...v2repl('imp**','{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an'),
+		im2s:'{v}|e',
 	},'идти'],
 	['haber',{...v2fut('hab',v2pret('h[u]b',v2yo('ha[y]',v2('haber')))),
-		...v2repl('pres**','h[]|[e],h[]|[a]s,h[]|[a],h[]|emos,hab|éis,h[]|[a]n'),
-		im2s:'h[]|e',
+		...v2repl('pres**','h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n'),
+		im2s:'h{}|e',
 	},['иметь','вспомогательный для сложных времён']],
 	// TODO orthographic
 	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
-	['pensar',v2vowel('e','ie',v2('pensar')),'думать','e→ie'], // {{es.v.conj.-ie-ue-.ar|pens|piens}}
-	['sentir',v2vowelIr('e','ie','i',v2('sentir')),'чувствовать','e→ie,i'], // {{es.v.conj.-ie-i-ue-u-.ir|sent|sient|sint}}
-	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→i'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
-	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→ue'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
-	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→ue,u'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
+	['pensar',v2vowel('e','ie',v2('pensar')),'думать','e→<strong class=insert>ie</string>'], // {{es.v.conj.-ie-ue-.ar|pens|piens}}
+	['sentir',v2vowelIr('e','ie','i',v2('sentir')),'чувствовать','e→<strong class=insert>ie</string>,<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|sent|sient|sint}}
+	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
+	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→<strong class=insert>ue</string>'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
+	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→<strong class=insert>ue</string>,<strong>u</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
 	// rest
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
-		pres1s:'d|o[y]',
+		pres1s:'d|o{y}',
 		pres2p:'d|[a]is',
 		pret1s:'d|[i]',
-		pret3s:'d|[io]',
+		pret3s:'d|{io}',
 		im3s:'d|[é]',
 	},'давать'],
 	['leer',v2yendo(v2('leer')),'читать'],
-	['ver',{...v2imp('v[e]',v2yo('v[e]',v2('ver'))),
-		par:'v|i[st]o',
+	['ver',{...v2imp('v{e}',v2yo('v{e}',v2('ver'))),
+		par:'v|i{st}o',
 		pres2p:'v|[e]is',
 		pret1s:'v|[i]',
 		pret3s:'v|i[o]',
 	},'видеть'],
-	['venir',{...v2fut('ven[d]',v2pret('v[i]n',v2yo('ven[g]',v2vowelIr('e','ie','i',v2('venir'))))),
-		im2s:'ven|[]',
+	['venir',{...v2fut('ven{d}',v2pret('v[i]n',v2yo('ven{g}',v2vowelIr('e','ie','i',v2('venir'))))),
+		im2s:'ven|{}',
 	},'приходить'], // {{es.v.conj.venir}}
-	['hacer',{...v2fut('ha[]',v2pret('h[i]c',v2yo('ha[g]',v2('hacer')))),
-		par:'h[e]c[h]|[]o',
+	['hacer',{...v2fut('ha{}',v2pret('h[i]c',v2yo('ha[g]',v2('hacer')))),
+		par:'h{ech}|{}o',
 		pret3s:'h[iz]|[o]',
-		im2s:'ha[z]|[]',
+		im2s:'ha[z]|{}',
 	},'делать'],
-	['poner',{...v2fut('pon[d]',v2pret('p[us]',v2yo('pon[g]',v2('poner')))),
-		par:'p[uest]|[]o',
-		im2s:'pon|[]',
+	['poner',{...v2fut('pon{d}',v2pret('p[us]',v2yo('pon{g}',v2('poner')))),
+		par:'p{uest}|{}o',
+		im2s:'pon|{}',
 	},'ставить'],
-	['tener',{...v2fut('ten[d]',v2pret('t[uv]',v2yo('ten[g]',v2vowel('e','ie',v2('tener'))))),
-		im2s:'ten|[]',
+	['tener',{...v2fut('ten{d}',v2pret('t[uv]',v2yo('ten{g}',v2vowel('e','ie',v2('tener'))))),
+		im2s:'ten|{}',
 	},'иметь'], // {{es.v.conj.tener}}
 	['saber',{...v2fut('sab',v2pret('s[up]',v2yo('s[ep]',v2('saber')))),
-		pres1s:'s[]|[é]',
+		pres1s:'s{}|[é]',
 	},['знать','знать факт/навык']],
-	['conocer',v2yo('cono[z]c',v2('conocer')),['знать','знать человека/место']],
-	['traer',{...v2pret('tra[j]',v2yo('tra[ig]',v2('traer'))),
-		pret3p:'traj|[]eron',
+	['conocer',v2yo('cono{z}c',v2('conocer')),['знать','знать человека/место']],
+	['traer',{...v2pret('tra{j}',v2yo('tra{ig}',v2('traer'))),
+		pret3p:'tra{j}|{}eron',
 	},'приносить'],
 	['coger',v2yojo(v2('coger')),'брать'],
 	['elegir',{...v2yojo(v2vowelIr('e','i','i',v2('elegir'))),
-		par:'ele[ct]|[]o',
+		par:'ele{ct}|{}o',
 	},'выбирать'], // {{es.v.conj.-ie-i-ue-u-.ir|ele|eli|eli|nexo=g|part=electo|part2=elegido}}
-	['seguir',v2yo('s[i]g[]',v2vowelIr('e','i','i',v2('seguir'))),'следовать'], // {{es.v.conj.seguir}}
+	['seguir',v2yo('s[i]g{}',v2vowelIr('e','i','i',v2('seguir'))),'следовать'], // {{es.v.conj.seguir}}
 	['poder',{...v2fut('pod',v2pret('p[u]d',v2vowel('o','ue',v2('poder')))),
 		ger:'p[u]d|iendo',
 	},'мочь'], // {{es.v.conj.er|pod|irregular=x|...}}
 	['empezar',v2pretYoZar(v2vowel('e','ie',v2('empezar'))),'начинать'], // {{es.v.conj.-ie-ue-.zar|empe|empie}}
 	['tocar',v2pretYoCar(v2('tocar')),'трогать'],
-	['oír',{...v2yendo(v2yo('o[ig]',v2vowel('o','oy',v2('oir')))),
+	['oír',{...v2yendo(v2yo('o{ig}',v2vowel('o','oy',v2('oir')))),
 		inf:'o|[í]r',
 		pres1p:'o|[í]mos',
 		im2p:'o|[í]d',
 	},'слышать'], // {{es.v.conj.oír|o}}
 	['querer',v2fut('quer',v2pret('quis',v2vowel('e','ie',v2('querer')))),'хотеть'], // {{es.v.conj.querer}}
 	['llegar',v2pretYoGar(v2('llegar')),'прибывать'], // {{es.v.conj.gar|lle}}
-	['salir',{...v2fut('sal[d]',v2yo('sal[g]',v2('salir'))),
-		im2s:'sal|[]',
+	['salir',{...v2fut('sal{d}',v2yo('sal{g}',v2('salir'))),
+		im2s:'sal|{}',
 	},'выходить'], // {{es.v.conj.salir}}
-	['decir',{...v2fut('d[i]',v2pret('d[ij]',v2yo('d[ig]',v2vowelIr('e','i','i',v2('decir'))))),
-		im2s:'d[i]|[]',
-		par:'d[i]c[h]|[]o',
+	['decir',{...v2fut('d[i]{}',v2pret('d[ij]',v2yo('d[ig]',v2vowelIr('e','i','i',v2('decir'))))),
+		im2s:'d[i]{}|{}',
+		par:'d{ich}|{}o',
 	},'сказать'], // {{es.v.conj.decir}}
 ]
+//for (let i=0;i<verbs.length;i+=2) {
+//	const [inf]=verbs[i]
+//	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
+//}
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
@@ -454,7 +467,7 @@ function createTable($container,sortType) {
 			}
 			const getFormHtml=(form)=>{
 				const [stem,end,subend]=form.split('|')
-				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<strong>$1</strong>')
+				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<strong>$1</strong>').replace(/\{(.*?)\}/g,'<strong class=insert>$1</strong>')
 				const makeSpan=(cls,s)=>s?`<span class=${cls}>${mark(s)}</span>`:''
 				let t=makeSpan('stem',stem)+makeSpan('end',end)
 				if (subend!==undefined) t+=makeSpan('subend',subend)
