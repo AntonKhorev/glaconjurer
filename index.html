@@ -417,7 +417,7 @@ const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
 function createTable($container,sortType) {
 	function cellClickHandler() {
-		if (this.dataset.formIds.length>1) {
+		if (this.dataset.formId2) {
 			this.classList.add('combination')
 		}
 	}
@@ -523,12 +523,13 @@ function createTable($container,sortType) {
 					} else {
 						$cell.innerHTML=getFormHtml(form)+" / "+getFormHtml(form2)
 					}
-					$cell.dataset.formIds=[formId+'s',formId+'p']
+					$cell.dataset.formId=formId+'s'
+					$cell.dataset.formId2=formId+'p'
 				} else {
 					const [form,formNote]=readPair(forms[formId])
 					$cell.innerHTML=getFormHtml(form)
 					if (formNote) $cell.setAttribute('title',formNote)
-					$cell.dataset.formIds=[formId]
+					$cell.dataset.formId=formId
 				}
 				$cell.dataset.verb=verb
 				$cell.addEventListener('click',cellClickHandler)
