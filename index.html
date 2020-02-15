@@ -82,6 +82,17 @@ th em, .end em, .subend em {
 	font-style: normal;
 	color: green;
 }
+.combination em {
+	animation: 1s 2 alternate blink;
+}
+@keyframes blink {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0.1;
+	}
+}
 </style>
 </head>
 <body>
@@ -405,6 +416,14 @@ const verbs=[
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
 function createTable($container,sortType) {
+	function cellClickHandler() {
+		if (this.dataset.formIds.length>1) {
+			this.classList.add('combination')
+		}
+	}
+	function cellAnimationEndHandler() {
+		this.classList.remove('combination')
+	}
 	while ($container.firstChild) $container.removeChild($container.firstChild)
 	const $table=document.createElement('table')
 	$table.setAttribute('lang','es')
@@ -493,7 +512,7 @@ function createTable($container,sortType) {
 				if (i!=j+1) return [false]
 				return [true,longForm.slice(0,i),longForm.slice(i,i+d),longForm.slice(i+d)]
 			}
-			for (const [,forms] of verbs) {
+			for (const [verb,forms] of verbs) {
 				const $cell=$row.insertCell()
 				if (compactRow) {
 					const [form]=readPair(forms[formId+'s'])
@@ -504,11 +523,16 @@ function createTable($container,sortType) {
 					} else {
 						$cell.innerHTML=getFormHtml(form)+" / "+getFormHtml(form2)
 					}
+					$cell.dataset.formIds=[formId+'s',formId+'p']
 				} else {
 					const [form,formNote]=readPair(forms[formId])
 					$cell.innerHTML=getFormHtml(form)
 					if (formNote) $cell.setAttribute('title',formNote)
+					$cell.dataset.formIds=[formId]
 				}
+				$cell.dataset.verb=verb
+				$cell.addEventListener('click',cellClickHandler)
+				$cell.addEventListener('animationend',cellAnimationEndHandler)
 			}
 		}
 	}
