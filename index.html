@@ -5,6 +5,8 @@
 <style>
 body {
 	font-family: sans-serif;
+	background: white;
+	color: black;
 }
 table {
 	border-collapse: collapse;
@@ -14,55 +16,78 @@ tbody {
 }
 td, th {
 	text-align: left;
-	padding: .2em;
 	font-weight: normal;
 }
+th {
+	padding: .2rem;
+}
 td {
+	padding: 0 .2rem;
 	white-space: nowrap;
 }
-tr.number-s td, tr.number-s th {
+thead th {
+	position: sticky;
+	top: 0;
+	background: white;
+}
+tbody th {
+	position: sticky;
+	background: white;
+	left: 1.4rem;
+}
+tbody th.group {
+	left: 0;
+}
+tbody th[colspan] {
+	left: 0;
+}
+tr.number-s td span, tr.number-s th {
 	padding-bottom: 0;
 }
-tr.number-p:not(:first-child) td, tr.number-p:not(:first-child) th {
+tr.number-p:not(:first-child) td span, tr.number-p:not(:first-child) th {
 	padding-top: 0;
 }
 th.group {
-	min-width: 1em;
+	min-width: 1rem;
+	width: 5em;
 }
 th.group span {
 	writing-mode: vertical-rl;
 	transform: rotate(180deg);
 }
 td[title], th[title] {
-	background: linear-gradient(225deg, #484 .3em, transparent .3em),
-		linear-gradient(182deg, #484 .05em, transparent .06em),
-		linear-gradient(268deg, #484 .05em, transparent .06em);
+	background:
+		linear-gradient(225deg, #484 .3rem, transparent .3rem),
+		linear-gradient(182deg, #484 .05rem, transparent .06rem),
+		linear-gradient(268deg, #484 .05rem, transparent .06rem), white;
 }
 th.long {
-	letter-spacing: -0.07em;
+	letter-spacing: -0.07rem;
 }
 th.very-long {
-	letter-spacing: -0.07em;
-	font-size: 0.8em;
+	letter-spacing: -0.07rem;
+	font-size: 0.8rem;
 }
 .stem {
+	display: inline-block;
 	border-right: solid 1px #060;
-	padding: .22em .05em .22em 0;
+	padding: .2rem .05rem .2rem 0;
+}
+.stem + .end {
+	border: none;
 }
 .end {
 	font-weight: bold;
 	border-left: solid 1px #060;
-	padding: .22em 0 .22em .05em;
+	padding: .2rem 0 .2rem .05rem;
 }
 .subend {
 	color: #333;
 	font-weight: bold;
 	border-left: solid 1px #DDD;
-	padding: .22em 0 .22em .05em;
+	padding: .2rem 0 .2rem .05rem;
 }
-.stem + .end {
-	border: none;
-}
+
 strong {
 	font-weight: normal;
 	color: #608;
