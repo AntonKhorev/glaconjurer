@@ -579,7 +579,7 @@ function createGame() {
 		for (const formId in forms) {
 			if (formId=='inf') continue
 			const [form]=readPair(forms[formId])
-			gameVerbs.push([verb,formId,form.replace(/[|#[\]]/g,'')])
+			gameVerbs.push([verb,formId,form.replace(/[|{}[\]]/g,'')])
 		}
 	}
 	const shuffle=(a)=>{
