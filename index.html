@@ -367,6 +367,8 @@ const verbs=[
 	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→<strong class=insert>ue</string>'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
 	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→<strong class=insert>ue</string>,<strong>u</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
 	['jugar',v2pretYoGar(v2vowel('u','ue',v2('jugar'))),'играть','u→<strong class=insert>ue</string>'], // {{es.v.conj.-ie-ue-.gar|ju|jue}}
+	// consonant change
+	['conocer',v2yo('cono{zc}',v2('conocer')),['знать','знать человека/место'],'c→<strong class=insert>zc</string>'], // {{es.v.conj.zc.cer|cono}}
 	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 	['escribir',{...v2('escribir'),
 		par:'escri[t]|{}o',
@@ -404,7 +406,6 @@ const verbs=[
 	['saber',{...v2fut('sab',v2pret('s[up]',v2yo('s[ep]',v2('saber')))),
 		pres1s:'s{}|[é]',
 	},['знать','знать факт/навык']],
-	['conocer',v2yo('cono{z}c',v2('conocer')),['знать','знать человека/место']],
 	['traer',{...v2pret('tra{j}',v2yo('tra{ig}',v2('traer'))),
 		pret3p:'tra{j}|{}eron',
 	},'приносить'],
