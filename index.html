@@ -32,6 +32,10 @@ body {
 #options .dialog.open {
 	display: block;
 }
+#options .block {
+	max-width: 30em;
+	margin: 2em auto;
+}
 .conjtable table {
 	border-collapse: collapse;
 }
@@ -711,18 +715,29 @@ function createOptions($featureContainer,$optionsContainer) {
 	} else {
 		createConjugationTable($featureContainer,sort)
 	}
+	const $featureBlock=document.createElement('div')
+	$featureBlock.classList.add('block')
+	$featureBlock.innerHTML="<div><label for=options-feature>Режим:</label></div><div><select id=options-feature>"+[
+		['conjtable','Таблица спряжений'],
+		['conjgame','Игра'],
+	].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select></div>"
+	$dialog.appendChild($featureBlock)
+	const $sortBlock=document.createElement('div')
+	$sortBlock.classList.add('block')
+	$sortBlock.innerHTML="<div>Отображение спряжений по лицам и числам:</div>"
+	$dialog.appendChild($sortBlock)
 	const $groupingControls=document.createElement('div')
 	$groupingControls.innerHTML=[
 		['number','Обычный порядок'],
 		['person','Группировка по лицам'],
 		['person-compact','...с уплотнением'],
-	].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
+	].map(([value,text])=>`<div><label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label></div>`).join('')
 	$groupingControls.addEventListener('change',(ev)=>{
 		localStorage.setItem('glaconjurer-sort',ev.target.value)
 		clearFeatureContainer()
 		createConjugationTable($featureContainer,ev.target.value)
 	})
-	$dialog.appendChild($groupingControls)
+	$sortBlock.appendChild($groupingControls)
 	const $openerButton=document.createElement('button')
 	$openerButton.innerHTML='Настройки'
 	$openerContainer.appendChild($openerButton)
