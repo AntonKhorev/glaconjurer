@@ -708,19 +708,34 @@ function createOptions($featureContainer,$optionsContainer) {
 	const $closerContainer=document.createElement('div')
 	$closerContainer.classList.add('closer')
 	$dialog.appendChild($closerContainer)
-	const sort=localStorage.getItem('glaconjurer-sort') || 'number'
-	const feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
-	if (feature=='conjgame') {
-		createConjugationGame($featureContainer)
-	} else {
-		createConjugationTable($featureContainer,sort)
+	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
+	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
+	const createFeature=()=>{
+		if (feature=='conjgame') {
+			createConjugationGame($featureContainer)
+		} else {
+			createConjugationTable($featureContainer,sort)
+		}
+	}
+	createFeature()
+	const createControl=(html,handler)=>{
+		const $control=document.createElement('div')
+		$control.innerHTML=html
+		$control.addEventListener('change',handler)
+		return $control
 	}
 	const $featureBlock=document.createElement('div')
 	$featureBlock.classList.add('block')
-	$featureBlock.innerHTML="<div><label for=options-feature>Режим:</label></div><div><select id=options-feature>"+[
+	$featureBlock.innerHTML="<div><label for=options-feature>Режим:</label></div>"
+	$featureBlock.appendChild(createControl("<select id=options-feature>"+[
 		['conjtable','Таблица спряжений'],
 		['conjgame','Игра'],
-	].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select></div>"
+	].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select>",(ev)=>{
+		feature=ev.target.value
+		localStorage.setItem('glaconjurer-feature',feature)
+		clearFeatureContainer()
+		createFeature()
+	}))
 	$dialog.appendChild($featureBlock)
 	const $sortBlock=document.createElement('div')
 	$sortBlock.classList.add('block')
@@ -733,9 +748,12 @@ function createOptions($featureContainer,$optionsContainer) {
 		['person-compact','...с уплотнением'],
 	].map(([value,text])=>`<div><label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label></div>`).join('')
 	$groupingControls.addEventListener('change',(ev)=>{
-		localStorage.setItem('glaconjurer-sort',ev.target.value)
-		clearFeatureContainer()
-		createConjugationTable($featureContainer,ev.target.value)
+		sort=ev.target.value
+		localStorage.setItem('glaconjurer-sort',sort)
+		if (feature=='conjtable') {
+			clearFeatureContainer()
+			createConjugationTable($featureContainer,sort)
+		}
 	})
 	$sortBlock.appendChild($groupingControls)
 	const $openerButton=document.createElement('button')
