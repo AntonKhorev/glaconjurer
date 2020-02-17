@@ -718,46 +718,53 @@ function createOptions($featureContainer,$optionsContainer) {
 		}
 	}
 	createFeature()
-	const createControl=(html,handler)=>{
+	const createBlock=(title,labelFor)=>{
+		const $block=document.createElement('div')
+		$block.classList.add('block')
+		if (labelFor) {
+			$block.innerHTML=`<div><label for=${labelFor}>${title}:</label></div>`
+		} else {
+			$block.innerHTML=`<div>${title}:</div>`
+		}
+		$dialog.appendChild($block)
+		return $block
+	}
+	const createControl=($block,html,handler)=>{
 		const $control=document.createElement('div')
 		$control.innerHTML=html
 		$control.addEventListener('change',handler)
-		return $control
+		$block.appendChild($control)
 	}
-	const $featureBlock=document.createElement('div')
-	$featureBlock.classList.add('block')
-	$featureBlock.innerHTML="<div><label for=options-feature>Режим:</label></div>"
-	$featureBlock.appendChild(createControl("<select id=options-feature>"+[
-		['conjtable','Таблица спряжений'],
-		['conjgame','Игра'],
-	].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select>",(ev)=>{
-		feature=ev.target.value
-		localStorage.setItem('glaconjurer-feature',feature)
-		clearFeatureContainer()
-		createFeature()
-	}))
-	$dialog.appendChild($featureBlock)
-	const $sortBlock=document.createElement('div')
-	$sortBlock.classList.add('block')
-	$sortBlock.innerHTML="<div>Отображение спряжений по лицам и числам:</div>"
-	$dialog.appendChild($sortBlock)
-	const sortHandler=(ev)=>{
-		sort=ev.target.value
-		localStorage.setItem('glaconjurer-sort',sort)
-		if (feature=='conjtable') {
+	{
+		const $block=createBlock("Режим",'options-feature')
+		createControl($block,"<select id=options-feature>"+[
+			['conjtable','Таблица спряжений'],
+			['conjgame','Игра'],
+		].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select>",(ev)=>{
+			feature=ev.target.value
+			localStorage.setItem('glaconjurer-feature',feature)
 			clearFeatureContainer()
-			createConjugationTable($featureContainer,sort)
+			createFeature()
+		})
+	}{
+		const $block=createBlock("Отображение спряжений по лицам и числам")
+		const handler=(ev)=>{
+			sort=ev.target.value
+			localStorage.setItem('glaconjurer-sort',sort)
+			if (feature=='conjtable') {
+				clearFeatureContainer()
+				createConjugationTable($featureContainer,sort)
+			}
 		}
-	}
-	for (const [value,text] of [
-		['number','Обычный порядок'],
-		['person','Группировка по лицам'],
-		['person-compact','...с уплотнением'],
-	]) {
-		$sortBlock.appendChild(createControl(
-			`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
-			sortHandler
-		))
+		for (const [value,text] of [
+			['number','Обычный порядок'],
+			['person','Группировка по лицам'],
+			['person-compact','...с уплотнением'],
+		]) {
+			createControl($block,
+				`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
+			handler)
+		}
 	}
 	const $openerButton=document.createElement('button')
 	$openerButton.innerHTML='Настройки'
