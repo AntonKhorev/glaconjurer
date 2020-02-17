@@ -10,108 +10,136 @@ body {
 	background: white;
 	color: black;
 }
-table {
+#options .opener {
+	position: fixed;
+	top: 0;
+	left: 0;
+	/*
+	width: 10em;
+	height: 2em;
+	*/
+	background: white;
+}
+#options .dialog {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: white;
+}
+#options .dialog.open {
+	display: block;
+}
+.conjtable table {
 	border-collapse: collapse;
 }
-tbody {
+.conjtable tbody {
 	border-top: solid 1px gray;
 }
-td, th {
+.conjtable td,
+.conjtable th {
 	text-align: left;
 	font-weight: normal;
 }
-th {
+.conjtable th {
 	padding: .2rem;
 }
-td {
+.conjtable td {
 	padding: 0 .2rem;
 	white-space: nowrap;
 }
-thead th {
+.conjtable thead th {
 	position: sticky;
 	top: 0;
 	background: white;
 }
-tbody th {
+.conjtable tbody th {
 	position: sticky;
 	background: white;
 	left: 1.4rem;
 }
-tbody th.group {
+.conjtable tbody th.group {
 	left: 0;
 }
-tbody th[colspan] {
+.conjtable tbody th[colspan] {
 	left: 0;
 }
-tr.number-s td span, tr.number-s th {
+.conjtable tr.number-s td span,
+.conjtable tr.number-s th {
 	padding-bottom: 0;
 }
-tr.number-p:not(:first-child) td span, tr.number-p:not(:first-child) th {
+.conjtable tr.number-p:not(:first-child) td span,
+.conjtable tr.number-p:not(:first-child) th {
 	padding-top: 0;
 }
-th.group {
+.conjtable th.group {
 	width: 1rem;
 }
-th.group span {
+.conjtable th.group span {
 	width: 1rem;
 	writing-mode: vertical-rl;
 	transform: rotate(180deg);
 }
-td[title], th[title] {
+.conjtable td[title],
+.conjtable th[title] {
 	background:
 		linear-gradient(225deg, #484 .3rem, transparent .3rem),
 		linear-gradient(182deg, #484 .05rem, transparent .06rem),
 		linear-gradient(268deg, #484 .05rem, transparent .06rem), white;
 }
-th.long {
+.conjtable th.long {
 	letter-spacing: -0.07rem;
 }
-th.very-long {
+.conjtable th.very-long {
 	letter-spacing: -0.07rem;
 	font-size: 0.8rem;
 }
-.stem {
+.conjtable .stem {
 	display: inline-block;
 	border-right: solid 1px #060;
 	padding: .2rem .05rem .2rem 0;
 }
-.stem + .end {
+.conjtable .stem + .end {
 	border: none;
 }
-.end {
+.conjtable .end {
 	display: inline-block;
 	font-weight: bold;
 	border-left: solid 1px #060;
 	padding: .2rem 0 .2rem .05rem;
 }
-.subend {
+.conjtable .subend {
 	display: inline-block;
 	color: #333;
 	font-weight: bold;
 	border-left: solid 1px #DDD;
 	padding: .2rem 0 .2rem .05rem;
 }
-
-strong {
+.conjtable strong {
 	font-weight: normal;
 	color: #608;
 }
-strong.insert {
+.conjtable strong.insert {
 	color: #A00;
 }
-.end strong {
+.conjtable .end strong {
 	font-weight: bold;
 }
-.stem strong:empty, .end strong:empty {
+.conjtable .stem strong:empty,
+.conjtable .end strong:empty {
 	display: inline-block;
 	width: .5ex;
 	border-bottom: solid 1px #A00;
 }
-th em, .end em, .subend em {
+.conjtable th em,
+.conjtable .end em,
+.conjtable .subend em {
 	font-style: normal;
 	color: green;
 }
-.combination em {
+.conjtable .combination em {
 	animation: 1s 2 alternate blink;
 }
 @keyframes blink {
@@ -449,7 +477,7 @@ const verbs=[
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
-function createTable($container,sortType) {
+function createConjugationTable($container,sortType) {
 	function cellClickHandler() {
 		if (this.dataset.formId2) {
 			this.classList.add('combination')
@@ -458,7 +486,7 @@ function createTable($container,sortType) {
 	function cellAnimationEndHandler() {
 		this.classList.remove('combination')
 	}
-	while ($container.firstChild) $container.removeChild($container.firstChild)
+	$container.classList.add('conjtable')
 	const $table=document.createElement('table')
 	$table.setAttribute('lang','es')
 	const $thead=document.createElement('thead')
@@ -600,39 +628,7 @@ function createTable($container,sortType) {
 	$container.appendChild($table)
 }
 
-function createTableAndOptions() {
-	const sort=localStorage.getItem('glaconjurer-sort') || 'number';
-	const $body=document.getElementsByTagName('body')[0]
-	const $tableContainer=document.createElement('div')
-	createTable($tableContainer,sort)
-	$body.appendChild($tableContainer)
-	const $optionsContainer=document.createElement('details')
-	$optionsContainer.innerHTML="<summary>Настройки</summary>"
-	const $groupingControls=document.createElement('div')
-	$groupingControls.innerHTML=[
-		['number','Обычный порядок'],
-		['person','Группировка по лицам'],
-		['person-compact','...с уплотнением'],
-	].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
-	$groupingControls.addEventListener('change',(ev)=>{
-		localStorage.setItem('glaconjurer-sort',ev.target.value)
-		createTable($tableContainer,ev.target.value)
-	})
-	$optionsContainer.appendChild($groupingControls)
-	const $gameControls=document.createElement('div')
-	const $gameButton=document.createElement('button')
-	$gameButton.innerHTML="Играть"
-	$gameButton.addEventListener('click',()=>{
-		$body.removeChild($tableContainer)
-		$body.removeChild($optionsContainer)
-		createGame()
-	})
-	$gameControls.appendChild($gameButton)
-	$optionsContainer.appendChild($gameControls)
-	$body.appendChild($optionsContainer)
-}
-
-function createGame() {
+function createConjugationGame($container) {
 	const gameVerbs=[]
 	for (const [verb,forms] of verbs) {
 		for (const formId in forms) {
@@ -651,20 +647,9 @@ function createGame() {
 	}
 	shuffle(gameVerbs)
 	let iCurrentGameVerb=0
-	const $body=document.getElementsByTagName('body')[0]
-	const $gameContainer=document.createElement('div')
+	$container.classList.add('conjgame')
 	const $table=document.createElement('table')
-	$gameContainer.appendChild($table)
-	const $buttonControls=document.createElement('div')
-	const $checkButton=document.createElement('button')
-	$checkButton.innerHTML='Завершить'
-	$checkButton.addEventListener('click',()=>{
-		$body.removeChild($gameContainer)
-		createTableAndOptions()
-	})
-	$buttonControls.appendChild($checkButton)
-	$gameContainer.appendChild($buttonControls)
-	$body.appendChild($gameContainer)
+	$container.appendChild($table)
 	const createNextQuestion=()=>{
 		if (iCurrentGameVerb>=gameVerbs.length) return
 		const [verb,formId,form]=gameVerbs[iCurrentGameVerb]
@@ -708,7 +693,73 @@ function createGame() {
 	createNextQuestion()
 }
 
-createTableAndOptions()
+function createOptions($featureContainer,$optionsContainer) {
+	const clearFeatureContainer=()=>{
+		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
+		$featureContainer.className=''
+	}
+	const $openerContainer=document.createElement('div')
+	$openerContainer.classList.add('opener')
+	$optionsContainer.appendChild($openerContainer)
+	const $dialog=document.createElement('div')
+	$dialog.classList.add('dialog')
+	$optionsContainer.appendChild($dialog)
+	const $closerContainer=document.createElement('div')
+	$closerContainer.classList.add('closer')
+	$dialog.appendChild($closerContainer)
+	const sort=localStorage.getItem('glaconjurer-sort') || 'number'
+	const feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
+	if (feature=='conjgame') {
+		createConjugationGame($featureContainer)
+	} else {
+		createConjugationTable($featureContainer,sort)
+	}
+	const $groupingControls=document.createElement('div')
+	$groupingControls.innerHTML=[
+		['number','Обычный порядок'],
+		['person','Группировка по лицам'],
+		['person-compact','...с уплотнением'],
+	].map(([id,text])=>`<label><input type=radio name=sort value=${id+(sort==id?' checked':'')}> ${text}</label>`).join('')
+	$groupingControls.addEventListener('change',(ev)=>{
+		localStorage.setItem('glaconjurer-sort',ev.target.value)
+		clearFeatureContainer()
+		createConjugationTable($featureContainer,ev.target.value)
+	})
+	$dialog.appendChild($groupingControls)
+	const $openerButton=document.createElement('button')
+	$openerButton.innerHTML='Настройки'
+	$openerContainer.appendChild($openerButton)
+	$openerButton.addEventListener('click',()=>{
+		$dialog.classList.add('open')
+	})
+	const $closerButton=document.createElement('button')
+	$closerButton.innerHTML='Назад'
+	$closerContainer.appendChild($closerButton)
+	$closerButton.addEventListener('click',()=>{
+		$dialog.classList.remove('open')
+	})
+	/*
+	const $gameControls=document.createElement('div')
+	const $gameButton=document.createElement('button')
+	$gameButton.innerHTML="Играть"
+	$gameButton.addEventListener('click',()=>{
+		$body.removeChild($tableContainer)
+		$body.removeChild($optionsContainer)
+		createGame()
+	})
+	$gameControls.appendChild($gameButton)
+	$optionsContainer.appendChild($gameControls)
+	*/
+}
+
+const $body=document.getElementsByTagName('body')[0]
+const $featureContainer=document.createElement('div')
+$featureContainer.id='feature'
+$body.appendChild($featureContainer)
+const $optionsContainer=document.createElement('div')
+$optionsContainer.id='options'
+$body.appendChild($optionsContainer)
+createOptions($featureContainer,$optionsContainer)
 
 </script>
 </body>
