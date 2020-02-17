@@ -741,21 +741,24 @@ function createOptions($featureContainer,$optionsContainer) {
 	$sortBlock.classList.add('block')
 	$sortBlock.innerHTML="<div>Отображение спряжений по лицам и числам:</div>"
 	$dialog.appendChild($sortBlock)
-	const $groupingControls=document.createElement('div')
-	$groupingControls.innerHTML=[
-		['number','Обычный порядок'],
-		['person','Группировка по лицам'],
-		['person-compact','...с уплотнением'],
-	].map(([value,text])=>`<div><label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label></div>`).join('')
-	$groupingControls.addEventListener('change',(ev)=>{
+	const sortHandler=(ev)=>{
 		sort=ev.target.value
 		localStorage.setItem('glaconjurer-sort',sort)
 		if (feature=='conjtable') {
 			clearFeatureContainer()
 			createConjugationTable($featureContainer,sort)
 		}
-	})
-	$sortBlock.appendChild($groupingControls)
+	}
+	for (const [value,text] of [
+		['number','Обычный порядок'],
+		['person','Группировка по лицам'],
+		['person-compact','...с уплотнением'],
+	]) {
+		$sortBlock.appendChild(createControl(
+			`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
+			sortHandler
+		))
+	}
 	const $openerButton=document.createElement('button')
 	$openerButton.innerHTML='Настройки'
 	$openerContainer.appendChild($openerButton)
@@ -768,18 +771,6 @@ function createOptions($featureContainer,$optionsContainer) {
 	$closerButton.addEventListener('click',()=>{
 		$dialog.classList.remove('open')
 	})
-	/*
-	const $gameControls=document.createElement('div')
-	const $gameButton=document.createElement('button')
-	$gameButton.innerHTML="Играть"
-	$gameButton.addEventListener('click',()=>{
-		$body.removeChild($tableContainer)
-		$body.removeChild($optionsContainer)
-		createGame()
-	})
-	$gameControls.appendChild($gameButton)
-	$optionsContainer.appendChild($gameControls)
-	*/
 }
 
 const $body=document.getElementsByTagName('body')[0]
