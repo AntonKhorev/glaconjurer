@@ -472,12 +472,13 @@ const verbsData=[
 	},'возвращаться'], // {{es.v.conj.-ie-ue-.er|volv|vuelv|part=vuelto}}
 	['pasar',v2('pasar'),'проходить'], // {{es.v.conj.ar|pas}}
 	['deber',v2('deber'),'быть должным'], // {{es.v.conj.er|deb}}
+	['parecer',v2yo('pare{zc}',v2('parecer')),'казаться'], // {{es.v.conj.zc.cer|pare}}
 ]
 //for (let i=0;i<verbs.length;i+=2) {
 //	const [inf]=verbs[i]
 //	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
 //}
-const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,saber,querer,llegar,pasar,deber'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
+const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,saber,querer,llegar,pasar,deber,poner,parecer'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
