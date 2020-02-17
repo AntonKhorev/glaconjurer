@@ -344,7 +344,7 @@ const v2pretYoHandler=(dict,replacementFn,note)=>{
 		result[formId]=[replacementFn(result[formId]),note]
 	}
 	return result
-}
+} // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.eer
 const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'{qu}|'),'у -car-глаголов -ce меняется на -que')
 const v2pretYoGar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/g\|/,'g{u}|'),'у -gar-глаголов -ge меняется на -gue') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.gar
 const v2pretYoZar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.zar
@@ -473,12 +473,17 @@ const verbsData=[
 	['pasar',v2('pasar'),'проходить'], // {{es.v.conj.ar|pas}}
 	['deber',v2('deber'),'быть должным'], // {{es.v.conj.er|deb}}
 	['parecer',v2yo('pare{zc}',v2('parecer')),'казаться'], // {{es.v.conj.zc.cer|pare}}
+	['quedar',v2('quedar'),'оставаться'], // {{es.v.conj.ar|qued}}
+	['creer',v2yendo(v2('creer')),'верить'], // {{es.v.conj.eer|cre}}
 ]
 //for (let i=0;i<verbs.length;i+=2) {
 //	const [inf]=verbs[i]
 //	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
-//}
-const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,saber,querer,llegar,pasar,deber,poner,parecer'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
+//} // for debugging
+const verbsByFrequency=(
+	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
+	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar'
+).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
