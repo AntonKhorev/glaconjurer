@@ -470,12 +470,13 @@ const verbsData=[
 	['volver',{...v2vowel('o','ue',v2('volver')),
 		par:'v{ue}l[t]|{}o',
 	},'возвращаться'], // {{es.v.conj.-ie-ue-.er|volv|vuelv|part=vuelto}}
+	['pasar',v2('pasar'),'проходить'], // {{es.v.conj.ar|pas}}
 ]
 //for (let i=0;i<verbs.length;i+=2) {
 //	const [inf]=verbs[i]
 //	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
 //}
-const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
+const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,saber,querer,llegar,pasar'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
@@ -484,7 +485,7 @@ function createConjugationTable($container,sortType,orderType) {
 	if (orderType=='frequency') { // hack
 		verbs=[]
 		for (const [i,verb] of verbsByFrequency.entries()) {
-			for (const [v,f,t] of verbsData) { // also clears title
+			for (const [v,f,t] of verbsData) {
 				if (v==verb) verbs.push([v,f,t,i+1])
 			}
 		}
