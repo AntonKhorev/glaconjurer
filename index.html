@@ -362,7 +362,7 @@ const v2fut=(stem,dict)=>{
 	}
 	return result
 }
-const verbs=[
+const verbsData=[
 	// regular
 	['hablar',v2('hablar'),'говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']],
 	['comer',v2('comer'),'есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']],
@@ -475,10 +475,20 @@ const verbs=[
 //	const [inf]=verbs[i]
 //	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
 //}
+const verbsByFrequency='ser,haber,estar,tener,hacer,poder,decir,ir'.split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
-function createConjugationTable($container,sortType) {
+function createConjugationTable($container,sortType,orderType) {
+	let verbs=verbsData
+	if (orderType=='frequency') { // hack
+		verbs=[]
+		for (const [i,verb] of verbsByFrequency.entries()) {
+			for (const [v,f,t] of verbsData) { // also clears title
+				if (v==verb) verbs.push([v,f,t,i+1])
+			}
+		}
+	}
 	function cellClickHandler() {
 		if (this.dataset.formId2) {
 			this.classList.add('combination')
@@ -630,6 +640,7 @@ function createConjugationTable($container,sortType) {
 }
 
 function createConjugationGame($container) {
+	let verbs=verbsData // hack
 	const gameVerbs=[]
 	for (const [verb,forms] of verbs) {
 		for (const formId in forms) {
@@ -695,10 +706,6 @@ function createConjugationGame($container) {
 }
 
 function createOptions($featureContainer,$optionsContainer) {
-	const clearFeatureContainer=()=>{
-		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
-		$featureContainer.className=''
-	}
 	const $openerContainer=document.createElement('div')
 	$openerContainer.classList.add('opener')
 	$optionsContainer.appendChild($openerContainer)
@@ -708,13 +715,16 @@ function createOptions($featureContainer,$optionsContainer) {
 	const $closerContainer=document.createElement('div')
 	$closerContainer.classList.add('closer')
 	$dialog.appendChild($closerContainer)
-	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
+	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
+	let order=localStorage.getItem('glaconjurer-order') || 'topic'
 	const createFeature=()=>{
+		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
+		$featureContainer.className=''
 		if (feature=='conjgame') {
 			createConjugationGame($featureContainer)
 		} else {
-			createConjugationTable($featureContainer,sort)
+			createConjugationTable($featureContainer,sort,order)
 		}
 	}
 	createFeature()
@@ -738,12 +748,11 @@ function createOptions($featureContainer,$optionsContainer) {
 	{
 		const $block=createBlock("Режим",'options-feature')
 		createControl($block,"<select id=options-feature>"+[
-			['conjtable','Таблица спряжений'],
-			['conjgame','Игра'],
+			['conjtable','таблица спряжений'],
+			['conjgame','игра'],
 		].map(([value,text])=>`<option value=${value+(value==feature?' selected':'')}>${text}</option>`).join('')+"</select>",(ev)=>{
 			feature=ev.target.value
 			localStorage.setItem('glaconjurer-feature',feature)
-			clearFeatureContainer()
 			createFeature()
 		})
 	}{
@@ -751,20 +760,28 @@ function createOptions($featureContainer,$optionsContainer) {
 		const handler=(ev)=>{
 			sort=ev.target.value
 			localStorage.setItem('glaconjurer-sort',sort)
-			if (feature=='conjtable') {
-				clearFeatureContainer()
-				createConjugationTable($featureContainer,sort)
-			}
+			if (feature=='conjtable') createFeature()
 		}
 		for (const [value,text] of [
-			['number','Обычный порядок'],
-			['person','Группировка по лицам'],
+			['number','обычный порядок'],
+			['person','группировка по лицам'],
 			['person-compact','...с уплотнением'],
-		]) {
-			createControl($block,
-				`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
-			handler)
+		]) createControl($block,
+			`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
+		handler)
+	}{
+		const $block=createBlock("Порядок и набор глаголов")
+		const handler=(ev)=>{
+			order=ev.target.value
+			localStorage.setItem('glaconjurer-order',order)
+			if (feature=='conjtable') createFeature()
 		}
+		for (const [value,text] of [
+			['topic','по видам спряжений глаголов'],
+			['frequency','по частоте употребления'],
+		]) createControl($block,
+			`<label><input type=radio name=order value=${value+(value==order?' checked':'')}> ${text}</label>`,
+		handler)
 	}
 	const $openerButton=document.createElement('button')
 	$openerButton.innerHTML='Настройки'
