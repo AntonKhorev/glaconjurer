@@ -652,12 +652,15 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 	$container.appendChild($table)
 }
 
-function createConjugationGame($container) {
+function createConjugationGame($container,formSet) {
 	let verbs=verbsData // hack
 	const gameVerbs=[]
 	for (const [verb,forms] of verbs) {
 		for (const formId in forms) {
 			if (formId=='inf') continue
+			if (formId in formSet && !formSet[formId]) continue
+			const [formGroupId,]=formId.split(/(\d)/)
+			if (formGroupId in formSet && !formSet[formGroupId]) continue
 			const [form]=readPair(forms[formId])
 			gameVerbs.push([verb,formId,form.replace(/[|{}[\]]/g,'')])
 		}
@@ -741,7 +744,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
 		$featureContainer.className=''
 		if (feature=='conjgame') {
-			createConjugationGame($featureContainer)
+			createConjugationGame($featureContainer,forms)
 		} else {
 			createConjugationTable($featureContainer,sort,forms,order)
 		}
@@ -793,7 +796,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		const handler=(ev)=>{
 			forms[ev.target.value]=ev.target.checked
 			localStorage.setItem('glaconjurer-form-'+ev.target.value,ev.target.checked?'1':'0')
-			if (feature=='conjtable') createFeature()
+			createFeature()
 		}
 		for (const value of formFilterIds) createControl($block,
 			`<label><input type=checkbox value=${value+(forms[value]?' checked':'')}> ${verbForms[value][0]}</label>`,
