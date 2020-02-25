@@ -155,25 +155,15 @@ body {
 </head>
 <body>
 <script>
-const verbFormOrder=[
-	['',['inf','ger','par']],
-	['pres'],
-	['pret'],
-	['imp'],
-	['fut'],
-	['im'],
-]
-const verbFormGroups={
+const verbForms={
+	inf: ['Infinitivo','инфинитив'],
+	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
 	pres: ['Presente','Presente'],
 	pret: ['Pretérito','Pretérito indefinido'],
 	imp: ['Imperfecto','Pretérito imperfecto'],
 	fut: ['Futuro','Futuro'],
 	im: ['Imperativo','Imperativo'],
-}
-const verbForms={
-	inf: ['Infinitivo','инфинитив'],
-	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
-	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
 	im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
 	im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
 	im1p: ['nosotros','nosotros, nosotras: давайте мы сделаем'],
@@ -487,6 +477,37 @@ const verbsByFrequency=(
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
+const getVerbFormOrder=(sortType)=>{
+	const a=[ // [formGroupId, [[isCompactable,formId], ...]], ...
+		['inf',[[0,'inf']]],
+		['ger',[[0,'ger']]],
+		['par',[[0,'par']]],
+	]
+	for (const formGroupId of ['pres','pret','imp','fut','im']) {
+		const formGroupRows=[]
+		if (sortType!='number') {
+			for (const p of [1,2,3]) {
+				if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
+					formGroupRows.push([1,formGroupId+p])
+					continue
+				}
+				for (const n of ['s','p']) {
+					if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+				}
+			}
+		} else {
+			for (const n of ['s','p']) {
+				for (const p of [1,2,3]) {
+					if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+				}
+			}
+		}
+		a.push([formGroupId,formGroupRows])
+	}
+	console.log(a)
+	return a
+}
+
 function createConjugationTable($container,sortType,orderType) {
 	let verbs=verbsData
 	if (orderType=='frequency') { // hack
@@ -521,40 +542,17 @@ function createConjugationTable($container,sortType,orderType) {
 			if (titleNote) $cell.setAttribute('title',titleNote)
 		}
 	}
-	for (const [formGroupId,formGroupMembers] of verbFormOrder) {
+	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType)) {
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
-		let formGroupRows
-		if (formGroupMembers) {
-			formGroupRows=formGroupMembers.map(formGroupId=>[false,formGroupId])
-		} else {
-			formGroupRows=[]
-			if (sortType!='number') {
-				for (const p of [1,2,3]) {
-					if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
-						formGroupRows.push([true,formGroupId+p])
-						continue
-					}
-					for (const n of ['s','p']) {
-						if (verbForms[formGroupId+p+n]) formGroupRows.push([false,formGroupId+p+n])
-					}
-				}
-			} else {
-				for (const n of ['s','p']) {
-					for (const p of [1,2,3]) {
-						if (verbForms[formGroupId+p+n]) formGroupRows.push([false,formGroupId+p+n])
-					}
-				}
-			}
-		}
 		let firstInGroup=true
 		for (const [compactRow,formId] of formGroupRows) {
 			const $row=$tbody.insertRow()
 			if (!compactRow && sortType!='number') {
 				$row.classList.add('number-'+formId.slice(-1))
 			}
-			if (firstInGroup && formGroupId) {
-				const [formGroupName]=verbFormGroups[formGroupId]
+			if (firstInGroup && formGroupRows.length>1) {
+				const [formGroupName]=verbForms[formGroupId]
 				let cls='group'
 				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'" // not in use
 				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
@@ -562,14 +560,14 @@ function createConjugationTable($container,sortType,orderType) {
 			firstInGroup=false
 			const [formText,formNote]=(compactRow?compactableVerbForms:verbForms)[formId]
 			const $formCell=document.createElement('th')
-			if (!formGroupId) $formCell.setAttribute('colspan',2)
+			if (formGroupRows.length<=1) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
 			const formRawText=formText.replace(/<[^>]*>/g,'')
-			if (formGroupId && formRawText.length>10) {
+			if (formGroupRows.length>1 && formRawText.length>10) {
 				$formCell.classList.add('very-long')
-			} else if (formGroupId && formRawText.length>5) {
+			} else if (formGroupRows.length>1 && formRawText.length>5) {
 				$formCell.classList.add('long')
 			}
 			const getFormHtml=(form)=>{
@@ -681,7 +679,7 @@ function createConjugationGame($container) {
 		const $formRow=$tbody.insertRow()
 		const [formGroupId,n]=formId.split(/(\d)/)
 		if (n) {
-			const [,formGroupTitle]=verbFormGroups[formGroupId]
+			const [,formGroupTitle]=verbForms[formGroupId]
 			const [formTitle]=verbForms[formId]
 			$formRow.insertAdjacentHTML('beforeend',`<th>${formGroupTitle},<th>${formTitle}`)
 		} else {
@@ -726,6 +724,12 @@ function createOptions($featureContainer,$optionsContainer) {
 	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
 	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let order=localStorage.getItem('glaconjurer-order') || 'topic'
+	/*
+	let forms={}
+	for (const formId of ['par']) {
+		forms[formId]=localStorage.getItem('glaconjurer-form-'+formId) || 1
+	}
+	*/
 	const createFeature=()=>{
 		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
 		$featureContainer.className=''
