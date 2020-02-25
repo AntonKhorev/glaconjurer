@@ -23,6 +23,7 @@ body {
 #options .dialog {
 	display: none;
 	position: fixed;
+	overflow: auto;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -724,12 +725,12 @@ function createOptions($featureContainer,$optionsContainer) {
 	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
 	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let order=localStorage.getItem('glaconjurer-order') || 'topic'
-	/*
 	let forms={}
-	for (const formId of ['par']) {
-		forms[formId]=localStorage.getItem('glaconjurer-form-'+formId) || 1
+	const formFilterIds=['par','ger','pres','pret','imp','fut','im']
+	for (const formId of formFilterIds) {
+		const v=localStorage.getItem('glaconjurer-form-'+formId)
+		forms[formId]=v!='0'
 	}
-	*/
 	const createFeature=()=>{
 		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
 		$featureContainer.className=''
@@ -780,6 +781,16 @@ function createOptions($featureContainer,$optionsContainer) {
 			['person-compact','...с уплотнением'],
 		]) createControl($block,
 			`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
+		handler)
+	}{
+		const $block=createBlock("Формы глаголов")
+		const handler=(ev)=>{
+			forms[ev.target.value]=ev.target.checked
+			localStorage.setItem('glaconjurer-form-'+ev.target.value,ev.target.checked?'1':'0')
+			// createFeature()
+		}
+		for (const value of formFilterIds) createControl($block,
+			`<label><input type=checkbox value=${value+(forms[value]?' checked':'')}> ${verbForms[value][0]}</label>`,
 		handler)
 	}{
 		const $block=createBlock("Порядок и набор глаголов")
