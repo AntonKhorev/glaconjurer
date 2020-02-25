@@ -479,13 +479,19 @@ const verbsByFrequency=(
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
-const getVerbFormOrder=(sortType)=>{
-	const a=[ // [formGroupId, [[isCompactable,formId], ...]], ...
-		['nonpers',[
-			[0,'inf'],[0,'ger'],[0,'par']
-		]]
-	]
+const getVerbFormOrder=(sortType,formSet)=>{
+	const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
+	{
+		formGroupId='nonpers'
+		const formGroupRows=[]
+		for (const formId of ['inf','ger','par']) {
+			if (formId in formSet && !formSet[formId]) continue
+			formGroupRows.push([0,formId])
+		}
+		a.push([formGroupId,formGroupRows])
+	}
 	for (const formGroupId of ['pres','pret','imp','fut','im']) {
+		if (formGroupId in formSet && !formSet[formGroupId]) continue
 		const formGroupRows=[]
 		if (sortType!='number') {
 			for (const p of [1,2,3]) {
@@ -509,7 +515,7 @@ const getVerbFormOrder=(sortType)=>{
 	return a
 }
 
-function createConjugationTable($container,sortType,orderType) {
+function createConjugationTable($container,sortType,formSet,orderType) {
 	let verbs=verbsData
 	if (orderType=='frequency') { // hack
 		verbs=[]
@@ -543,7 +549,7 @@ function createConjugationTable($container,sortType,orderType) {
 			if (titleNote) $cell.setAttribute('title',titleNote)
 		}
 	}
-	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType)) {
+	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType,formSet)) {
 		const [formGroupName]=verbForms[formGroupId]
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
@@ -737,7 +743,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		if (feature=='conjgame') {
 			createConjugationGame($featureContainer)
 		} else {
-			createConjugationTable($featureContainer,sort,order)
+			createConjugationTable($featureContainer,sort,forms,order)
 		}
 	}
 	createFeature()
@@ -787,7 +793,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		const handler=(ev)=>{
 			forms[ev.target.value]=ev.target.checked
 			localStorage.setItem('glaconjurer-form-'+ev.target.value,ev.target.checked?'1':'0')
-			// createFeature()
+			if (feature=='conjtable') createFeature()
 		}
 		for (const value of formFilterIds) createControl($block,
 			`<label><input type=checkbox value=${value+(forms[value]?' checked':'')}> ${verbForms[value][0]}</label>`,
