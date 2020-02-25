@@ -166,7 +166,7 @@ const verbFormOrder=[
 const verbFormGroups={
 	pres: ['Presente','Presente'],
 	pret: ['Pretérito','Pretérito indefinido'],
-	imp: ['<abbr title=Pretérito>Pr.</abbr> imperfecto','Pretérito imperfecto'],
+	imp: ['Imperfecto','Pretérito imperfecto'],
 	fut: ['Futuro','Futuro'],
 	im: ['Imperativo','Imperativo'],
 }
@@ -556,7 +556,7 @@ function createConjugationTable($container,sortType,orderType) {
 			if (firstInGroup && formGroupId) {
 				const [formGroupName]=verbFormGroups[formGroupId]
 				let cls='group'
-				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'"
+				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'" // not in use
 				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
 			}
 			firstInGroup=false
