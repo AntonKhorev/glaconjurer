@@ -156,6 +156,7 @@ body {
 <body>
 <script>
 const verbForms={
+	nonpers: ['','безличные формы'], // don't display group title
 	inf: ['Infinitivo','инфинитив'],
 	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
 	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
@@ -479,9 +480,9 @@ const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
 const getVerbFormOrder=(sortType)=>{
 	const a=[ // [formGroupId, [[isCompactable,formId], ...]], ...
-		['inf',[[0,'inf']]],
-		['ger',[[0,'ger']]],
-		['par',[[0,'par']]],
+		['nonpers',[
+			[0,'inf'],[0,'ger'],[0,'par']
+		]]
 	]
 	for (const formGroupId of ['pres','pret','imp','fut','im']) {
 		const formGroupRows=[]
@@ -504,7 +505,6 @@ const getVerbFormOrder=(sortType)=>{
 		}
 		a.push([formGroupId,formGroupRows])
 	}
-	console.log(a)
 	return a
 }
 
@@ -543,6 +543,7 @@ function createConjugationTable($container,sortType,orderType) {
 		}
 	}
 	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType)) {
+		const [formGroupName]=verbForms[formGroupId]
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		let firstInGroup=true
@@ -551,8 +552,7 @@ function createConjugationTable($container,sortType,orderType) {
 			if (!compactRow && sortType!='number') {
 				$row.classList.add('number-'+formId.slice(-1))
 			}
-			if (firstInGroup && formGroupRows.length>1) {
-				const [formGroupName]=verbForms[formGroupId]
+			if (firstInGroup && formGroupName) {
 				let cls='group'
 				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'" // not in use
 				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
@@ -560,14 +560,14 @@ function createConjugationTable($container,sortType,orderType) {
 			firstInGroup=false
 			const [formText,formNote]=(compactRow?compactableVerbForms:verbForms)[formId]
 			const $formCell=document.createElement('th')
-			if (formGroupRows.length<=1) $formCell.setAttribute('colspan',2)
+			if (!formGroupName) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
 			$formCell.innerHTML=formText
 			$formCell.setAttribute('title',formNote)
 			const formRawText=formText.replace(/<[^>]*>/g,'')
-			if (formGroupRows.length>1 && formRawText.length>10) {
+			if (formGroupName && formRawText.length>10) {
 				$formCell.classList.add('very-long')
-			} else if (formGroupRows.length>1 && formRawText.length>5) {
+			} else if (formGroupName && formRawText.length>5) {
 				$formCell.classList.add('long')
 			}
 			const getFormHtml=(form)=>{
