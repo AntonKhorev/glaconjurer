@@ -198,6 +198,7 @@ const compactableVerbForms={
 	cond1: ['yo/<em>nosotros</em>',verbForms.cond1s[1]+'; '+verbForms.cond1p[1]],
 	cond2: ['tú/<em>vosotros</em>',verbForms.cond2s[1]+'; '+verbForms.cond2p[1]],
 	cond3: ['él<em>los</em>',verbForms.cond3s[1]+'; '+verbForms.cond3p[1]],
+	subj3: ['él<em>los</em>',verbForms.subj3s[1]+'; '+verbForms.subj3p[1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
 const personalVerbForms=['pres','pret','imp','fut','cond','subj','im']
@@ -391,6 +392,7 @@ class Verb {
 			'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p,'+
 			'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p,'+
 			'cond1s,cond2s,cond3s,cond1p,cond2p,cond3p,'+
+			'subj1s,subj2s,subj3s,subj1p,subj2p,subj3p,'+
 			'im2s,im3s,im1p,im2p,im3p'
 		).split(',')
 		const formEndsFut=(e)=>`${e}|é,${e}|ás,${e}|á,${e}|emos,${e}|éis,${e}|án,`
@@ -405,6 +407,7 @@ class Verb {
 			'ab|a,ab|as,ab|a,áb|amos,ab|ais,ab|an,'+
 			formEndsFut('ar')+
 			formEndsCond('ar')+
+			'e,es,e,emos,éis,en,'+
 			'a,e,emos,ad,en'
 		).split(','),
 		er:(
@@ -414,6 +417,7 @@ class Verb {
 			formEndsImpEir+
 			formEndsFut('er')+
 			formEndsCond('er')+
+			'a,as,a,amos,áis,an,'+
 			'e,a,amos,ed,an'
 		).split(','),
 		ir:(
@@ -423,6 +427,7 @@ class Verb {
 			formEndsImpEir+
 			formEndsFut('ir')+
 			formEndsCond('ir')+
+			'a,as,a,amos,áis,an,'+
 			'e,a,amos,id,an'
 		).split(','),
 		}
@@ -437,9 +442,8 @@ const v3=(...args)=>(new Verb(...args))
 const verbsData=v2tov3([
 	// regular
 	v3('hablar','говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']),
-	['hablar',v2('hablar'),'говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']],
-	['comer',v2('comer'),'есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']],
-	['vivir',v2('vivir'),'жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']],
+	v3('comer','есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']),
+	v3('vivir','жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']),
 	// helper
 	['estar',{...v2pret('est{uv}',v2('estar')),
 		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
