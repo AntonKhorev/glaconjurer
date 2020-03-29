@@ -360,7 +360,35 @@ const v2fut=(stem,dict)=>{
 	}
 	return result
 }
-const verbsData=[
+const v2tov3=(data)=>data.map(entry=>{
+	if (!Array.isArray(entry)) return entry
+	const verb=new Verb('xar','')
+	verb.forms={}
+	let forms
+	;[verb.title,forms,verb.translation,verb.category]=entry
+	for (const [formId,form] of Object.entries(forms)) {
+		if (Array.isArray(form)) {
+			;[verb.forms[formId],verb.formNotes[formId]]=form
+		} else {
+			verb.forms[formId]=form
+		}
+	}
+	return verb
+})
+class Verb {
+	constructor(title,translation,category) {
+		this.title=title
+		this.translation=translation
+		this.category=category
+		this.forms={}
+		this.formNotes={}
+	}
+	getRawForm(formId) {
+		return this.forms[formId].replace(/[|{}[\]]/g,'')
+	}
+}
+const v3=(...args)=>(new Verb(...args))
+const verbsData=v2tov3([
 	// regular
 	['hablar',v2('hablar'),'говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']],
 	['comer',v2('comer'),'есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']],
@@ -473,7 +501,7 @@ const verbsData=[
 	['deber',v2('deber'),'быть должным'], // {{es.v.conj.er|deb}}
 	['parecer',v2yo('pare{zc}',v2('parecer')),'казаться'], // {{es.v.conj.zc.cer|pare}}
 	['quedar',v2('quedar'),'оставаться'], // {{es.v.conj.ar|qued}}
-]
+])
 //for (let i=0;i<verbs.length;i+=2) {
 //	const [inf]=verbs[i]
 //	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
@@ -525,9 +553,12 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 	let verbs=verbsData
 	if (orderType=='frequency') { // hack
 		verbs=[]
-		for (const [i,verb] of verbsByFrequency.entries()) {
-			for (const [v,f,t] of verbsData) {
-				if (v==verb) verbs.push([v,f,t,i+1])
+		for (const v of verbsByFrequency) {
+			for (const verb of verbsData) {
+				if (verb.title==v) {
+					verbs.push(verb)
+					continue
+				}
 			}
 		}
 	}
@@ -547,8 +578,12 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 	{
 		const $row=$thead.insertRow()
 		$row.innerHTML="<th colspan=2>"
-		for (const [,,,titleData] of verbs) {
-			const [title,titleNote]=readPair(titleData)
+		for (const [i,verb] of verbs.entries()) {
+			let [title,titleNote]=readPair(verb.category)
+			if (orderType=='frequency') {
+				title=i+1
+				titleNote=undefined
+			}
 			const $cell=document.createElement('th')
 			$row.appendChild($cell)
 			if (title) $cell.innerHTML=title
@@ -605,11 +640,11 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 				if (i!=j+1) return [false]
 				return [true,longForm.slice(0,i),longForm.slice(i,i+d),longForm.slice(i+d)]
 			}
-			for (const [verb,forms] of verbs) {
+			for (const verb of verbs) {
 				const $cell=$row.insertCell()
 				if (compactRow) {
-					const [form]=readPair(forms[formId+'s'])
-					const [form2]=readPair(forms[formId+'p'])
+					const form=verb.forms[formId+'s']
+					const form2=verb.forms[formId+'p']
 					const [isCombined,preMarked,inMarked,postMarked]=combineForms(form,form2)
 					if (isCombined) {
 						$cell.innerHTML=getFormHtml(`${preMarked}<em>${inMarked}</em>${postMarked}`)
@@ -618,10 +653,10 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 					}
 					$cell.dataset.formId=formId+'s'
 					$cell.dataset.formId2=formId+'p'
+					// TODO combined form note
 				} else {
-					const [form,formNote]=readPair(forms[formId])
-					$cell.innerHTML=getFormHtml(form)
-					if (formNote) $cell.setAttribute('title',formNote)
+					$cell.innerHTML=getFormHtml(verb.forms[formId])
+					if (verb.formNotes[formId]) $cell.setAttribute('title',verb.formNotes[formId])
 					$cell.dataset.formId=formId
 				}
 				$cell.dataset.verb=verb
@@ -639,8 +674,8 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			const $cell=document.createElement('th')
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
-			for (const [,,translationData] of verbs) {
-				const [translation,translationNote]=readPair(translationData)
+			for (const verb of verbs) {
+				const [translation,translationNote]=readPair(verb.translation)
 				const $cell=$row.insertCell()
 				$cell.innerHTML=translation
 				if (translationNote) $cell.setAttribute('title',translationNote)
@@ -651,8 +686,8 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			const $cell=document.createElement('th')
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
-			for (const [verb] of verbs) {
-				$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb+"#Conjugaci%C3%B3n>[w]</a>"
+			for (const verb of verbs) {
+				$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb.title+"#Conjugaci%C3%B3n>[w]</a>"
 			}
 		}
 	}
@@ -662,14 +697,13 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 function createConjugationGame($container,formSet) {
 	let verbs=verbsData // hack
 	const gameVerbs=[]
-	for (const [verb,forms] of verbs) {
-		for (const formId in forms) {
+	for (const verb of verbs) {
+		for (const formId in verb.forms) {
 			if (formId=='inf') continue
 			if (formId in formSet && !formSet[formId]) continue
 			const [formGroupId,]=formId.split(/(\d)/)
 			if (formGroupId in formSet && !formSet[formGroupId]) continue
-			const [form]=readPair(forms[formId])
-			gameVerbs.push([verb,formId,form.replace(/[|{}[\]]/g,'')])
+			gameVerbs.push([verb,formId])
 		}
 	}
 	const shuffle=(a)=>{
@@ -687,12 +721,12 @@ function createConjugationGame($container,formSet) {
 	$container.appendChild($table)
 	const createNextQuestion=()=>{
 		if (iCurrentGameVerb>=gameVerbs.length) return
-		const [verb,formId,form]=gameVerbs[iCurrentGameVerb]
+		const [verb,formId]=gameVerbs[iCurrentGameVerb]
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		const $infRow=$tbody.insertRow()
 		$infRow.insertAdjacentHTML('beforeend',"<th colspan=2>")
-		$infRow.insertCell().innerHTML=verb
+		$infRow.insertCell().innerHTML=verb.title
 		const $formRow=$tbody.insertRow()
 		const [formGroupId,n]=formId.split(/(\d)/)
 		if (n) {
@@ -715,6 +749,7 @@ function createConjugationGame($container,formSet) {
 			$formInputTd.removeChild($formInput)
 			$formButtonTd.removeChild($formButton)
 			$formInputTd.insertAdjacentText('beforeend',userForm)
+			const form=verb.getRawForm(formId)
 			if (userForm==form) {
 				$formButtonTd.insertAdjacentHTML('beforeend',"<span class=correct>Правильно</span>")
 			} else {
