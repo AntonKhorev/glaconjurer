@@ -711,19 +711,31 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			for (const verb of verbs) {
 				const $cell=$row.insertCell()
 				if (compactRow) {
-					const form=verb.forms[formId+'s']
+					const form1=verb.forms[formId+'s']
 					const form2=verb.forms[formId+'p']
-					if (form && form2) {
-						const [isCombined,preMarked,inMarked,postMarked]=combineForms(form,form2)
+					if (form1 && form2) {
+						const [isCombined,preMarked,inMarked,postMarked]=combineForms(form1,form2)
 						if (isCombined) {
 							$cell.innerHTML=getFormHtml(`${preMarked}<em>${inMarked}</em>${postMarked}`)
 						} else {
-							$cell.innerHTML=getFormHtml(form)+" / "+getFormHtml(form2)
+							$cell.innerHTML=getFormHtml(form1)+" / "+getFormHtml(form2)
 						}
 					}
+					const formNote1=verb.formNotes[formId+'s']
+					const formNote2=verb.formNotes[formId+'p']
+					let formNote
+					if (formNote1 && formNote2) {
+						if (formNote1==formNote2) {
+							formNote=formNote1
+						} else {
+							formNote=formNote1+' / '+formNote2
+						}
+					} else {
+						formNote=formNote1||formNote2
+					}
+					if (formNote) $cell.setAttribute('title',formNote)
 					$cell.dataset.formId=formId+'s'
 					$cell.dataset.formId2=formId+'p'
-					// TODO combined form note
 				} else {
 					$cell.innerHTML=getFormHtml(verb.forms[formId])
 					if (verb.formNotes[formId]) $cell.setAttribute('title',verb.formNotes[formId])
