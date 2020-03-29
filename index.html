@@ -383,8 +383,9 @@ class Verb {
 		this.title=title
 		this.translation=translation
 		this.category=category
+		this.forms={}
 		this.formNotes={}
-		const [stem,infEnd]=title.split(/(..)$/)
+		const [infStem,infEnd]=title.split(/(..)$/)
 		const formIds=(
 			'inf,ger,par,'+
 			'pres1s,pres2s,pres3s,pres1p,pres2p,pres3p,'+
@@ -430,9 +431,24 @@ class Verb {
 			'a,as,a,amos,áis,an,'+
 			'e,a,amos,id,an'
 		).split(','),
+		}[infEnd]
+		for (const [i,formId] of formIds.entries()) {
+			let stem=infStem
+			let end=formEnds[i]
+			if (infEnd[0]=='a') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.aou
+				const replacements={c:'qu',z:'c',gu:'gü',g:'gu'}
+				const stemMatch=stem.match(new RegExp(Object.keys(replacements).join('|')+'$'))
+				const endMatch=end.match(/^[eéií]/)
+				if (stemMatch && endMatch) {
+					const [s]=stemMatch
+					const [e]=endMatch
+					const r=replacements[s]
+					stem=stem.replace(new RegExp(s+'$'),'{'+r+'}')
+					this.formNotes[formId]=`у -${s}${infEnd}-глаголов -${s}${e}- меняется на -${r}${e}-`
+				}
+			}
+			this.forms[formId]=stem+'|'+end
 		}
-		const a=formEnds[infEnd]
-		this.forms=formIds.reduce((o,k,i)=>({...o,[k]:stem+'|'+a[i]}),{})
 	}
 	getRawForm(formId) {
 		return this.forms[formId].replace(/[|{}[\]]/g,'')
@@ -444,6 +460,8 @@ const verbsData=v2tov3([
 	v3('hablar','говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']),
 	v3('comer','есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']),
 	v3('vivir','жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']),
+	// orthographic
+	v3('tocar','трогать','c→<strong class=insert>qu</strong>'),
 	// helper
 	['estar',{...v2pret('est{uv}',v2('estar')),
 		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
@@ -467,7 +485,6 @@ const verbsData=v2tov3([
 		...v2repl('pres**','h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n'),
 		im2s:'h{}|e',
 	},['иметь','вспомогательный для сложных времён']],
-	// TODO orthographic
 	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	['pensar',v2vowel('e','ie',v2('pensar')),'думать','e→<strong class=insert>ie</strong>'], // {{es.v.conj.-ie-ue-.ar|pens|piens}}
 	['sentir',v2vowelIr('e','ie','i',v2('sentir')),'чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|sent|sient|sint}}
@@ -530,7 +547,6 @@ const verbsData=v2tov3([
 		ger:'p[u]d|iendo',
 	},'мочь'], // {{es.v.conj.er|pod|irregular=x|...}}
 	['empezar',v2pretYoZar(v2vowel('e','ie',v2('empezar'))),'начинать'], // {{es.v.conj.-ie-ue-.zar|empe|empie}}
-	['tocar',v2pretYoCar(v2('tocar')),'трогать'],
 	['oír',{...v2yendo(v2yo('o{ig}',v2vowel('o','oy',v2('oir')))),
 		inf:'o|[í]r',
 		pres1p:'o|[í]mos',
