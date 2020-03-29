@@ -165,6 +165,8 @@ const verbForms={
 	pret: ['Pretérito','Pretérito indefinido'],
 	imp: ['Imperfecto','Pretérito imperfecto'],
 	fut: ['Futuro','Futuro'],
+	cond: ['Condicional','Condicional'],
+	subj: ['Subjuntivo','Presente de subjuntivo'],
 	im: ['Imperativo','Imperativo'],
 	im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
 	im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
@@ -172,18 +174,20 @@ const verbForms={
 	im2p: ['vosotros','vosotros, vosotras: (множественное) вы сделайте'],
 	im3p: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
 }
-for (const [prefix,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
-	['pres',['делаю','делаешь','делает','делает','делаем','делаете','делают']],
-	['pret',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
-	['fut' ,['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
-	['imp' ,['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+for (const [prefix,v0,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
+	['pres','',        ['делаю','делаешь','делает','делает','делаем','делаете','делают']],
+	['pret','',        ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+	['fut' ,'',        ['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
+	['cond','',        ['бы сделал(а)','бы сделал(а)','бы сделал','бы сделала','бы сделали','бы сделали','бы сделали']],
+	['subj','(чтобы) ',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+	['imp' ,'',        ['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
 ]) {
-	verbForms[prefix+'1s']=['yo',`yo: я ${v1s}`]
-	verbForms[prefix+'2s']=['tú',`tú: ты ${v2s}`]
-	verbForms[prefix+'3s']=['él',`él: он ${v3sm}; ella: она ${v3sf}; usted: (вежливое) вы ${v2p}`]
-	verbForms[prefix+'1p']=['nosotros',`nosotros, nosotras: мы ${v1p}`]
-	verbForms[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) вы ${v2p}`]
-	verbForms[prefix+'3p']=['ellos',`ellos, ellas: они ${v3p}; ustedes: (вежливое множественное) вы ${v2p}`]
+	verbForms[prefix+'1s']=['yo',`yo: ${v0}я ${v1s}`]
+	verbForms[prefix+'2s']=['tú',`tú: ${v0}ты ${v2s}`]
+	verbForms[prefix+'3s']=['él',`él: ${v0}он ${v3sm}; ella: она ${v3sf}; usted: (вежливое) ${v0}вы ${v2p}`]
+	verbForms[prefix+'1p']=['nosotros',`nosotros, nosotras: ${v0}мы ${v1p}`]
+	verbForms[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) ${v0}вы ${v2p}`]
+	verbForms[prefix+'3p']=['ellos',`ellos, ellas: ${v0}они ${v3p}; ustedes: (вежливое множественное) ${v0}вы ${v2p}`]
 }
 const compactableVerbForms={
 	pres3: ['él<em>los</em>',verbForms.pres3s[1]+'; '+verbForms.pres3p[1]],
@@ -193,6 +197,7 @@ const compactableVerbForms={
 	fut3: ['él<em>los</em>',verbForms.fut3s[1]+'; '+verbForms.fut3p[1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
+const personalVerbForms=['pres','pret','imp','fut','cond','subj','im']
 // wiktionary templates:
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
@@ -204,6 +209,7 @@ const v2=(inf)=>{
 		'pret1s,pret2s,pret3s,pret1p,pret2p,pret3p,'+
 		'imp1s,imp2s,imp3s,imp1p,imp2p,imp3p,'+
 		'fut1s,fut2s,fut3s,fut1p,fut2p,fut3p,'+
+		//'cond1s,cond2s,cond3s,cond1p,cond2p,cond3p,'+
 		'im2s,im3s,im1p,im2p,im3p'
 	).split(',')
 	const formEndsFut=(e)=>`${e}|é,${e}|ás,${e}|á,${e}|emos,${e}|éis,${e}|án,`
@@ -490,7 +496,7 @@ const getVerbFormOrder=(sortType,formSet)=>{
 		}
 		a.push([formGroupId,formGroupRows])
 	}
-	for (const formGroupId of ['pres','pret','imp','fut','im']) {
+	for (const formGroupId of personalVerbForms) {
 		if (formGroupId in formSet && !formSet[formGroupId]) continue
 		const formGroupRows=[]
 		if (sortType!='number') {
@@ -578,6 +584,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 				$formCell.classList.add('long')
 			}
 			const getFormHtml=(form)=>{
+				if (form===undefined) return ''
 				const [stem,end,subend]=form.split('|')
 				const mark=(s)=>s.replace(/\[(.*?)\]/g,'<strong>$1</strong>').replace(/\{(.*?)\}/g,'<strong class=insert>$1</strong>')
 				const makeSpan=(cls,s)=>s?`<span class=${cls}>${mark(s)}</span>`:''
@@ -735,7 +742,7 @@ function createOptions($featureContainer,$optionsContainer) {
 	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let order=localStorage.getItem('glaconjurer-order') || 'topic'
 	let forms={}
-	const formFilterIds=['par','ger','pres','pret','imp','fut','im']
+	const formFilterIds=['par','ger',...personalVerbForms]
 	for (const formId of formFilterIds) {
 		const v=localStorage.getItem('glaconjurer-form-'+formId)
 		forms[formId]=v!='0'
