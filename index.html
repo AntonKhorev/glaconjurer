@@ -443,7 +443,7 @@ class Verb {
 					const [s]=stemMatch
 					const [e]=endMatch
 					const r=replacements[s]
-					stem=stem.replace(new RegExp(s+'$'),'{'+r+'}')
+					stem=stem.replace(new RegExp(s+'$'),r.length==1?'['+r+']':'{'+r+'}')
 					this.formNotes[formId]=`у -${s}${infEnd}-глаголов -${s}${e}- меняется на -${r}${e}-`
 				}
 			}
@@ -462,6 +462,7 @@ const verbsData=v2tov3([
 	v3('vivir','жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']),
 	// orthographic
 	v3('tocar','трогать','c→<strong class=insert>qu</strong>'),
+	v3('utilizar','использовать','z→<strong>c</strong>'),
 	// helper
 	['estar',{...v2pret('est{uv}',v2('estar')),
 		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
