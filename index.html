@@ -346,8 +346,6 @@ const v2pretYoHandler=(dict,replacementFn,note)=>{
 	}
 	return result
 } // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.eer
-const v2pretYoCar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/c\|/,'{qu}|'),'у -car-глаголов -ce меняется на -que')
-const v2pretYoGar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/g\|/,'g{u}|'),'у -gar-глаголов -ge меняется на -gue') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.gar
 const v2pretYoZar=(dict)=>v2pretYoHandler(dict,s=>s.replace(/z\|/,'[c]|'),'у -zar-глаголов -ze меняется на -ce') // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.zar
 const v2imp=(stem,dict)=>{
 	const result={...dict}
@@ -450,6 +448,27 @@ class Verb {
 			this.forms[formId]=stem+'|'+end
 		}
 	}
+	replaceLastStemVowel(formId,v) {
+		let replacement='['+v+']'
+		if (v.length>1) replacement='{'+v+'}'
+		const [oldStem,end]=this.forms[formId].split(/\|(.*)/)
+		let i=oldStem.length-1
+		for (;i>=0;i--) {
+			if ('aeio'.includes(oldStem[i]) || oldStem[i]=='u' && oldStem[i-1]!='g') break
+		}
+		const newStem=oldStem.slice(0,i)+replacement+oldStem.slice(i+1)
+		this.forms[formId]=newStem+'|'+end
+	}
+	vowel(v) { // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.er , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.ar
+		for (const formId of [
+			'pres1s','pres2s','pres3s','pres3p',
+			'subj1s','subj2s','subj3s','subj3p',
+			'im2s','im3s','im3p'
+		]) {
+			this.replaceLastStemVowel(formId,v)
+		}
+		return this
+	}
 	getRawForm(formId) {
 		return this.forms[formId].replace(/[|{}[\]]/g,'')
 	}
@@ -493,7 +512,7 @@ const verbsData=v2tov3([
 	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
 	['mover',v2vowel('o','ue',v2('mover')),'двигать','o→<strong class=insert>ue</strong>'], // {{es.v.conj.-ie-ue-.er|mov|muev}}
 	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→<strong class=insert>ue</strong>,<strong>u</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
-	['jugar',v2pretYoGar(v2vowel('u','ue',v2('jugar'))),'играть','u→<strong class=insert>ue</strong>'], // {{es.v.conj.-ie-ue-.gar|ju|jue}}
+	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
 	['conocer',v2yo('cono{zc}',v2('conocer')),['знать','знать человека/место'],'c→<strong class=insert>zc</strong>'], // {{es.v.conj.zc.cer|cono}}
 	['conducir',{...v2pret('condu[j]',v2yo('condu{zc}',v2('conducir'))),
