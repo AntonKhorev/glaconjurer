@@ -463,6 +463,7 @@ const verbsData=v2tov3([
 	// orthographic
 	v3('tocar','трогать','c→<strong class=insert>qu</strong>'),
 	v3('utilizar','использовать','z→<strong>c</strong>'),
+	v3('llegar','прибывать','g→<strong class=insert>gu</strong>'),
 	// helper
 	['estar',{...v2pret('est{uv}',v2('estar')),
 		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
@@ -554,7 +555,6 @@ const verbsData=v2tov3([
 		im2p:'o|[í]d',
 	},'слышать'], // {{es.v.conj.oír|o}}
 	['querer',v2fut('quer',v2pret('qu[is]',v2vowel('e','ie',v2('querer')))),'хотеть'], // {{es.v.conj.querer}}
-	['llegar',v2pretYoGar(v2('llegar')),'прибывать'], // {{es.v.conj.gar|lle}}
 	['salir',{...v2fut('sal{d}',v2yo('sal{g}',v2('salir'))),
 		im2s:'sal|{}',
 	},'выходить'], // {{es.v.conj.salir}}
