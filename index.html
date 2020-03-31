@@ -505,9 +505,9 @@ const verbsData=v2tov3([
 	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
 	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
-	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
+	v3('pedir','просить','e→<strong>i</strong>').vowel('i','i'),
 	v3('mover','двигать','o→<strong class=insert>ue</strong>').vowel('ue'),
-	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→<strong class=insert>ue</strong>,<strong>u</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
+	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
 	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
 	['conocer',v2yo('cono{zc}',v2('conocer')),['знать','знать человека/место'],'c→<strong class=insert>zc</strong>'], // {{es.v.conj.zc.cer|cono}}
