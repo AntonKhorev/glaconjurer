@@ -465,6 +465,12 @@ class Verb {
 		}
 		return this
 	}
+	yo(stem) {
+		for (const formId of ['pres1s','subj1s','subj2s','subj3s','subj1p','subj2p','subj3p','im3s','im1p','im3p']) {
+			this.forms[formId]=this.forms[formId].replace(/^.*?\|/,stem+'|')
+		}
+		return this
+	}
 	getRawForm(formId) {
 		return this.forms[formId].replace(/[|{}[\]]/g,'')
 	}
@@ -510,7 +516,7 @@ const verbsData=v2tov3([
 	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
 	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
-	['conocer',v2yo('cono{zc}',v2('conocer')),['знать','знать человека/место'],'c→<strong class=insert>zc</strong>'], // {{es.v.conj.zc.cer|cono}}
+	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
 	['conducir',{...v2pret('condu[j]',v2yo('condu{zc}',v2('conducir'))),
 		pret3p:'conduj|{}eron',
 	},'вести','c→<strong class=insert>zc</strong>,<strong>j</strong>'], // {{es.v.conj.ducir|condu}}
