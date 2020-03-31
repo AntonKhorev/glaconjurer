@@ -425,17 +425,21 @@ class Verb {
 		for (const [i,formId] of formIds.entries()) {
 			let stem=infStem
 			let end=formEnds[i]
-			if (infEnd[0]=='a') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.aou
-				const replacements={c:'qu',z:'c',gu:'gü',g:'gu'}
-				const stemMatch=stem.match(new RegExp(Object.keys(replacements).join('|')+'$'))
-				const endMatch=end.match(/^[eéií]/)
+			const replace=(replacements,endPattern)=>{
+				const stemMatch=stem.match(new RegExp('(?:'+Object.keys(replacements).join('|')+')$'))
+				const endMatch=end.match(endPattern)
 				if (stemMatch && endMatch) {
 					const [s]=stemMatch
 					const [e]=endMatch
 					const r=replacements[s]
-					stem=stem.replace(new RegExp(s+'$'),r.length==1?'['+r+']':'{'+r+'}')
+					stem=stem.replace(new RegExp(s+'$'),r.length==s.length?'['+r+']':'{'+r+'}')
 					this.formNotes[formId]=`у -${s}${infEnd}-глаголов -${s}${e}- меняется на -${r}${e}-`
 				}
+			}
+			if (infEnd[0]=='a') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.aou
+				replace({c:'qu',z:'c',gu:'gü',g:'gu'},/^[eéií]/)
+			} else if (infEnd[0]=='e' || infEnd[0]=='i') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.ei
+				replace({qu:'c',c:'z',g:'j',gu:'g','gü':'gu'},/^[aáoó]/)
 			}
 			this.forms[formId]=stem+'|'+end
 		}
@@ -485,6 +489,7 @@ const verbsData=v2tov3([
 	v3('tocar','трогать','c→<strong class=insert>qu</strong>'),
 	v3('utilizar','использовать','z→<strong>c</strong>'),
 	v3('llegar','прибывать','g→<strong class=insert>gu</strong>'),
+	v3('coger','брать','g→<strong>j</strong>'),
 	// helper
 	['estar',{...v2pret('est{uv}',v2('estar')),
 		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
@@ -561,7 +566,6 @@ const verbsData=v2tov3([
 	['traer',{...v2pret('tra{j}',v2yo('tra{ig}',v2('traer'))),
 		pret3p:'tra{j}|{}eron',
 	},'приносить'],
-	['coger',v2yojo(v2('coger')),'брать'],
 	['elegir',{...v2yojo(v2vowelIr('e','i','i',v2('elegir'))),
 		par:'ele{ct}|{}o',
 	},'выбирать'], // {{es.v.conj.-ie-i-ue-u-.ir|ele|eli|eli|nexo=g|part=electo|part2=elegido}}
