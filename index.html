@@ -586,10 +586,10 @@ const verbsData=v2tov3([
 	['volver',{...v2vowel('o','ue',v2('volver')),
 		par:'v{ue}l[t]|{}o',
 	},'возвращаться'], // {{es.v.conj.-ie-ue-.er|volv|vuelv|part=vuelto}}
-	['pasar',v2('pasar'),'проходить'], // {{es.v.conj.ar|pas}}
-	['deber',v2('deber'),'быть должным'], // {{es.v.conj.er|deb}}
-	['parecer',v2yo('pare{zc}',v2('parecer')),'казаться'], // {{es.v.conj.zc.cer|pare}}
-	['quedar',v2('quedar'),'оставаться'], // {{es.v.conj.ar|qued}}
+	v3('pasar','проходить'),
+	v3('deber','быть должным'),
+	v3('parecer','казаться').yo('pare{zc}'),
+	v3('quedar','оставаться'),
 ])
 //for (let i=0;i<verbs.length;i+=2) {
 //	const [inf]=verbs[i]
