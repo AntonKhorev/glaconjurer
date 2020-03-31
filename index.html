@@ -451,13 +451,17 @@ class Verb {
 		const newStem=oldStem.slice(0,i)+replacement+oldStem.slice(i+1)
 		this.forms[formId]=newStem+'|'+end
 	}
-	vowel(v) { // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.er , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.ar
-		for (const formId of [
+	vowel(v,va) {
+		for (const formId of [ // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.er , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.ar
 			'pres1s','pres2s','pres3s','pres3p',
 			'subj1s','subj2s','subj3s','subj3p',
 			'im2s','im3s','im3p'
 		]) {
 			this.replaceLastStemVowel(formId,v)
+		}
+		if (va===undefined) return this
+		for (const formId of ['ger','pret3s','pret3p','subj1p','subj2p','im1p']) { // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-i-ue-u-.ir
+			this.replaceLastStemVowel(formId,va)
 		}
 		return this
 	}
@@ -500,7 +504,7 @@ const verbsData=v2tov3([
 	},['иметь','вспомогательный для сложных времён']],
 	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
 	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
-	['sentir',v2vowelIr('e','ie','i',v2('sentir')),'чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|sent|sient|sint}}
+	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
 	['pedir',v2vowelIr('e','i','i',v2('pedir')),'просить','e→<strong>i</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|ped|pid|pid}}
 	v3('mover','двигать','o→<strong class=insert>ue</strong>').vowel('ue'),
 	['dormir',v2vowelIr('o','ue','u',v2('dormir')),'спать','o→<strong class=insert>ue</strong>,<strong>u</strong>'], // {{es.v.conj.-ie-i-ue-u-.ir|dorm|duerm|durm}}
