@@ -306,9 +306,6 @@ const v2yoHandler=(dict,replacementFn,note)=>{ // TODO? yo -go-глаголы ч
 	return result
 }
 const v2yo=(stem,dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,stem+'|'))
-const v2yojo=(dict)=>v2yoHandler(dict,s=>s.replace(/^.*?\|/,
-	dict.pres1s.split('|')[0].replace(/g$/,'[j]')+'|'
-),'у -ger и -gir-глаголов для yo в настоящем времени -g- в корне меняется на -j-')
 const v2yendo=(dict)=>{
 	const result={...dict}
 	for (const formId of ['ger','pret3s','pret3p']) {
@@ -475,6 +472,10 @@ class Verb {
 		}
 		return this
 	}
+	replace(forms) {
+		this.forms={...this.forms,...forms}
+		return this
+	}
 	getRawForm(formId) {
 		return this.forms[formId].replace(/[|{}[\]]/g,'')
 	}
@@ -528,9 +529,9 @@ const verbsData=v2tov3([
 	},'вести','c→<strong class=insert>zc</strong>,<strong>j</strong>'], // {{es.v.conj.ducir|condu}}
 	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 	['creer',v2yendo(v2('creer')),'верить','-<strong>y</strong>endo'], // {{es.v.conj.eer|cre}}
-	['escribir',{...v2('escribir'),
+	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
 		par:'escri[t]|{}o',
-	},'писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // {{es.v.conj.ir|escrib|part=escrito}}
+	}),
 	// unsorted
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o{y}',
@@ -567,9 +568,9 @@ const verbsData=v2tov3([
 	['traer',{...v2pret('tra{j}',v2yo('tra{ig}',v2('traer'))),
 		pret3p:'tra{j}|{}eron',
 	},'приносить'],
-	['elegir',{...v2yojo(v2vowelIr('e','i','i',v2('elegir'))),
+	v3('elegir','выбирать').vowel('i','i').replace({
 		par:'ele{ct}|{}o',
-	},'выбирать'], // {{es.v.conj.-ie-i-ue-u-.ir|ele|eli|eli|nexo=g|part=electo|part2=elegido}}
+	}),
 	v3('seguir','следовать').vowel('i','i'),
 	['poder',{...v2fut('pod',v2pret('p[u]d',v2vowel('o','ue',v2('poder')))),
 		ger:'p[u]d|iendo',
@@ -588,9 +589,9 @@ const verbsData=v2tov3([
 		im2s:'d[i]{}|{}',
 		par:'d{ich}|{}o',
 	},'сказать'], // {{es.v.conj.decir}}
-	['volver',{...v2vowel('o','ue',v2('volver')),
+	v3('volver','возвращаться').vowel('ue').replace({
 		par:'v{ue}l[t]|{}o',
-	},'возвращаться'], // {{es.v.conj.-ie-ue-.er|volv|vuelv|part=vuelto}}
+	}),
 	v3('pasar','проходить'),
 	v3('deber','быть должным'),
 	v3('parecer','казаться').yo('pare{zc}'),
