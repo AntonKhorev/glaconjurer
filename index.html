@@ -412,7 +412,7 @@ const verbsData=[
 	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
 	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
-	v3('conducir','вести','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('condu{zc}').pret('condu[j]'),
+	v3('producir','производить','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('produ{zc}').pret('produ[j]'),
 	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 	v3('creer','верить','-<strong>y</strong>endo').yendo(),
 	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
@@ -518,12 +518,17 @@ const verbsData=[
 	v3('tocar','трогать'),
 	v3('comer','есть'),
 	v3('existir','существовать'),
+	v3('entrar','входить'),
+	v3('trabajar','работать'),
+	v3('perder','терять').vowel('ie'),
+	v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
 ]
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
 	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
 	'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
-	'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir'
+	'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
+	'entrar,trabajar,escribir,perder,producir'
 ).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
