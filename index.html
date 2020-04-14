@@ -441,6 +441,27 @@ class Verb {
 			this.forms[formId]=stem+'|'+end
 		}
 	}
+	formIdsFromPattern(pattern) {
+		const [base,person,number]=pattern.split(/(.)(.)$/)
+		function* subEnd(person,number) {
+			yield base+person+number
+		}
+		function* subPerson(number) {
+			if (person=='*') {
+				for (let p of '123') yield* subEnd(p,number)
+			} else {
+				yield* subEnd(person,number)
+			}
+		}
+		function* subNumber() {
+			if (number=='*') {
+				for (let n of 'sp') yield* subPerson(n)
+			} else {
+				yield* subPerson(number)
+			}
+		}
+		return Array.from(subNumber())
+	}
 	replaceLastStemVowel(formId,v) {
 		let replacement='['+v+']'
 		if (v.length>1) replacement='{'+v+'}'
@@ -476,7 +497,7 @@ class Verb {
 		const ends='e,iste,o,imos,isteis,ieron'.split(',')
 		const markEnds      ='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
 		const markInsertEnds='{e},{i}ste,{o},{i}mos,{i}steis,{ie}ron'.split(',')
-		for (const [i,formId] of v2formIds('pret**').entries()) { // TODO rewrite v2
+		for (const [i,formId] of this.formIdsFromPattern('pret**').entries()) {
 			const [,end]=this.forms[formId].split('|')
 			let strongEnd=end
 			if (strongStem.replace(/[|{}[\]]/g,'').slice(-1)=='j' && ends[i]=='ieron') {
@@ -493,7 +514,13 @@ class Verb {
 		return this
 	}
 	replace(forms) {
-		this.forms={...this.forms,...forms}
+		for (const [k,v] of Object.entries(forms)) {
+			const formIds=this.formIdsFromPattern(k)
+			const replacements=v.split(',')
+			for (const [i,formId] of formIds.entries()) {
+				this.forms[formId]=replacements[i]
+			}
+		}
 		return this
 	}
 	getRawForm(formId) {
@@ -513,11 +540,13 @@ const verbsData=v2tov3([
 	v3('coger','брать','g→<strong>j</strong>'),
 	v3('distinguir','различать','gu→<strong class=insert>g</strong>'),
 	// helper
-	['estar',{...v2pret('est{uv}',v2('estar')),
-		...v2repl('pres*s','est|o{y},est|[á]s,est|[á]'),
+	v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
+		'pres*s':'est|o{y},est|[á]s,est|[á]',
 		pres3p:'est|[á]n',
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
-	},['быть','быть временно, быть в указанном месте']],
+		'subj*s':'est|[é],est|[é]s,est|[é]',
+		subj3p:'est|[é]n',
+	}),
 	['ser',{...v2yo('s{e}',v2('ser')),
 		...v2repl('pres**','s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n'),
 		...v2repl('pret**','{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron'),
