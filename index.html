@@ -612,9 +612,7 @@ const verbsData=v2tov3([
 	['saber',{...v2fut('sab',v2pret('s[up]',v2yo('s[ep]',v2('saber')))),
 		pres1s:'s{}|[é]',
 	},['знать','знать факт/навык']],
-	['traer',{...v2pret('tra{j}',v2yo('tra{ig}',v2('traer'))),
-		pret3p:'tra{j}|{}eron',
-	},'приносить'],
+	v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
 	v3('elegir','выбирать').vowel('i','i').replace({
 		par:'ele{ct}|{}o',
 	}),
