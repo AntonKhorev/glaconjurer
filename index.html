@@ -563,13 +563,13 @@ const verbsData=v2tov3([
 		'imp**':'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
 		im2s:'s|[é]',
 	}),
-	['ir',{...v2yo('{vay}',v2('ir')),
+	v3('ir','идти').yo('{vay}').replace({
 		ger:'|[y]endo',
-		...v2repl('pres**','{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n'),
-		...v2repl('pret**','{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron'),
-		...v2repl('imp**','{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an'),
+		'pres**':'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
+		'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
+		'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
 		im2s:'{v}|e',
-	},'идти'],
+	}),
 	['haber',{...v2fut('hab',v2pret('h[u]b',v2yo('ha[y]',v2('haber')))),
 		...v2repl('pres**','h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n'),
 		im2s:'h{}|e',
@@ -589,7 +589,7 @@ const verbsData=v2tov3([
 	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
 		par:'escri[t]|{}o',
 	}),
-	// unsorted
+	// very irregular
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o{y}',
 		pres2p:'d|[a]is',
@@ -597,6 +597,7 @@ const verbsData=v2tov3([
 		pret3s:'d|{io}',
 		im3s:'d|[é]',
 	},'давать'],
+	// unsorted
 	['leer',v2yendo(v2('leer')),'читать'],
 	['ver',{...v2imp('v{e}',v2yo('v{e}',v2('ver'))),
 		par:'v|i{st}o',
