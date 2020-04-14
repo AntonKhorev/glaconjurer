@@ -394,11 +394,11 @@ class Verb {
 const v3=(...args)=>(new Verb(...args))
 const verbsData=[
 	// regular
-	v3('hablar','говорить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']),
-	v3('comer','есть',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']),
+	v3('pasar','проходить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']),
+	v3('deber','<abbr title=быть>б.</abbr> должным',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']),
 	v3('vivir','жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']),
 	// orthographic
-	v3('tocar','трогать','c→<strong class=insert>qu</strong>'),
+	v3('buscar','искать','c→<strong class=insert>qu</strong>'),
 	v3('utilizar','использовать','z→<strong>c</strong>'),
 	v3('llegar','прибывать','g→<strong class=insert>gu</strong>'),
 	v3('coger','брать','g→<strong>j</strong>'),
@@ -407,7 +407,7 @@ const verbsData=[
 	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
 	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
 	v3('pedir','просить','e→<strong>i</strong>').vowel('i','i'),
-	v3('mover','двигать','o→<strong class=insert>ue</strong>').vowel('ue'),
+	v3('contar','считать','o→<strong class=insert>ue</strong>').vowel('ue'),
 	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
 	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
@@ -503,10 +503,9 @@ const verbsData=[
 	v3('volver','возвращаться').vowel('ue').replace({
 		par:'v{ue}l[t]|{}o',
 	}),
-	v3('pasar','проходить'),
-	v3('deber','быть должным'),
 	v3('parecer','казаться').yo('pare{zc}'),
 	v3('quedar','оставаться'),
+	v3('hablar','говорить'),
 	v3('llevar','нести'),
 	v3('dejar','оставлять'),
 	v3('encontrar','находить').vowel('ue'),
@@ -514,12 +513,17 @@ const verbsData=[
 	v3('tomar','брать'),
 	v3('tratar','пытаться'),
 	v3('mirar','смотреть'),
+	v3('mover','двигать').vowel('ue'),
+	v3('esperar','ждать'),
+	v3('tocar','трогать'),
+	v3('comer','есть'),
+	v3('existir','существовать'),
 ]
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
 	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
 	'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
-	'conocer,vivir,sentir,tratar,mirar'
+	'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir'
 ).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
