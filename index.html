@@ -601,13 +601,15 @@ const verbsData=v2tov3([
 		'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
 		im2s:'h{}|e',
 	}),
-	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
+	v3('dar','давать').pret('d').replace({
 		pres1s:'d|o{y}',
 		pres2p:'d|[a]is',
 		pret1s:'d|[i]',
 		pret3s:'d|{io}',
+		subj1s:'d|[é]',
+		subj3s:'d|[é]',
 		im3s:'d|[é]',
-	},'давать'],
+	}),
 	// unsorted
 	['leer',v2yendo(v2('leer')),'читать'],
 	['ver',{...v2imp('v{e}',v2yo('v{e}',v2('ver'))),
