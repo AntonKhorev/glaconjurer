@@ -372,7 +372,8 @@ class Verb {
 		this.category=category
 		this.forms={}
 		this.formNotes={}
-		const [infStem,infEnd]=title.split(/(..)$/)
+		let [infStem,infEnd]=title.split(/(..)$/)
+		if (infEnd=='ír') infEnd='ir'
 		const formIds=(
 			'inf,ger,par,'+
 			'pres1s,pres2s,pres3s,pres1p,pres2p,pres3p,'+
@@ -627,38 +628,38 @@ const verbsData=v2tov3([
 		pret3s:'h[iz]|[o]', // TODO this is otho change
 		im2s:'ha[z]|{}',
 	}),
-	['poner',{...v2fut('pon{d}',v2pret('p[us]',v2yo('pon{g}',v2('poner')))),
+	v3('poner','ставить').yo('pon{g}').pret('p[us]').fut('pon{d}').replace({
 		par:'p{uest}|{}o',
 		im2s:'pon|{}',
-	},'ставить'],
-	['tener',{...v2fut('ten{d}',v2pret('t[uv]',v2yo('ten{g}',v2vowel('e','ie',v2('tener'))))),
+	}),
+	v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
 		im2s:'ten|{}',
-	},'иметь'], // {{es.v.conj.tener}}
-	['saber',{...v2fut('sab',v2pret('s[up]',v2yo('s[ep]',v2('saber')))),
+	}),
+	v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
 		pres1s:'s{}|[é]',
-	},['знать','знать факт/навык']],
+	}),
 	v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
 	v3('elegir','выбирать').vowel('i','i').replace({
 		par:'ele{ct}|{}o',
 	}),
 	v3('seguir','следовать').vowel('i','i'),
-	['poder',{...v2fut('pod',v2pret('p[u]d',v2vowel('o','ue',v2('poder')))),
-		ger:'p[u]d|iendo',
-	},'мочь'], // {{es.v.conj.er|pod|irregular=x|...}}
+	v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
+		ger:'p[u]d|iendo', // TODO vowel-raising
+	}),
 	v3('empezar','начинать').vowel('ie'),
-	['oír',{...v2yendo(v2yo('o{ig}',v2vowel('o','oy',v2('oir')))),
+	v3('oír','слышать').vowel('oy').yo('o{ig}').yendo().replace({
 		inf:'o|[í]r',
 		pres1p:'o|[í]mos',
 		im2p:'o|[í]d',
-	},'слышать'], // {{es.v.conj.oír|o}}
-	['querer',v2fut('quer',v2pret('qu[is]',v2vowel('e','ie',v2('querer')))),'хотеть'], // {{es.v.conj.querer}}
-	['salir',{...v2fut('sal{d}',v2yo('sal{g}',v2('salir'))),
+	}),
+	v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
+	v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
 		im2s:'sal|{}',
-	},'выходить'], // {{es.v.conj.salir}}
-	['decir',{...v2fut('d[i]{}',v2pret('d[ij]',v2yo('d[ig]',v2vowelIr('e','i','i',v2('decir'))))),
-		im2s:'d[i]{}|{}',
+	}),
+	v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
 		par:'d{ich}|{}o',
-	},'сказать'], // {{es.v.conj.decir}}
+		im2s:'d[i]{}|{}',
+	}),
 	v3('volver','возвращаться').vowel('ue').replace({
 		par:'v{ue}l[t]|{}o',
 	}),
@@ -667,10 +668,6 @@ const verbsData=v2tov3([
 	v3('parecer','казаться').yo('pare{zc}'),
 	v3('quedar','оставаться'),
 ])
-//for (let i=0;i<verbs.length;i+=2) {
-//	const [inf]=verbs[i]
-//	verbs.splice(i+1,0,[inf,v2(inf.replace('í','i')),'TEST','TEST'])
-//} // for debugging
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
 	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar'
