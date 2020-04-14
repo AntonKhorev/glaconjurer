@@ -493,6 +493,16 @@ class Verb {
 		}
 		return this
 	}
+	yendo() {
+		for (const formId of ['ger','pret3s','pret3p']) {
+			this.forms[formId]=this.forms[formId].replace(/\|i/,'|[y]')
+		}
+		for (const formId of ['par','pret2s','pret1p','pret2p']) {
+			this.forms[formId]=this.forms[formId].replace(/\|i/,'|[í]')
+		}
+		this.formNotes.ger='после гласной -iendo меняется на -yendo'
+		return this
+	}
 	pret(strongStem) { // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
 		const ends='e,iste,o,imos,isteis,ieron'.split(',')
 		const markEnds      ='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
@@ -575,7 +585,7 @@ const verbsData=v2tov3([
 	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
 	v3('conducir','вести','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('condu{zc}').pret('condu[j]'),
 	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
-	['creer',v2yendo(v2('creer')),'верить','-<strong>y</strong>endo'], // {{es.v.conj.eer|cre}}
+	v3('creer','верить','-<strong>y</strong>endo').yendo(),
 	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
 		par:'escri[t]|{}o',
 	}),
