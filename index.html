@@ -523,6 +523,18 @@ class Verb {
 		}
 		return this
 	}
+	imp(stem) {
+		for (const formId of this.formIdsFromPattern('imp**')) {
+			this.forms[formId]=this.forms[formId].replace(/^.*?\|/,`${stem}|`)
+		}
+		return this
+	}
+	fut(stem) {
+		for (const formId of [...this.formIdsFromPattern('fut**'),...this.formIdsFromPattern('cond**')]) {
+			this.forms[formId]=this.forms[formId].replace(/^.*\|.*\|/,`${stem}|{}r|`)
+		}
+		return this
+	}
 	replace(forms) {
 		for (const [k,v] of Object.entries(forms)) {
 			const formIds=this.formIdsFromPattern(k)
@@ -549,8 +561,23 @@ const verbsData=v2tov3([
 	v3('llegar','прибывать','g→<strong class=insert>gu</strong>'),
 	v3('coger','брать','g→<strong>j</strong>'),
 	v3('distinguir','различать','gu→<strong class=insert>g</strong>'),
-	// helper
-	v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
+	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
+	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
+	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
+	v3('pedir','просить','e→<strong>i</strong>').vowel('i','i'),
+	v3('mover','двигать','o→<strong class=insert>ue</strong>').vowel('ue'),
+	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
+	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
+	// consonant change
+	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
+	v3('conducir','вести','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('condu{zc}').pret('condu[j]'),
+	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
+	v3('creer','верить','-<strong>y</strong>endo').yendo(),
+	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
+		par:'escri[t]|{}o',
+	}),
+	// irregularidad propia
+	v3('estar',['быть','быть временно, быть в указанном месте'],'<abbr title=irregularidad>irreg.</abbr> propia').pret('est{uv}').replace({
 		'pres*s':'est|o{y},est|[á]s,est|[á]',
 		pres3p:'est|[á]n',
 		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
@@ -570,26 +597,10 @@ const verbsData=v2tov3([
 		'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
 		im2s:'{v}|e',
 	}),
-	['haber',{...v2fut('hab',v2pret('h[u]b',v2yo('ha[y]',v2('haber')))),
-		...v2repl('pres**','h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n'),
+	v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
+		'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
 		im2s:'h{}|e',
-	},['иметь','вспомогательный для сложных времён']],
-	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
-	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
-	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
-	v3('pedir','просить','e→<strong>i</strong>').vowel('i','i'),
-	v3('mover','двигать','o→<strong class=insert>ue</strong>').vowel('ue'),
-	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
-	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
-	// consonant change
-	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
-	v3('conducir','вести','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('condu{zc}').pret('condu[j]'),
-	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
-	v3('creer','верить','-<strong>y</strong>endo').yendo(),
-	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
-		par:'escri[t]|{}o',
 	}),
-	// very irregular
 	['dar',{...v2pret('d',v2('dar')), // легче посчитать за сильный претерит, хотя викисловарь так не считает
 		pres1s:'d|o{y}',
 		pres2p:'d|[a]is',
