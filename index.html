@@ -490,6 +490,7 @@ class Verb {
 	yo(stem) {
 		for (const formId of ['pres1s','subj1s','subj2s','subj3s','subj1p','subj2p','subj3p','im3s','im1p','im3p']) {
 			this.forms[formId]=this.forms[formId].replace(/^.*?\|/,stem+'|')
+			delete this.formNotes[formId]
 		}
 		return this
 	}
@@ -611,21 +612,21 @@ const verbsData=v2tov3([
 		im3s:'d|[é]',
 	}),
 	// unsorted
-	['leer',v2yendo(v2('leer')),'читать'],
-	['ver',{...v2imp('v{e}',v2yo('v{e}',v2('ver'))),
+	v3('leer','читать').yendo(),
+	v3('ver','видеть').yo('v{e}').imp('v{e}').replace({
 		par:'v|i{st}o',
 		pres2p:'v|[e]is',
 		pret1s:'v|[i]',
 		pret3s:'v|i[o]',
-	},'видеть'],
-	['venir',{...v2fut('ven{d}',v2pret('v[i]n',v2yo('ven{g}',v2vowelIr('e','ie','i',v2('venir'))))),
+	}),
+	v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
 		im2s:'ven|{}',
-	},'приходить'], // {{es.v.conj.venir}}
-	['hacer',{...v2fut('ha{}',v2pret('h[i]c',v2yo('ha[g]',v2('hacer')))),
+	}),
+	v3('hacer','делать').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
 		par:'h{ech}|{}o',
-		pret3s:'h[iz]|[o]',
+		pret3s:'h[iz]|[o]', // TODO this is otho change
 		im2s:'ha[z]|{}',
-	},'делать'],
+	}),
 	['poner',{...v2fut('pon{d}',v2pret('p[us]',v2yo('pon{g}',v2('poner')))),
 		par:'p{uest}|{}o',
 		im2s:'pon|{}',
