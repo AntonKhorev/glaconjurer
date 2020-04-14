@@ -472,6 +472,26 @@ class Verb {
 		}
 		return this
 	}
+	pret(strongStem) { // TODO make note: https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Pret%C3%A9ritos_fuertes
+		const ends='e,iste,o,imos,isteis,ieron'.split(',')
+		const markEnds      ='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
+		const markInsertEnds='{e},{i}ste,{o},{i}mos,{i}steis,{ie}ron'.split(',')
+		for (const [i,formId] of v2formIds('pret**').entries()) { // TODO rewrite v2
+			const [,end]=this.forms[formId].split('|')
+			let strongEnd=end
+			if (strongStem.replace(/[|{}[\]]/g,'').slice(-1)=='j' && ends[i]=='ieron') {
+				strongEnd='{}eron'
+			} else if (end!=ends[i]) {
+				if (end.length==ends[i].length) {
+					strongEnd=markEnds[i]
+				} else {
+					strongEnd=markInsertEnds[i]
+				}
+			}
+			this.forms[formId]=strongStem+'|'+strongEnd
+		}
+		return this
+	}
 	replace(forms) {
 		this.forms={...this.forms,...forms}
 		return this
@@ -524,9 +544,7 @@ const verbsData=v2tov3([
 	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
 	// consonant change
 	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
-	['conducir',{...v2pret('condu[j]',v2yo('condu{zc}',v2('conducir'))),
-		pret3p:'conduj|{}eron',
-	},'вести','c→<strong class=insert>zc</strong>,<strong>j</strong>'], // {{es.v.conj.ducir|condu}}
+	v3('conducir','вести','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('condu{zc}').pret('condu[j]'),
 	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 	['creer',v2yendo(v2('creer')),'верить','-<strong>y</strong>endo'], // {{es.v.conj.eer|cre}}
 	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
