@@ -507,10 +507,15 @@ const verbsData=[
 	v3('deber','быть должным'),
 	v3('parecer','казаться').yo('pare{zc}'),
 	v3('quedar','оставаться'),
+	v3('llevar','нести'),
+	v3('dejar','оставлять'),
+	v3('encontrar','находить').vowel('ue'),
+	v3('llamar','звать'),
 ]
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
-	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar'
+	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
+	'llevar,dejar,seguir,encontrar,llamar'
 ).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
