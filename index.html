@@ -439,10 +439,6 @@ const verbsData=[
 		'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
 		im2s:'{v}|e',
 	}),
-	v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
-		'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
-		im2s:'h{}|e',
-	}),
 	v3('dar','давать').pret('d').replace({
 		pres1s:'d|o{y}',
 		pres2p:'d|[a]is',
@@ -452,21 +448,37 @@ const verbsData=[
 		subj3s:'d|[é]',
 		im3s:'d|[é]',
 	}),
-	// unsorted
-	v3('leer','читать').yendo(),
 	v3('ver','видеть').yo('v{e}').imp('v{e}').replace({
 		par:'v|i{st}o',
 		pres2p:'v|[e]is',
 		pret1s:'v|[i]',
 		pret3s:'v|i[o]',
 	}),
-	v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
-		im2s:'ven|{}',
+	v3('oír','слышать').vowel('oy').yo('o{ig}').yendo().replace({
+		inf:'o|[í]r',
+		pres1p:'o|[í]mos',
+		im2p:'o|[í]d',
 	}),
+	v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
+	v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
+		'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
+		im2s:'h{}|e',
+	}),
+	v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
+		pres1s:'s{}|[é]',
+	}),
+	v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
+		ger:'p[u]d|iendo', // TODO vowel-raising
+	}),
+	v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
 	v3('hacer','делать').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
 		par:'h{ech}|{}o',
 		pret3s:'h[iz]|[o]', // TODO this is otho change
 		im2s:'ha[z]|{}',
+	}),
+	v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
+		par:'d{ich}|{}o',
+		im2s:'d[i]{}|{}',
 	}),
 	v3('poner','ставить').yo('pon{g}').pret('p[us]').fut('pon{d}').replace({
 		par:'p{uest}|{}o',
@@ -475,57 +487,45 @@ const verbsData=[
 	v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
 		im2s:'ten|{}',
 	}),
-	v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
-		pres1s:'s{}|[é]',
+	v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
+		im2s:'ven|{}',
 	}),
-	v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
-	v3('elegir','выбирать').vowel('i','i').replace({
-		par:'ele{ct}|{}o',
-	}),
-	v3('seguir','следовать').vowel('i','i'),
-	v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
-		ger:'p[u]d|iendo', // TODO vowel-raising
-	}),
-	v3('empezar','начинать').vowel('ie'),
-	v3('oír','слышать').vowel('oy').yo('o{ig}').yendo().replace({
-		inf:'o|[í]r',
-		pres1p:'o|[í]mos',
-		im2p:'o|[í]d',
-	}),
-	v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
 	v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
 		im2s:'sal|{}',
 	}),
-	v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
-		par:'d{ich}|{}o',
-		im2s:'d[i]{}|{}',
+	// unsorted
+	v3('elegir','выбирать').vowel('i','i').replace({
+		par:'ele{ct}|{}o',
 	}),
 	v3('volver','возвращаться').vowel('ue').replace({
 		par:'v{ue}l[t]|{}o',
 	}),
+	v3('leer','читать').yendo(),
+	v3('seguir','следовать').vowel('i','i'),
+	v3('empezar','начинать').vowel('ie'),
+	v3('perder','терять').vowel('ie'),
+	v3('entender','понимать').vowel('ie'),
+	v3('encontrar','находить').vowel('ue'),
+	v3('recordar','помнить').vowel('ue'),
+	v3('mover','двигать').vowel('ue'),
 	v3('parecer','казаться').yo('pare{zc}'),
+	v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
 	v3('quedar','оставаться'),
 	v3('hablar','говорить'),
 	v3('llevar','нести'),
 	v3('dejar','оставлять'),
-	v3('encontrar','находить').vowel('ue'),
 	v3('llamar','звать'),
 	v3('tomar','брать'),
 	v3('tratar','пытаться'),
 	v3('mirar','смотреть'),
-	v3('mover','двигать').vowel('ue'),
 	v3('esperar','ждать'),
 	v3('tocar','трогать'),
 	v3('comer','есть'),
 	v3('existir','существовать'),
 	v3('entrar','входить'),
 	v3('trabajar','работать'),
-	v3('perder','терять').vowel('ie'),
-	v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
 	v3('ocurrir','происходить'),
-	v3('entender','понимать').vowel('ie'),
 	v3('recibir','получать'),
-	v3('recordar','помнить').vowel('ue'),
 ]
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
