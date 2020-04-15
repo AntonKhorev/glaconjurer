@@ -522,13 +522,17 @@ const verbsData=[
 	v3('trabajar','работать'),
 	v3('perder','терять').vowel('ie'),
 	v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
+	v3('ocurrir','происходить'),
+	v3('entender','понимать').vowel('ie'),
+	v3('recibir','получать'),
+	v3('recordar','помнить').vowel('ue'),
 ]
 const verbsByFrequency=(
 	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
 	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
 	'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
 	'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
-	'entrar,trabajar,escribir,perder,producir'
+	'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar'
 ).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
