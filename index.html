@@ -206,7 +206,22 @@ const personalVerbForms=['pres','pret','imp','fut','cond','subj','im']
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
 class Verb {
+	listForms() {
+		return []
+	}
+	getForm(formId) {
+		return undefined
+	}
+	getRawForm(formId) {
+		return this.getForm(formId).replace(/[|{}[\]]/g,'')
+	}
+	getFormNote(formId) {
+		return undefined
+	}
+}
+class SpanishVerb extends Verb {
 	constructor(title,translation) {
+		super()
 		this.title=title
 		this.translation=translation
 		this.forms={}
@@ -280,6 +295,15 @@ class Verb {
 			}
 			this.forms[formId]=stem+'|'+end
 		}
+	}
+	listForms() {
+		return Object.keys(this.forms)
+	}
+	getForm(formId) {
+		return this.forms[formId]
+	}
+	getFormNote(formId) {
+		return this.formNotes[formId]
 	}
 	formIdsFromPattern(pattern) {
 		const [base,person,number]=pattern.split(/(.)(.)$/)
@@ -386,9 +410,6 @@ class Verb {
 		}
 		return this
 	}
-	getRawForm(formId) {
-		return this.forms[formId].replace(/[|{}[\]]/g,'')
-	}
 }
 
 class Language {
@@ -417,7 +438,7 @@ class SpanishLanguage extends Language {
 	constructor() {
 		super()
 		this.verbs={}
-		const v3=(...args)=>(new Verb(...args))
+		const v3=(...args)=>(new SpanishVerb(...args))
 		for (const verb of [
 			// regular
 			v3('pasar','проходить'),
@@ -770,8 +791,8 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			for (const verb of language.listVerbs(orderType)) {
 				const $cell=$row.insertCell()
 				if (compactRow) {
-					const form1=verb.forms[formId+'s']
-					const form2=verb.forms[formId+'p']
+					const form1=verb.getForm(formId+'s')
+					const form2=verb.getForm(formId+'p')
 					if (form1 && form2) {
 						const [isCombined,preMarked,inMarked,postMarked]=combineForms(form1,form2)
 						if (isCombined) {
@@ -780,8 +801,8 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 							$cell.innerHTML=getFormHtml(form1)+" / "+getFormHtml(form2)
 						}
 					}
-					const formNote1=verb.formNotes[formId+'s']
-					const formNote2=verb.formNotes[formId+'p']
+					const formNote1=verb.getformNote(formId+'s')
+					const formNote2=verb.getFormNote(formId+'p')
 					let formNote
 					if (formNote1 && formNote2) {
 						if (formNote1==formNote2) {
@@ -796,8 +817,8 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 					$cell.dataset.formId=formId+'s'
 					$cell.dataset.formId2=formId+'p'
 				} else {
-					$cell.innerHTML=getFormHtml(verb.forms[formId])
-					if (verb.formNotes[formId]) $cell.setAttribute('title',verb.formNotes[formId])
+					$cell.innerHTML=getFormHtml(verb.getForm(formId))
+					if (verb.getFormNote(formId)) $cell.setAttribute('title',verb.getFormNote(formId))
 					$cell.dataset.formId=formId
 				}
 				$cell.dataset.verb=verb
@@ -839,7 +860,7 @@ function createConjugationGame($container,formSet) {
 	let language=languages.es
 	const gameVerbs=[]
 	for (const verbs of language.listVerbs('topic')) { // TODO receive list of verbs, for example to play with 20 most frequent verbs
-		for (const formId in verb.forms) {
+		for (const formId in verb.listForms()) {
 			if (formId=='inf') continue
 			if (formId in formSet && !formSet[formId]) continue
 			const [formGroupId,]=formId.split(/(\d)/)
