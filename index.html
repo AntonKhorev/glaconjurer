@@ -206,10 +206,9 @@ const personalVerbForms=['pres','pret','imp','fut','cond','subj','im']
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
 class Verb {
-	constructor(title,translation,category) {
+	constructor(title,translation) {
 		this.title=title
 		this.translation=translation
-		this.category=category
 		this.forms={}
 		this.formNotes={}
 		let [infStem,infEnd]=title.split(/(..)$/)
@@ -391,149 +390,250 @@ class Verb {
 		return this.forms[formId].replace(/[|{}[\]]/g,'')
 	}
 }
-const v3=(...args)=>(new Verb(...args))
-const verbsData=[
-	// regular
-	v3('pasar','проходить',['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол']),
-	v3('deber','<abbr title=быть>б.</abbr> должным',['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол']),
-	v3('vivir','жить',['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол']),
-	// orthographic
-	v3('buscar','искать','c→<strong class=insert>qu</strong>'),
-	v3('utilizar','использовать','z→<strong>c</strong>'),
-	v3('llegar','прибывать','g→<strong class=insert>gu</strong>'),
-	v3('coger','брать','g→<strong>j</strong>'),
-	v3('distinguir','различать','gu→<strong class=insert>g</strong>'),
-	// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
-	v3('pensar','думать','e→<strong class=insert>ie</strong>').vowel('ie'),
-	v3('sentir','чувствовать','e→<strong class=insert>ie</strong>,<strong>i</strong>').vowel('ie','i'),
-	v3('pedir','просить','e→<strong>i</strong>').vowel('i','i'),
-	v3('contar','считать','o→<strong class=insert>ue</strong>').vowel('ue'),
-	v3('dormir','спать','o→<strong class=insert>ue</strong>,<strong>u</strong>').vowel('ue','u'),
-	v3('jugar','играть','u→<strong class=insert>ue</strong>').vowel('ue'),
-	// consonant change
-	v3('conocer',['знать','знать человека/место'],'c→<strong class=insert>zc</strong>').yo('cono{zc}'),
-	v3('producir','производить','c→<strong class=insert>zc</strong>,<strong>j</strong>').yo('produ{zc}').pret('produ[j]'),
-	// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
-	v3('creer','верить','-<strong>y</strong>endo').yendo(),
-	v3('escribir','писать','<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>').replace({
-		par:'escri[t]|{}o',
-	}),
-	// irregularidad propia
-	v3('estar',['быть','быть временно, быть в указанном месте'],'<abbr title=irregularidad>irreg.</abbr> propia').pret('est{uv}').replace({
-		'pres*s':'est|o{y},est|[á]s,est|[á]',
-		pres3p:'est|[á]n',
-		im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
-		'subj*s':'est|[é],est|[é]s,est|[é]',
-		subj3p:'est|[é]n',
-	}),
-	v3('ser',['быть','быть постоянно, быть в указанный момент времени']).yo('s{e}').replace({
-		'pres**':'s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n',
-		'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
-		'imp**':'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
-		im2s:'s|[é]',
-	}),
-	v3('ir','идти').yo('{vay}').replace({
-		ger:'|[y]endo',
-		'pres**':'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
-		'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
-		'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
-		im2s:'{v}|e',
-	}),
-	v3('dar','давать').pret('d').replace({
-		pres1s:'d|o{y}',
-		pres2p:'d|[a]is',
-		pret1s:'d|[i]',
-		pret3s:'d|{io}',
-		subj1s:'d|[é]',
-		subj3s:'d|[é]',
-		im3s:'d|[é]',
-	}),
-	v3('ver','видеть').yo('v{e}').imp('v{e}').replace({
-		par:'v|i{st}o',
-		pres2p:'v|[e]is',
-		pret1s:'v|[i]',
-		pret3s:'v|i[o]',
-	}),
-	v3('oír','слышать').vowel('oy').yo('o{ig}').yendo().replace({
-		inf:'o|[í]r',
-		pres1p:'o|[í]mos',
-		im2p:'o|[í]d',
-	}),
-	v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
-	v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
-		'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
-		im2s:'h{}|e',
-	}),
-	v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
-		pres1s:'s{}|[é]',
-	}),
-	v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
-		ger:'p[u]d|iendo', // TODO vowel-raising
-	}),
-	v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
-	v3('hacer','делать').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
-		par:'h{ech}|{}o',
-		pret3s:'h[iz]|[o]', // TODO this is otho change
-		im2s:'ha[z]|{}',
-	}),
-	v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
-		par:'d{ich}|{}o',
-		im2s:'d[i]{}|{}',
-	}),
-	v3('poner','ставить').yo('pon{g}').pret('p[us]').fut('pon{d}').replace({
-		par:'p{uest}|{}o',
-		im2s:'pon|{}',
-	}),
-	v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
-		im2s:'ten|{}',
-	}),
-	v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
-		im2s:'ven|{}',
-	}),
-	v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
-		im2s:'sal|{}',
-	}),
-	// unsorted
-	v3('elegir','выбирать').vowel('i','i').replace({
-		par:'ele{ct}|{}o',
-	}),
-	v3('volver','возвращаться').vowel('ue').replace({
-		par:'v{ue}l[t]|{}o',
-	}),
-	v3('leer','читать').yendo(),
-	v3('seguir','следовать').vowel('i','i'),
-	v3('empezar','начинать').vowel('ie'),
-	v3('perder','терять').vowel('ie'),
-	v3('entender','понимать').vowel('ie'),
-	v3('encontrar','находить').vowel('ue'),
-	v3('recordar','помнить').vowel('ue'),
-	v3('mover','двигать').vowel('ue'),
-	v3('parecer','казаться').yo('pare{zc}'),
-	v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
-	v3('quedar','оставаться'),
-	v3('hablar','говорить'),
-	v3('llevar','нести'),
-	v3('dejar','оставлять'),
-	v3('llamar','звать'),
-	v3('tomar','брать'),
-	v3('tratar','пытаться'),
-	v3('mirar','смотреть'),
-	v3('esperar','ждать'),
-	v3('tocar','трогать'),
-	v3('comer','есть'),
-	v3('existir','существовать'),
-	v3('entrar','входить'),
-	v3('trabajar','работать'),
-	v3('ocurrir','происходить'),
-	v3('recibir','получать'),
-]
-const verbsByFrequency=(
-	'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
-	'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
-	'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
-	'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
-	'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar'
-).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
+
+class Language {
+	getVerbs() {
+		return {}
+	}
+	listVerbOrders() {
+		return [
+			['topic','по видам спряжений глаголов'],
+			['frequency','по частоте употребления'],
+		]
+	}
+	getVerbOrder() {
+		return []
+	}
+	*listVerbs(orderType) {
+		for (const [,...c2s] of this.getVerbOrder(orderType)) {
+			for (const [,...vs] of c2s) {
+				for (const v of vs) yield this.getVerbs()[v]
+			}
+		}
+	}
+}
+
+class SpanishLanguage extends Language {
+	constructor() {
+		super()
+		this.verbs={}
+		const v3=(...args)=>(new Verb(...args))
+		for (const verb of [
+			// regular
+			v3('pasar','проходить'),
+			v3('deber','<abbr title=быть>б.</abbr> должным'),
+			v3('vivir','жить'),
+			// orthographic
+			v3('buscar','искать'),
+			v3('utilizar','использовать'),
+			v3('llegar','прибывать'),
+			v3('coger','брать'),
+			v3('distinguir','различать'),
+			// vowel change - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
+			v3('pensar','думать').vowel('ie'),
+			v3('sentir','чувствовать').vowel('ie','i'),
+			v3('pedir','просить').vowel('i','i'),
+			v3('contar','считать').vowel('ue'),
+			v3('dormir','спать').vowel('ue','u'),
+			v3('jugar','играть').vowel('ue'),
+			// consonant change
+			v3('conocer',['знать','знать человека/место']).yo('cono{zc}'),
+			v3('producir','производить').yo('produ{zc}').pret('produ[j]'),
+			// other rules - https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
+			v3('creer','верить').yendo(),
+			v3('escribir','писать').replace({
+				par:'escri[t]|{}o',
+			}),
+			// irregularidad propia
+			v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
+				'pres*s':'est|o{y},est|[á]s,est|[á]',
+				pres3p:'est|[á]n',
+				im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
+				'subj*s':'est|[é],est|[é]s,est|[é]',
+				subj3p:'est|[é]n',
+			}),
+			v3('ser',['быть','быть постоянно, быть в указанный момент времени']).yo('s{e}').replace({
+				'pres**':'s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n',
+				'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
+				'imp**':'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
+				im2s:'s|[é]',
+			}),
+			v3('ir','идти').yo('{vay}').replace({
+				ger:'|[y]endo',
+				'pres**':'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
+				'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
+				'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
+				im2s:'{v}|e',
+			}),
+			v3('dar','давать').pret('d').replace({
+				pres1s:'d|o{y}',
+				pres2p:'d|[a]is',
+				pret1s:'d|[i]',
+				pret3s:'d|{io}',
+				subj1s:'d|[é]',
+				subj3s:'d|[é]',
+				im3s:'d|[é]',
+			}),
+			v3('ver','видеть').yo('v{e}').imp('v{e}').replace({
+				par:'v|i{st}o',
+				pres2p:'v|[e]is',
+				pret1s:'v|[i]',
+				pret3s:'v|i[o]',
+			}),
+			v3('oír','слышать').vowel('oy').yo('o{ig}').yendo().replace({
+				inf:'o|[í]r',
+				pres1p:'o|[í]mos',
+				im2p:'o|[í]d',
+			}),
+			v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
+			v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
+				'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
+				im2s:'h{}|e',
+			}),
+			v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
+				pres1s:'s{}|[é]',
+			}),
+			v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
+				ger:'p[u]d|iendo', // TODO vowel-raising
+			}),
+			v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
+			v3('hacer','делать').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
+				par:'h{ech}|{}o',
+				pret3s:'h[iz]|[o]', // TODO this is otho change
+				im2s:'ha[z]|{}',
+			}),
+			v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
+				par:'d{ich}|{}o',
+				im2s:'d[i]{}|{}',
+			}),
+			v3('poner','ставить').yo('pon{g}').pret('p[us]').fut('pon{d}').replace({
+				par:'p{uest}|{}o',
+				im2s:'pon|{}',
+			}),
+			v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
+				im2s:'ten|{}',
+			}),
+			v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
+				im2s:'ven|{}',
+			}),
+			v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
+				im2s:'sal|{}',
+			}),
+			// unsorted
+			v3('elegir','выбирать').vowel('i','i').replace({
+				par:'ele{ct}|{}o',
+			}),
+			v3('volver','возвращаться').vowel('ue').replace({
+				par:'v{ue}l[t]|{}o',
+			}),
+			v3('leer','читать').yendo(),
+			v3('seguir','следовать').vowel('i','i'),
+			v3('empezar','начинать').vowel('ie'),
+			v3('perder','терять').vowel('ie'),
+			v3('entender','понимать').vowel('ie'),
+			v3('encontrar','находить').vowel('ue'),
+			v3('recordar','помнить').vowel('ue'),
+			v3('mover','двигать').vowel('ue'),
+			v3('parecer','казаться').yo('pare{zc}'),
+			v3('conducir','вести').yo('condu{zc}').pret('condu[j]'),
+			v3('quedar','оставаться'),
+			v3('hablar','говорить'),
+			v3('llevar','нести'),
+			v3('dejar','оставлять'),
+			v3('llamar','звать'),
+			v3('tomar','брать'),
+			v3('tratar','пытаться'),
+			v3('mirar','смотреть'),
+			v3('esperar','ждать'),
+			v3('tocar','трогать'),
+			v3('comer','есть'),
+			v3('existir','существовать'),
+			v3('entrar','входить'),
+			v3('trabajar','работать'),
+			v3('ocurrir','происходить'),
+			v3('recibir','получать'),
+		]) {
+			this.verbs[verb.title]=verb
+		}
+	}
+	getVerbs() {
+		return this.verbs
+	}
+	getVerbOrder(orderType) {
+		if (orderType=='topic') {
+			return this.getTopicVerbOrder()
+		} else if (orderType=='frequency') {
+			return this.getFrequencyVerbOrder()
+		} else {
+			return []
+		}
+	}
+	getTopicVerbOrder() {
+		const order=[
+			['правильные',
+				[['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол'],'pasar'],
+				[['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол'],'deber'],
+				[['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол'],'vivir'],
+			],
+			['орфографические изменения',
+				['c→<strong class=insert>qu</strong>','buscar'],
+				['z→<strong>c</strong>','utilizar'],
+				['g→<strong class=insert>gu</strong>','llegar'],
+				['g→<strong>j</strong>','coger'],
+				['gu→<strong class=insert>g</strong>','distinguir'],
+			],
+			['изменения гласных',
+				['e→<strong class=insert>ie</strong>','pensar'],
+				['e→<strong class=insert>ie</strong>,<strong>i</strong>','sentir'],
+				['e→<strong>i</strong>','pedir'],
+				['o→<strong class=insert>ue</strong>','contar'],
+				['o→<strong class=insert>ue</strong>,<strong>u</strong>','dormir'],
+				['u→<strong class=insert>ue</strong>','jugar'],
+			],
+			['изменения согласных',
+				['c→<strong class=insert>zc</strong>','conocer'],
+				['c→<strong class=insert>zc</strong>,<strong>j</strong>','producir'],
+			],
+			['прочие изменения',
+				['-<strong>y</strong>endo','creer'],
+				['<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>','escribir'],
+			],
+			[['irregularidad propia','индивидуальное спряжение'],
+				',estar,ser,ir,dar,ver,oír,traer,haber,saber,poder,querer,hacer,decir,poner,tener,venir,salir'.split(',')
+			],
+		]
+		const added={}
+		for (const [,...c2s] of order) {
+			for (const [,...vs] of c2s) {
+				for (const v of vs) added[v]=true
+			}
+		}
+		const left=['']
+		for (const v of Object.keys(this.verbs)) {
+			if (!added[v]) left.push(v)
+		}
+		order.push(['оставшиеся глаголы в произвольном порядке',left])
+		return order
+	}
+	getFrequencyVerbOrder() {
+		const verbsByFrequency=(
+			'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
+			'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
+			'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
+			'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
+			'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar'
+		).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
+		const numbered=['по частоте употребления']
+		for (let i=0;i<verbsByFrequency.length;i++) {
+			numbered.push([i+1,verbsByFrequency[i]])
+		}
+		return [numbered]
+	}
+}
+
+const languages={
+	es: new SpanishLanguage(),
+}
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
@@ -574,18 +674,7 @@ const getVerbFormOrder=(sortType,formSet)=>{
 }
 
 function createConjugationTable($container,sortType,formSet,orderType) {
-	let verbs=verbsData
-	if (orderType=='frequency') { // hack
-		verbs=[]
-		for (const v of verbsByFrequency) {
-			for (const verb of verbsData) {
-				if (verb.title==v) {
-					verbs.push(verb)
-					continue
-				}
-			}
-		}
-	}
+	let language=languages.es
 	function cellClickHandler() {
 		if (this.dataset.formId2) {
 			this.classList.add('combination')
@@ -599,19 +688,32 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 	$table.setAttribute('lang','es')
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
-	{
+	const catCell=($row,parent,colspan)=>{
+		let [title,titleNote]=readPair(parent)
+		const $cell=document.createElement('th')
+		$row.appendChild($cell)
+		if (title) $cell.innerHTML=title
+		if (titleNote) $cell.setAttribute('title',titleNote)
+		$cell.setAttribute('colspan',colspan)
+	}
+	{ // header row 1
 		const $row=$thead.insertRow()
 		$row.innerHTML="<th colspan=2>"
-		for (const [i,verb] of verbs.entries()) {
-			let [title,titleNote]=readPair(verb.category)
-			if (orderType=='frequency') {
-				title=i+1
-				titleNote=undefined
+		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
+			let colspan=0
+			for (const [subcategory,...verbIds] of subcategories) {
+				colspan+=verbIds.length
 			}
-			const $cell=document.createElement('th')
-			$row.appendChild($cell)
-			if (title) $cell.innerHTML=title
-			if (titleNote) $cell.setAttribute('title',titleNote)
+			catCell($row,category,colspan)
+		}
+	}
+	{ // header row 2
+		const $row=$thead.insertRow()
+		$row.innerHTML="<th colspan=2>"
+		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
+			for (const [subcategory,...verbIds] of subcategories) {
+				catCell($row,subcategory,verbIds.length)
+			}
 		}
 	}
 	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType,formSet)) {
@@ -665,7 +767,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 				if (i!=j+1) return [false]
 				return [true,longForm.slice(0,i),longForm.slice(i,i+d),longForm.slice(i+d)]
 			}
-			for (const verb of verbs) {
+			for (const verb of language.listVerbs(orderType)) {
 				const $cell=$row.insertCell()
 				if (compactRow) {
 					const form1=verb.forms[formId+'s']
@@ -713,7 +815,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			const $cell=document.createElement('th')
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
-			for (const verb of verbs) {
+			for (const verb of language.listVerbs(orderType)) {
 				const [translation,translationNote]=readPair(verb.translation)
 				const $cell=$row.insertCell()
 				$cell.innerHTML=translation
@@ -725,7 +827,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			const $cell=document.createElement('th')
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
-			for (const verb of verbs) {
+			for (const verb of language.listVerbs(orderType)) {
 				$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb.title+"#Conjugaci%C3%B3n>[w]</a>"
 			}
 		}
@@ -734,9 +836,9 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 }
 
 function createConjugationGame($container,formSet) {
-	let verbs=verbsData // hack
+	let language=languages.es
 	const gameVerbs=[]
-	for (const verb of verbs) {
+	for (const verbs of language.listVerbs('topic')) { // TODO receive list of verbs, for example to play with 20 most frequent verbs
 		for (const formId in verb.forms) {
 			if (formId=='inf') continue
 			if (formId in formSet && !formSet[formId]) continue
@@ -890,7 +992,7 @@ function createOptions($featureContainer,$optionsContainer) {
 			localStorage.setItem('glaconjurer-order',order)
 			if (feature=='conjtable') needToCreateFeature=true
 		}
-		for (const [value,text] of [
+		for (const [value,text] of [ // TODO read from language
 			['topic','по видам спряжений глаголов'],
 			['frequency','по частоте употребления'],
 		]) createControl($block,
