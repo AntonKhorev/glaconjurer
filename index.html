@@ -420,6 +420,7 @@ class Language {
 		return [
 			['topic','по видам спряжений глаголов'],
 			['frequency','по частоте употребления'],
+			['alphabet','по алфавиту'],
 		]
 	}
 	getVerbOrder() {
@@ -431,6 +432,20 @@ class Language {
 				for (const v of vs) yield this.getVerbs()[v]
 			}
 		}
+	}
+	getAlphabetVerbOrder() {
+		const sorted=['по алфавиту']
+		let firstLetter
+		let sortedByLetter
+		for (const verbId of Object.keys(this.getVerbs()).sort()) {
+			if (firstLetter!=verbId[0]) {
+				firstLetter=verbId[0]
+				sortedByLetter=[firstLetter.toUpperCase()]
+				sorted.push(sortedByLetter)
+			}
+			sortedByLetter.push(verbId)
+		}
+		return [sorted]
 	}
 }
 
@@ -585,6 +600,8 @@ class SpanishLanguage extends Language {
 			return this.getTopicVerbOrder()
 		} else if (orderType=='frequency') {
 			return this.getFrequencyVerbOrder()
+		} else if (orderType=='alphabet') {
+			return this.getAlphabetVerbOrder()
 		} else {
 			return []
 		}
@@ -1013,10 +1030,7 @@ function createOptions($featureContainer,$optionsContainer) {
 			localStorage.setItem('glaconjurer-order',order)
 			if (feature=='conjtable') needToCreateFeature=true
 		}
-		for (const [value,text] of [ // TODO read from language
-			['topic','по видам спряжений глаголов'],
-			['frequency','по частоте употребления'],
-		]) createControl($block,
+		for (const [value,text] of languages.es.listVerbOrders()) createControl($block,
 			`<label><input type=radio name=order value=${value+(value==order?' checked':'')}> ${text}</label>`,
 		handler)
 	}
