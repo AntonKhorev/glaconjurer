@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang='ru'>
+<html lang=ru>
 <head>
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+<meta charset=utf-8>
+<meta name=viewport content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
 <style>
 body {
 	margin: 0;
@@ -296,6 +296,9 @@ class SpanishVerb extends Verb {
 			this.forms[formId]=stem+'|'+end
 		}
 	}
+	get wiktionary() {
+		return "<a href=https://es.wiktionary.org/wiki/"+this.title+"#Conjugaci%C3%B3n>[w]</a>"
+	}
 	listForms() {
 		return Object.keys(this.forms)
 	}
@@ -415,6 +418,9 @@ class SpanishVerb extends Verb {
 class Language {
 	getVerbs() {
 		return {}
+	}
+	getVerbFormOrder(sortType,formSet) {
+		return [] // [formGroupId, [[isCompactable,formId], ...]], ...
 	}
 	listVerbOrders() {
 		return [
@@ -592,8 +598,49 @@ class SpanishLanguage extends Language {
 			this.verbs[verb.title]=verb
 		}
 	}
+	get title() {
+		return 'испанский'
+	}
+	get code() {
+		return 'es'
+	}
 	getVerbs() {
 		return this.verbs
+	}
+	getVerbFormOrder(sortType,formSet) {
+		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
+		{
+			const formGroupId='nonpers'
+			const formGroupRows=[]
+			for (const formId of ['inf','ger','par']) {
+				if (formId in formSet && !formSet[formId]) continue
+				formGroupRows.push([0,formId])
+			}
+			a.push([formGroupId,formGroupRows])
+		}
+		for (const formGroupId of personalVerbForms) {
+			if (formGroupId in formSet && !formSet[formGroupId]) continue
+			const formGroupRows=[]
+			if (sortType!='number') {
+				for (const p of [1,2,3]) {
+					if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
+						formGroupRows.push([1,formGroupId+p])
+						continue
+					}
+					for (const n of ['s','p']) {
+						if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+					}
+				}
+			} else {
+				for (const n of ['s','p']) {
+					for (const p of [1,2,3]) {
+						if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+					}
+				}
+			}
+			a.push([formGroupId,formGroupRows])
+		}
+		return a
 	}
 	getVerbOrder(orderType) {
 		if (orderType=='topic') {
@@ -669,50 +716,107 @@ class SpanishLanguage extends Language {
 	}
 }
 
+class ItalianVerb extends Verb {
+	constructor(title,translation) {
+		super()
+		this.title=title
+		this.translation=translation
+	}
+	get wiktionary() {
+		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
+	}
+	getForm(formId) {
+		let stem=this.title.slice(0,-3)
+		let infEnd=this.title.slice(-3)
+		let stemNoI=stem
+		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)
+		if (formId=='inf') {
+			return stem+'|'+infEnd
+		} else if (formId=='pres1s') {
+			return stem+'|o'
+		} else if (formId=='pres2s') {
+			return stemNoI+'|i'
+		} else if (formId=='pres3s') {
+			if (infEnd=='are') {
+				return stem+'|a'
+			} else {
+				return stem+'|e'
+			}
+		} else if (formId=='pres1p') {
+			return stemNoI+'|iamo'
+		} else if (formId=='pres2p') {
+			return stem+'|'+infEnd[0]+'te'
+		} else if (formId=='pres3p') {
+			if (infEnd=='are') {
+				return stem+'|ano'
+			} else {
+				return stem+'|ono'
+			}
+		}
+	}
+}
+
+class ItalianLanguage extends Language {
+	constructor() {
+		super()
+		this.verbs={}
+		const v=(...args)=>(new ItalianVerb(...args))
+		for (const verb of [
+			v('abitare'),
+			v('leggere'),
+			v('offrire'),
+			v('studiare'),
+		]) {
+			this.verbs[verb.title]=verb
+		}
+	}
+	get title() {
+		return 'итальянский'
+	}
+	get code() {
+		return 'it'
+	}
+	getVerbs() {
+		return this.verbs
+	}
+	getVerbFormOrder(sortType,formSet) {
+		return [
+			['nonpers',[
+				[0,'inf']
+			]],
+			['pres',[
+				[0,'pres1s'],
+				[0,'pres2s'],
+				[0,'pres3s'],
+				[0,'pres1p'],
+				[0,'pres2p'],
+				[0,'pres3p'],
+			]],
+		]
+	}
+	getVerbOrder(orderType) {
+		return [
+			['правильные',
+				['1-е спряжение','abitare'],
+				['2-е спряжение','leggere'],
+				['3-е спряжение','offrire'],
+			],
+			['почти',
+				['-i-','studiare'],
+			],
+		]
+	}
+}
+
 const languages={
 	es: new SpanishLanguage(),
+	it: new ItalianLanguage(),
 }
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
-const getVerbFormOrder=(sortType,formSet)=>{
-	const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
-	{
-		formGroupId='nonpers'
-		const formGroupRows=[]
-		for (const formId of ['inf','ger','par']) {
-			if (formId in formSet && !formSet[formId]) continue
-			formGroupRows.push([0,formId])
-		}
-		a.push([formGroupId,formGroupRows])
-	}
-	for (const formGroupId of personalVerbForms) {
-		if (formGroupId in formSet && !formSet[formGroupId]) continue
-		const formGroupRows=[]
-		if (sortType!='number') {
-			for (const p of [1,2,3]) {
-				if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
-					formGroupRows.push([1,formGroupId+p])
-					continue
-				}
-				for (const n of ['s','p']) {
-					if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
-				}
-			}
-		} else {
-			for (const n of ['s','p']) {
-				for (const p of [1,2,3]) {
-					if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
-				}
-			}
-		}
-		a.push([formGroupId,formGroupRows])
-	}
-	return a
-}
-
-function createConjugationTable($container,sortType,formSet,orderType) {
-	let language=languages.es
+function createConjugationTable($container,languageType,sortType,formSet,orderType) {
+	let language=languages[languageType]
 	function cellClickHandler() {
 		if (this.dataset.formId2) {
 			this.classList.add('combination')
@@ -723,7 +827,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 	}
 	$container.classList.add('conjtable')
 	const $table=document.createElement('table')
-	$table.setAttribute('lang','es')
+	$table.setAttribute('lang',language.code)
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
 	const catCell=($row,parent,colspan)=>{
@@ -754,7 +858,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			}
 		}
 	}
-	for (const [formGroupId,formGroupRows] of getVerbFormOrder(sortType,formSet)) {
+	for (const [formGroupId,formGroupRows] of language.getVerbFormOrder(sortType,formSet)) {
 		const [formGroupName]=verbForms[formGroupId]
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
@@ -866,7 +970,7 @@ function createConjugationTable($container,sortType,formSet,orderType) {
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
 			for (const verb of language.listVerbs(orderType)) {
-				$row.insertCell().innerHTML="<a href=https://es.wiktionary.org/wiki/"+verb.title+"#Conjugaci%C3%B3n>[w]</a>"
+				$row.insertCell().innerHTML=verb.wiktionary
 			}
 		}
 	}
@@ -952,6 +1056,7 @@ function createOptions($featureContainer,$optionsContainer) {
 	const $closerContainer=document.createElement('div')
 	$closerContainer.classList.add('closer')
 	$dialog.appendChild($closerContainer)
+	let languageId=localStorage.getItem('glaconjurer-language') || 'es'
 	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
 	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let order=localStorage.getItem('glaconjurer-order') || 'topic'
@@ -967,7 +1072,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		if (feature=='conjgame') {
 			createConjugationGame($featureContainer,forms)
 		} else {
-			createConjugationTable($featureContainer,sort,forms,order)
+			createConjugationTable($featureContainer,languageId,sort,forms,order)
 		}
 	}
 	createFeature()
@@ -990,6 +1095,15 @@ function createOptions($featureContainer,$optionsContainer) {
 		$block.appendChild($control)
 	}
 	{
+		const $block=createBlock("Язык",'options-language')
+		createControl($block,"<select id=options-language>"+
+			Object.entries(languages).map(([code,language])=>`<option value=${code+(code==languageId?' selected':'')}>${language.title}</option>`).join('')
+		+"</select>",(ev)=>{
+			languageId=ev.target.value
+			localStorage.setItem('glaconjurer-language',languageId)
+			needToCreateFeature=true
+		})
+	}{
 		const $block=createBlock("Режим",'options-feature')
 		createControl($block,"<select id=options-feature>"+[
 			['conjtable','таблица спряжений'],
