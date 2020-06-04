@@ -37,6 +37,12 @@ body {
 	max-width: 30em;
 	margin: 2em auto;
 }
+#options .block.forms {
+	display: none;
+}
+#options .block.forms.open {
+	display: block;
+}
 .conjtable table {
 	border-collapse: collapse;
 }
@@ -201,7 +207,6 @@ const compactableVerbForms={
 	subj3: ['él<em>los</em>',verbForms.subj3s[1]+'; '+verbForms.subj3p[1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
-const personalVerbForms=['pres','pret','imp','fut','cond','subj','im']
 // wiktionary templates:
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
@@ -419,6 +424,12 @@ class Language {
 	getVerbs() {
 		return {}
 	}
+	listPersonalVerbForms() {
+		return []
+	}
+	listSelectableVerbForms() {
+		return this.listPersonalVerbForms()
+	}
 	getVerbFormOrder(sortType,formSet) {
 		return [] // [formGroupId, [[isCompactable,formId], ...]], ...
 	}
@@ -607,6 +618,12 @@ class SpanishLanguage extends Language {
 	getVerbs() {
 		return this.verbs
 	}
+	listPersonalVerbForms() {
+		return ['pres','pret','imp','fut','cond','subj','im']
+	}
+	listSelectableVerbForms() {
+		return ['par','ger',...this.listPersonalVerbForms()]
+	}
 	getVerbFormOrder(sortType,formSet) {
 		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
 		{
@@ -618,7 +635,7 @@ class SpanishLanguage extends Language {
 			}
 			a.push([formGroupId,formGroupRows])
 		}
-		for (const formGroupId of personalVerbForms) {
+		for (const formGroupId of this.listPersonalVerbForms()) {
 			if (formGroupId in formSet && !formSet[formGroupId]) continue
 			const formGroupRows=[]
 			if (sortType!='number') {
@@ -778,6 +795,9 @@ class ItalianLanguage extends Language {
 	}
 	getVerbs() {
 		return this.verbs
+	}
+	listPersonalVerbForms() {
+		return ['pres']
 	}
 	getVerbFormOrder(sortType,formSet) {
 		return [
@@ -1056,23 +1076,26 @@ function createOptions($featureContainer,$optionsContainer) {
 	const $closerContainer=document.createElement('div')
 	$closerContainer.classList.add('closer')
 	$dialog.appendChild($closerContainer)
-	let languageId=localStorage.getItem('glaconjurer-language') || 'es'
+	let languageId=localStorage.getItem('glaconjurer-language')
+	if (languages[languageId]===undefined) languageId='es'
 	let feature=localStorage.getItem('glaconjurer-feature') || 'conjtable'
 	let sort=localStorage.getItem('glaconjurer-sort') || 'number'
 	let order=localStorage.getItem('glaconjurer-order') || 'topic'
 	let forms={}
-	const formFilterIds=['par','ger',...personalVerbForms]
-	for (const formId of formFilterIds) {
-		const v=localStorage.getItem('glaconjurer-form-'+formId)
-		forms[formId]=v!='0'
+	for (const [langId,lang] of Object.entries(languages)) {
+		forms[langId]={}
+		for (const formId of lang.listSelectableVerbForms()) {
+			const v=localStorage.getItem(`glaconjurer-form-${langId}-${formId}`)
+			forms[langId][formId]=v!='0'
+		}
 	}
 	const createFeature=()=>{
 		while ($featureContainer.firstChild) $featureContainer.removeChild($featureContainer.firstChild)
 		$featureContainer.className=''
 		if (feature=='conjgame') {
-			createConjugationGame($featureContainer,forms)
+			createConjugationGame($featureContainer,forms[languageId])
 		} else {
-			createConjugationTable($featureContainer,languageId,sort,forms,order)
+			createConjugationTable($featureContainer,languageId,sort,forms[languageId],order)
 		}
 	}
 	createFeature()
@@ -1085,7 +1108,6 @@ function createOptions($featureContainer,$optionsContainer) {
 		} else {
 			$block.innerHTML=`<div>${title}:</div>`
 		}
-		$dialog.appendChild($block)
 		return $block
 	}
 	const createControl=($block,html,handler)=>{
@@ -1094,17 +1116,37 @@ function createOptions($featureContainer,$optionsContainer) {
 		$control.addEventListener('change',handler)
 		$block.appendChild($control)
 	}
+	let form$blocks={}
+	for (const [langId,lang] of Object.entries(languages)) {
+		const $block=createBlock("Формы глаголов")
+		form$blocks[langId]=$block
+		$block.classList.add('forms')
+		if (langId==languageId) $block.classList.add('open')
+		const handler=(ev)=>{
+			forms[langId][ev.target.value]=ev.target.checked
+			localStorage.setItem(`glaconjurer-form-${langId}-${ev.target.value}`,ev.target.checked?'1':'0')
+			needToCreateFeature=true
+		}
+		for (const value of lang.listSelectableVerbForms()) createControl($block,
+			`<label><input type=checkbox value=${value+(forms[langId][value]?' checked':'')}> ${verbForms[value][0]}</label>`,
+		handler)
+	}
 	{
 		const $block=createBlock("Язык",'options-language')
+		$dialog.appendChild($block)
 		createControl($block,"<select id=options-language>"+
 			Object.entries(languages).map(([code,language])=>`<option value=${code+(code==languageId?' selected':'')}>${language.title}</option>`).join('')
 		+"</select>",(ev)=>{
+			form$blocks[languageId].classList.remove('open')
 			languageId=ev.target.value
+			form$blocks[languageId].classList.add('open')
 			localStorage.setItem('glaconjurer-language',languageId)
 			needToCreateFeature=true
 		})
-	}{
+	}
+	{
 		const $block=createBlock("Режим",'options-feature')
+		$dialog.appendChild($block)
 		createControl($block,"<select id=options-feature>"+[
 			['conjtable','таблица спряжений'],
 			['conjgame','игра'],
@@ -1113,8 +1155,10 @@ function createOptions($featureContainer,$optionsContainer) {
 			localStorage.setItem('glaconjurer-feature',feature)
 			needToCreateFeature=true
 		})
-	}{
+	}
+	{
 		const $block=createBlock("Отображение спряжений по лицам и числам")
+		$dialog.appendChild($block)
 		const handler=(ev)=>{
 			sort=ev.target.value
 			localStorage.setItem('glaconjurer-sort',sort)
@@ -1127,18 +1171,13 @@ function createOptions($featureContainer,$optionsContainer) {
 		]) createControl($block,
 			`<label><input type=radio name=sort value=${value+(value==sort?' checked':'')}> ${text}</label>`,
 		handler)
-	}{
-		const $block=createBlock("Формы глаголов")
-		const handler=(ev)=>{
-			forms[ev.target.value]=ev.target.checked
-			localStorage.setItem('glaconjurer-form-'+ev.target.value,ev.target.checked?'1':'0')
-			needToCreateFeature=true
-		}
-		for (const value of formFilterIds) createControl($block,
-			`<label><input type=checkbox value=${value+(forms[value]?' checked':'')}> ${verbForms[value][0]}</label>`,
-		handler)
-	}{
+	}
+	for (const $block of Object.values(form$blocks)) {
+		$dialog.appendChild($block)
+	}
+	{
 		const $block=createBlock("Порядок и набор глаголов")
+		$dialog.appendChild($block)
 		const handler=(ev)=>{
 			order=ev.target.value
 			localStorage.setItem('glaconjurer-order',order)
