@@ -452,6 +452,17 @@ class Language {
 			}
 		}
 	}
+	getVerbOrder(orderType) {
+		if (orderType=='topic') {
+			return this.getTopicVerbOrder()
+		} else if (orderType=='frequency') {
+			return this.getFrequencyVerbOrder()
+		} else if (orderType=='alphabet') {
+			return this.getAlphabetVerbOrder()
+		} else {
+			return []
+		}
+	}
 	getAlphabetVerbOrder() {
 		const sorted=['по алфавиту']
 		let firstLetter
@@ -465,6 +476,9 @@ class Language {
 			sortedByLetter.push(verbId)
 		}
 		return [sorted]
+	}
+	getFrequencyVerbOrder() {
+		return [['пока не сделано']]
 	}
 }
 
@@ -661,17 +675,6 @@ class SpanishLanguage extends Language {
 		}
 		return a
 	}
-	getVerbOrder(orderType) {
-		if (orderType=='topic') {
-			return this.getTopicVerbOrder()
-		} else if (orderType=='frequency') {
-			return this.getFrequencyVerbOrder()
-		} else if (orderType=='alphabet') {
-			return this.getAlphabetVerbOrder()
-		} else {
-			return []
-		}
-	}
 	getTopicVerbOrder() {
 		const order=[
 			['правильные',
@@ -832,7 +835,7 @@ class ItalianLanguage extends Language {
 			]],
 		]
 	}
-	getVerbOrder(orderType) {
+	getTopicVerbOrder() {
 		return [
 			['правильные',
 				['1-е спряжение','abitare'],
