@@ -798,8 +798,19 @@ class ItalianLanguage extends Language {
 			v('vendere','продавать'),
 			v('sentire','чувствовать'),
 			v('studiare','изучать'),
-			v('leggere','читать').replace({'par':'l{}|{ett}o'}),
-			v('offrire','предлагать').replace({'par':'off{}|{ert}o'}),
+			v('leggere','читать').replace({par:'l{}|[e]{tt}o'}),
+			v('offrire','предлагать').replace({par:'off{}|[e]{rt}o'}),
+			v('essere','быть').replace({
+				par:'{st}|[a]to',
+				'pres**':'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
+			}),
+			v('avere','иметь').replace({
+				'pres**':'{h}|o,{ha}|i,{h}|[a],a{bb}|iamo,av|ete,{h}|[a]{nn}o',
+			}),
+			v('dire','сказать').replace({
+				par:'d|[e]{tt}o',
+				'pres**':'d{ic}|o,d{ic}|i,d{ic}|e,d{ic}|iamo,d|ite,d{ic}|ono',
+			}),
 		]) {
 			this.verbs[verb.title]=verb
 		}
@@ -847,6 +858,9 @@ class ItalianLanguage extends Language {
 			],
 			['неправильные причастия',
 				['','leggere','offrire'],
+			],
+			['неправильные',
+				['','essere','avere','dire'],
 			],
 		]
 	}
