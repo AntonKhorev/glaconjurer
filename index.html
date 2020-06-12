@@ -207,10 +207,18 @@ const compactableVerbForms={
 	subj3: ['él<em>los</em>',verbForms.subj3s[1]+'; '+verbForms.subj3p[1]],
 	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
 }
-// wiktionary templates:
-// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
-// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
+
 class Verb {
+	replace(forms) {
+		for (const [k,v] of Object.entries(forms)) {
+			const formIds=this.formIdsFromPattern(k)
+			const replacements=v.split(',')
+			for (const [i,formId] of formIds.entries()) {
+				this.forms[formId]=replacements[i]
+			}
+		}
+		return this
+	}
 	listForms() {
 		return []
 	}
@@ -223,7 +231,32 @@ class Verb {
 	getFormNote(formId) {
 		return undefined
 	}
+	formIdsFromPattern(pattern) {
+		const [base,person,number]=pattern.split(/(.)(.)$/)
+		function* subEnd(person,number) {
+			yield base+person+number
+		}
+		function* subPerson(number) {
+			if (person=='*') {
+				for (let p of '123') yield* subEnd(p,number)
+			} else {
+				yield* subEnd(person,number)
+			}
+		}
+		function* subNumber() {
+			if (number=='*') {
+				for (let n of 'sp') yield* subPerson(n)
+			} else {
+				yield* subPerson(number)
+			}
+		}
+		return Array.from(subNumber())
+	}
 }
+
+// wiktionary templates:
+// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_de_flexi%C3%B3n_de_verbos
+// https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
 class SpanishVerb extends Verb {
 	constructor(title,translation) {
 		super()
@@ -313,27 +346,6 @@ class SpanishVerb extends Verb {
 	getFormNote(formId) {
 		return this.formNotes[formId]
 	}
-	formIdsFromPattern(pattern) {
-		const [base,person,number]=pattern.split(/(.)(.)$/)
-		function* subEnd(person,number) {
-			yield base+person+number
-		}
-		function* subPerson(number) {
-			if (person=='*') {
-				for (let p of '123') yield* subEnd(p,number)
-			} else {
-				yield* subEnd(person,number)
-			}
-		}
-		function* subNumber() {
-			if (number=='*') {
-				for (let n of 'sp') yield* subPerson(n)
-			} else {
-				yield* subPerson(number)
-			}
-		}
-		return Array.from(subNumber())
-	}
 	replaceLastStemVowel(formId,v) {
 		let replacement='['+v+']'
 		if (v.length>1) replacement='{'+v+'}'
@@ -405,16 +417,6 @@ class SpanishVerb extends Verb {
 	fut(stem) {
 		for (const formId of [...this.formIdsFromPattern('fut**'),...this.formIdsFromPattern('cond**')]) {
 			this.forms[formId]=this.forms[formId].replace(/^.*\|.*\|/,`${stem}|{}r|`)
-		}
-		return this
-	}
-	replace(forms) {
-		for (const [k,v] of Object.entries(forms)) {
-			const formIds=this.formIdsFromPattern(k)
-			const replacements=v.split(',')
-			for (const [i,formId] of formIds.entries()) {
-				this.forms[formId]=replacements[i]
-			}
 		}
 		return this
 	}
@@ -738,17 +740,27 @@ class ItalianVerb extends Verb {
 		super()
 		this.title=title
 		this.translation=translation
+		this.forms={}
 	}
 	get wiktionary() {
 		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
 	}
 	getForm(formId) {
+		if (formId in this.forms) return this.forms[formId]
 		let stem=this.title.slice(0,-3)
 		let infEnd=this.title.slice(-3)
 		let stemNoI=stem
-		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)
+		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
 		if (formId=='inf') {
 			return stem+'|'+infEnd
+		} else if (formId=='par') {
+			if (infEnd=='are') {
+				return stem+'|ato'
+			} else if (infEnd=='ere') {
+				return stem+'|uto'
+			} else {
+				return stem+'|ito'
+			}
 		} else if (formId=='pres1s') {
 			return stem+'|o'
 		} else if (formId=='pres2s') {
@@ -779,10 +791,12 @@ class ItalianLanguage extends Language {
 		this.verbs={}
 		const v=(...args)=>(new ItalianVerb(...args))
 		for (const verb of [
-			v('abitare'),
-			v('leggere'),
-			v('offrire'),
-			v('studiare'),
+			v('abitare','проживать'),
+			v('vendere','продавать'),
+			v('sentire','чувствовать'),
+			v('studiare','изучать'),
+			v('leggere','читать').replace({'par':'l{}|{ett}o'}),
+			v('offrire','предлагать').replace({'par':'off{}|{ert}o'}),
 		]) {
 			this.verbs[verb.title]=verb
 		}
@@ -799,10 +813,14 @@ class ItalianLanguage extends Language {
 	listPersonalVerbForms() {
 		return ['pres']
 	}
+	listSelectableVerbForms() {
+		return ['par',...this.listPersonalVerbForms()]
+	}
 	getVerbFormOrder(sortType,formSet) {
 		return [
 			['nonpers',[
-				[0,'inf']
+				[0,'inf'],
+				[0,'par'],
 			]],
 			['pres',[
 				[0,'pres1s'],
@@ -818,11 +836,14 @@ class ItalianLanguage extends Language {
 		return [
 			['правильные',
 				['1-е спряжение','abitare'],
-				['2-е спряжение','leggere'],
-				['3-е спряжение','offrire'],
+				['2-е спряжение','vendere'],
+				['3-е спряжение','sentire'],
 			],
 			['почти',
 				['-i-','studiare'],
+			],
+			['неправильные причастия',
+				['','leggere','offrire'],
 			],
 		]
 	}
