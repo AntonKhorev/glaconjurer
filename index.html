@@ -487,32 +487,33 @@ class Language {
 			}
 			return order
 		} else if (orderType=='frequency') {
-			return this.getFrequencyVerbOrder()
+			const numbered=['по частоте употребления']
+			for (const [i,v] of this.provideFrequencyVerbs().entries()) {
+				numbered.push([i+1,v])
+			}
+			return [numbered]
 		} else if (orderType=='alphabet') {
-			return this.getAlphabetVerbOrder()
+			const sorted=['по алфавиту']
+			let firstLetter
+			let sortedByLetter
+			for (const verbId of Object.keys(this.getVerbs()).sort()) {
+				if (firstLetter!=verbId[0]) {
+					firstLetter=verbId[0]
+					sortedByLetter=[firstLetter.toUpperCase()]
+					sorted.push(sortedByLetter)
+				}
+				sortedByLetter.push(verbId)
+			}
+			return [sorted]
 		} else {
 			return []
 		}
 	}
-	getAlphabetVerbOrder() {
-		const sorted=['по алфавиту']
-		let firstLetter
-		let sortedByLetter
-		for (const verbId of Object.keys(this.getVerbs()).sort()) {
-			if (firstLetter!=verbId[0]) {
-				firstLetter=verbId[0]
-				sortedByLetter=[firstLetter.toUpperCase()]
-				sorted.push(sortedByLetter)
-			}
-			sortedByLetter.push(verbId)
-		}
-		return [sorted]
-	}
-	getFrequencyVerbOrder() {
-		return [['пока не сделано']]
-	}
 	provideTopicVerbs() {
-		return [['пока не сделано']]
+		return [[1,'пока не сделано']]
+	}
+	provideFrequencyVerbs() {
+		return []
 	}
 }
 
@@ -723,19 +724,14 @@ class SpanishLanguage extends Language {
 			v3('recibir','получать'),
 		]
 	}
-	getFrequencyVerbOrder() {
-		const verbsByFrequency=(
+	provideFrequencyVerbs() {
+		return (
 			'ser,haber,estar,tener,hacer,poder,decir,ir,ver,dar,'+
 			'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
 			'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
 			'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
 			'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar'
 		).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
-		const numbered=['по частоте употребления']
-		for (let i=0;i<verbsByFrequency.length;i++) {
-			numbered.push([i+1,verbsByFrequency[i]])
-		}
-		return [numbered]
 	}
 }
 
@@ -906,6 +902,9 @@ class ItalianLanguage extends Language {
 	// essere,avere,fare,potere,stare,venire,vedere,volere,dire,dovere,dare [Alphonse Juilland, Vicenzo Traversa]
 	// essere,avere,potere,fare,dire,dovere,stare,venire,vedere,volere,andare,sapere,sembrare,prendere,mettere [Gianpaolo Intronati]
 	// essere,avere,fare,sapere,andare,dire,volere,stare,potere,dovere,vedere,porre,venire,guardare,sembrare,parlare,dispiacere,aspettare,piacere,pensare,bastare,portare,sentire,prendere,ideare,capire,succedere,volgere,trovare,dare,servire,leggere,scusare [J.L. Laide]
+	provideFrequencyVerbs() {
+		return 'essere,avere,fare,sapere,andare'.split(',')
+	}
 }
 
 const languages={
