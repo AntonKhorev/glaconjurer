@@ -836,6 +836,7 @@ class ItalianLanguage extends Language {
 			v('studiare','изучать'),
 		[1,'неправильные причастия'],
 			v('leggere','читать').replace({par:'l{}|[e]{tt}o'}),
+			v('vedere','видеть').replace({par:'v{}|[i]{st}o'}),
 			v('offrire','предлагать').replace({par:'off{}|[e]{rt}o'}),
 		[1,'неправильные'],
 			v('essere','быть').replace({
@@ -845,9 +846,26 @@ class ItalianLanguage extends Language {
 			v('avere','иметь').replace({
 				'pres**':'{h}|o,{ha}|i,{h}|[a],a{bb}|iamo,av|ete,{h}|[a]{nn}o',
 			}),
+			v('andare','идти').replace({
+				'pres*s':'{vad}|o,{va}|i,{v}|a',
+				pres3p:'{v}|a{nn}o',
+			}),
+			v('fare','делать').replace({
+				par:'f|a{tt}o',
+				pres1s:'f{acci}|o',
+				pres2s:'f{a}|i',
+				pres1p:'f{acc}|iamo',
+				pres3p:'f|a{nn}o',
+			}),
 			v('dire','сказать').replace({
 				par:'d|[e]{tt}o',
 				'pres**':'d{ic}|o,d{ic}|i,d{ic}|e,d{ic}|iamo,d|ite,d{ic}|ono',
+			}),
+			v('piacere','нравиться').replace({ // possibly ortho change ce -> ci(vowel)
+				par:'piac{i}|uto',
+				pres1s:'piac{ci}|o',
+				pres1p:'piac{c}|iamo',
+				pres3p:'piac{ci}|ono',
 			}),
 		]
 	}
