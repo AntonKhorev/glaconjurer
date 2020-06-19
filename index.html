@@ -890,6 +890,10 @@ class ItalianLanguage extends Language {
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
 				pres3p:'[e]sc|ono',
 			}),
+			v('stare','оставаться').replace({
+				pres2s:'st{a}|i',
+				pres3p:'st|a{nn}o',
+			}),
 			v('piacere','нравиться').replace({ // possibly ortho change ce -> ci(vowel)
 				par:'piac{i}|uto',
 				pres1s:'piac{ci}|o',
@@ -903,7 +907,7 @@ class ItalianLanguage extends Language {
 	// essere,avere,potere,fare,dire,dovere,stare,venire,vedere,volere,andare,sapere,sembrare,prendere,mettere [Gianpaolo Intronati]
 	// essere,avere,fare,sapere,andare,dire,volere,stare,potere,dovere,vedere,porre,venire,guardare,sembrare,parlare,dispiacere,aspettare,piacere,pensare,bastare,portare,sentire,prendere,ideare,capire,succedere,volgere,trovare,dare,servire,leggere,scusare [J.L. Laide]
 	provideFrequencyVerbs() {
-		return 'essere,avere,fare,sapere,andare'.split(',')
+		return 'essere,avere,fare,sapere,andare,dire,volere,stare,potere,dovere'.split(',')
 	}
 }
 
