@@ -425,10 +425,8 @@ class SpanishVerb extends Verb {
 class Language {
 	constructor() {
 		this.verbs={}
-		for (const [c1,...c2s] of this.provideTopicVerbs()) {
-			for (const [c2,...vs] of c2s) {
-				for (const v of vs) this.verbs[v.title]=v
-			}
+		for (const item of this.provideTopicVerbs()) {
+			if (!Array.isArray(item)) this.verbs[item.title]=item
 		}
 	}
 	getVerbs() {
@@ -450,9 +448,6 @@ class Language {
 			['alphabet','по алфавиту'],
 		]
 	}
-	getVerbOrder() {
-		return []
-	}
 	*listVerbs(orderType) {
 		for (const [,...c2s] of this.getVerbOrder(orderType)) {
 			for (const [,...vs] of c2s) {
@@ -462,11 +457,35 @@ class Language {
 	}
 	getVerbOrder(orderType) {
 		if (orderType=='topic') {
-			return this.provideTopicVerbs().map(
-				([c1,...c2s])=>[c1,...c2s.map(
-					([c2,...vs])=>[c2,...vs.map(v=>v.title)]
-				)]
-			)
+			const order=[]
+			let level=0
+			for (const item of this.provideTopicVerbs()) {
+				if (!Array.isArray(item)) {
+					if (level<1) {
+						order.push([''])
+						level=1
+					}
+					const order1=order[order.length-1]
+					if (level<2) {
+						order1.push([''])
+						level=2
+					}
+					const order2=order1[order1.length-1]
+					order2.push(item.title)
+				} else if (item[0]==2) {
+					if (level<1) {
+						order.push([''])
+						level=1
+					}
+					const order1=order[order.length-1]
+					order1.push([item.slice(1)])
+					level=2
+				} else {
+					order.push([item.slice(1)])
+					level=1
+				}
+			}
+			return order
 		} else if (orderType=='frequency') {
 			return this.getFrequencyVerbOrder()
 		} else if (orderType=='alphabet') {
@@ -551,50 +570,50 @@ class SpanishLanguage extends Language {
 	provideTopicVerbs() {
 		const v3=(...args)=>(new SpanishVerb(...args))
 		return [
-		['правильные',[['1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол'],
+		[1,'правильные'],
+		[2,'1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол'],
 			v3('pasar','проходить'),
-		],[['2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол'],
+		[2,'2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол'],
 			v3('deber','<abbr title=быть>б.</abbr> должным'),
-		],[['3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол'],
+		[2,'3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол'],
 			v3('vivir','жить'),
-		]],
-		['орфографические изменения',['c→<strong class=insert>qu</strong>',
+		[1,'орфографические изменения'],
+		[2,'c→<strong class=insert>qu</strong>'],
 			v3('buscar','искать'),
-		],['z→<strong>c</strong>',
+		[2,'z→<strong>c</strong>'],
 			v3('utilizar','использовать'),
-		],['g→<strong class=insert>gu</strong>',
+		[2,'g→<strong class=insert>gu</strong>'],
 			v3('llegar','прибывать'),
-		],['g→<strong>j</strong>',
+		[2,'g→<strong>j</strong>'],
 			v3('coger','брать'),
-		],['gu→<strong class=insert>g</strong>',
+		[2,'gu→<strong class=insert>g</strong>'],
 			v3('distinguir','различать'),
-		]],
-		['изменения гласных',['e→<strong class=insert>ie</strong>', // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
+		[1,'изменения гласных'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_alternancia_voc%C3%A1lica
+		[2,'e→<strong class=insert>ie</strong>'],
 			v3('pensar','думать').vowel('ie'),
-		],['e→<strong class=insert>ie</strong>,<strong>i</strong>',
+		[2,'e→<strong class=insert>ie</strong>,<strong>i</strong>'],
 			v3('sentir','чувствовать').vowel('ie','i'),
-		],['e→<strong>i</strong>',
+		[2,'e→<strong>i</strong>'],
 			v3('pedir','просить').vowel('i','i'),
-		],['o→<strong class=insert>ue</strong>',
+		[2,'o→<strong class=insert>ue</strong>'],
 			v3('contar','считать').vowel('ue'),
-		],['o→<strong class=insert>ue</strong>,<strong>u</strong>',
+		[2,'o→<strong class=insert>ue</strong>,<strong>u</strong>'],
 			v3('dormir','спать').vowel('ue','u'),
-		],['u→<strong class=insert>ue</strong>',
+		[1,'u→<strong class=insert>ue</strong>'],
 			v3('jugar','играть').vowel('ue'),
-		]],
-		['изменения согласных',['c→<strong class=insert>zc</strong>',
+		[1,'изменения согласных'],
+		[2,'c→<strong class=insert>zc</strong>'],
 			v3('conocer',['знать','знать человека/место']).yo('cono{zc}'),
-		],['c→<strong class=insert>zc</strong>,<strong>j</strong>',
+		[2,'c→<strong class=insert>zc</strong>,<strong>j</strong>'],
 			v3('producir','производить').yo('produ{zc}').pret('produ[j]'),
-		]],
-		['прочие изменения',['-<strong>y</strong>endo',
+		[1,'прочие изменения'],
+		[2,'-<strong>y</strong>endo'],
 			v3('creer','верить').yendo(),
-		],['<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>', // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
+		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 			v3('escribir','писать').replace({
 				par:'escri[t]|{}o',
 			}),
-		]],
-		[['irregularidad propia','индивидуальное спряжение'],['',
+		[1,'irregularidad propia','индивидуальное спряжение'],
 			v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
 				'pres*s':'est|o{y},est|[á]s,est|[á]',
 				pres3p:'est|[á]n',
@@ -669,8 +688,7 @@ class SpanishLanguage extends Language {
 			v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
 				im2s:'sal|{}',
 			}),
-		]],
-		['оставшиеся глаголы в произвольном порядке',['',
+		[1,'оставшиеся глаголы в произвольном порядке'],
 			v3('elegir','выбирать').vowel('i','i').replace({
 				par:'ele{ct}|{}o',
 			}),
@@ -703,7 +721,6 @@ class SpanishLanguage extends Language {
 			v3('trabajar','работать'),
 			v3('ocurrir','происходить'),
 			v3('recibir','получать'),
-		]],
 		]
 	}
 	getFrequencyVerbOrder() {
@@ -807,21 +824,20 @@ class ItalianLanguage extends Language {
 	provideTopicVerbs() {
 		const v=(...args)=>(new ItalianVerb(...args))
 		return [
-		['правильные',['1-е спряжение',
+		[1,'правильные'],
+		[2,'1-е спряжение'],
 			v('abitare','проживать'),
-		],['2-е спряжение',
+		[2,'2-е спряжение'],
 			v('vendere','продавать'),
-		],['3-е спряжение',
+		[2,'3-е спряжение'],
 			v('sentire','чувствовать'),
-		]],
-		['почти',['-i-',
+		[1,'почти'],
+		[2,'-i-'],
 			v('studiare','изучать'),
-		]],
-		['неправильные причастия',['',
+		[1,'неправильные причастия'],
 			v('leggere','читать').replace({par:'l{}|[e]{tt}o'}),
 			v('offrire','предлагать').replace({par:'off{}|[e]{rt}o'}),
-		]],
-		['неправильные',['',
+		[1,'неправильные'],
 			v('essere','быть').replace({
 				par:'{st}|[a]to',
 				'pres**':'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
@@ -833,7 +849,6 @@ class ItalianLanguage extends Language {
 				par:'d|[e]{tt}o',
 				'pres**':'d{ic}|o,d{ic}|i,d{ic}|e,d{ic}|iamo,d|ite,d{ic}|ono',
 			}),
-		]],
 		]
 	}
 	// freq:
