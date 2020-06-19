@@ -237,14 +237,14 @@ class Verb {
 			yield base+person+number
 		}
 		function* subPerson(number) {
-			if (person=='*') {
+			if (person=='_') {
 				for (let p of '123') yield* subEnd(p,number)
 			} else {
 				yield* subEnd(person,number)
 			}
 		}
 		function* subNumber() {
-			if (number=='*') {
+			if (number=='_') {
 				for (let n of 'sp') yield* subPerson(n)
 			} else {
 				yield* subPerson(number)
@@ -392,7 +392,7 @@ class SpanishVerb extends Verb {
 		const ends='e,iste,o,imos,isteis,ieron'.split(',')
 		const markEnds      ='[e],[i]ste,[o],[i]mos,[i]steis,[ie]ron'.split(',')
 		const markInsertEnds='{e},{i}ste,{o},{i}mos,{i}steis,{ie}ron'.split(',')
-		for (const [i,formId] of this.formIdsFromPattern('pret**').entries()) {
+		for (const [i,formId] of this.formIdsFromPattern('pret__').entries()) {
 			const [,end]=this.forms[formId].split('|')
 			let strongEnd=end
 			if (strongStem.replace(/[|{}[\]]/g,'').slice(-1)=='j' && ends[i]=='ieron') {
@@ -409,13 +409,13 @@ class SpanishVerb extends Verb {
 		return this
 	}
 	imp(stem) {
-		for (const formId of this.formIdsFromPattern('imp**')) {
+		for (const formId of this.formIdsFromPattern('imp__')) {
 			this.forms[formId]=this.forms[formId].replace(/^.*?\|/,`${stem}|`)
 		}
 		return this
 	}
 	fut(stem) {
-		for (const formId of [...this.formIdsFromPattern('fut**'),...this.formIdsFromPattern('cond**')]) {
+		for (const formId of [...this.formIdsFromPattern('fut__'),...this.formIdsFromPattern('cond__')]) {
 			this.forms[formId]=this.forms[formId].replace(/^.*\|.*\|/,`${stem}|{}r|`)
 		}
 		return this
@@ -615,23 +615,23 @@ class SpanishLanguage extends Language {
 			}),
 		[1,'irregularidad propia','индивидуальное спряжение'],
 			v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
-				'pres*s':'est|o{y},est|[á]s,est|[á]',
+				pres_s:'est|o{y},est|[á]s,est|[á]',
 				pres3p:'est|[á]n',
 				im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
-				'subj*s':'est|[é],est|[é]s,est|[é]',
+				subj_s:'est|[é],est|[é]s,est|[é]',
 				subj3p:'est|[é]n',
 			}),
 			v3('ser',['быть','быть постоянно, быть в указанный момент времени']).yo('s{e}').replace({
-				'pres**':'s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n',
-				'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
-				'imp**':'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
+				pres__:'s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n',
+				pret__:'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
+				imp__:'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
 				im2s:'s|[é]',
 			}),
 			v3('ir','идти').yo('{vay}').replace({
 				ger:'|[y]endo',
-				'pres**':'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
-				'pret**':'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
-				'imp**':'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
+				pres__:'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
+				pret__:'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
+				imp__:'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
 				im2s:'{v}|e',
 			}),
 			v3('dar','давать').pret('d').replace({
@@ -656,7 +656,7 @@ class SpanishLanguage extends Language {
 			}),
 			v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
 			v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
-				'pres**':'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
+				pres__:'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
 				im2s:'h{}|e',
 			}),
 			v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
@@ -841,13 +841,13 @@ class ItalianLanguage extends Language {
 		[1,'неправильные'],
 			v('essere','быть').replace({
 				par:'{st}|[a]to',
-				'pres**':'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
+				pres__:'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
 			}),
 			v('avere','иметь').replace({
-				'pres**':'{h}|o,{ha}|i,{h}|[a],a{bb}|iamo,av|ete,{h}|[a]{nn}o',
+				pres__:'{h}|o,{ha}|i,{h}|[a],a{bb}|iamo,av|ete,{h}|[a]{nn}o',
 			}),
 			v('andare','идти').replace({
-				'pres*s':'{vad}|o,{va}|i,{v}|a',
+				pres_s:'{vad}|o,{va}|i,{v}|a',
 				pres3p:'{v}|a{nn}o',
 			}),
 			v('fare','делать').replace({
@@ -859,7 +859,7 @@ class ItalianLanguage extends Language {
 			}),
 			v('dire','сказать').replace({
 				par:'d|[e]{tt}o',
-				'pres**':'d{ic}|o,d{ic}|i,d{ic}|e,d{ic}|iamo,d|ite,d{ic}|ono',
+				pres__:'d{ic}|o,d{ic}|i,d{ic}|e,d{ic}|iamo,d|ite,d{ic}|ono',
 			}),
 			v('piacere','нравиться').replace({ // possibly ortho change ce -> ci(vowel)
 				par:'piac{i}|uto',
