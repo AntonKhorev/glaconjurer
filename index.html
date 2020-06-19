@@ -162,52 +162,6 @@ body {
 </head>
 <body>
 <script>
-const verbForms={
-	nonpers: ['','безличные формы'], // don't display group title
-	inf: ['Infinitivo','инфинитив'],
-	ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
-	par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
-	pres: ['Presente','Presente'],
-	pret: ['Pretérito','Pretérito indefinido'],
-	imp: ['Imperfecto','Pretérito imperfecto'],
-	fut: ['Futuro','Futuro'],
-	cond: ['Condicional','Condicional'],
-	subj: ['Subjuntivo','Presente de subjuntivo'],
-	im: ['Imperativo','Imperativo'],
-	im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
-	im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
-	im1p: ['nosotros','nosotros, nosotras: давайте мы сделаем'],
-	im2p: ['vosotros','vosotros, vosotras: (множественное) вы сделайте'],
-	im3p: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
-}
-for (const [prefix,v0,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
-	['pres','',        ['делаю','делаешь','делает','делает','делаем','делаете','делают']],
-	['pret','',        ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
-	['fut' ,'',        ['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
-	['cond','',        ['бы сделал(а)','бы сделал(а)','бы сделал','бы сделала','бы сделали','бы сделали','бы сделали']],
-	['subj','(чтобы) ',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
-	['imp' ,'',        ['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
-]) {
-	verbForms[prefix+'1s']=['yo',`yo: ${v0}я ${v1s}`]
-	verbForms[prefix+'2s']=['tú',`tú: ${v0}ты ${v2s}`]
-	verbForms[prefix+'3s']=['él',`él: ${v0}он ${v3sm}; ella: она ${v3sf}; usted: (вежливое) ${v0}вы ${v2p}`]
-	verbForms[prefix+'1p']=['nosotros',`nosotros, nosotras: ${v0}мы ${v1p}`]
-	verbForms[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) ${v0}вы ${v2p}`]
-	verbForms[prefix+'3p']=['ellos',`ellos, ellas: ${v0}они ${v3p}; ustedes: (вежливое множественное) ${v0}вы ${v2p}`]
-}
-const compactableVerbForms={
-	pres3: ['él<em>los</em>',verbForms.pres3s[1]+'; '+verbForms.pres3p[1]],
-	pret2: ['tú/<em>vosotros</em>',verbForms.pret2s[1]+'; '+verbForms.pret2p[1]],
-	imp2: ['tú/<em>vosotros</em>',verbForms.imp2s[1]+'; '+verbForms.imp2p[1]],
-	imp3: ['él<em>los</em>',verbForms.imp3s[1]+'; '+verbForms.imp3p[1]],
-	fut3: ['él<em>los</em>',verbForms.fut3s[1]+'; '+verbForms.fut3p[1]],
-	cond1: ['yo/<em>nosotros</em>',verbForms.cond1s[1]+'; '+verbForms.cond1p[1]],
-	cond2: ['tú/<em>vosotros</em>',verbForms.cond2s[1]+'; '+verbForms.cond2p[1]],
-	cond3: ['él<em>los</em>',verbForms.cond3s[1]+'; '+verbForms.cond3p[1]],
-	subj3: ['él<em>los</em>',verbForms.subj3s[1]+'; '+verbForms.subj3p[1]],
-	im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
-}
-
 class Verb {
 	replace(forms) {
 		for (const [k,v] of Object.entries(forms)) {
@@ -429,6 +383,12 @@ class Language {
 			if (!Array.isArray(item)) this.verbs[item.title]=item
 		}
 	}
+	getVerbFormTitle(formId) {
+		return ['','']
+	}
+	isVerbFormCompactible(formId) {
+		return false
+	}
 	getVerbs() {
 		return {}
 	}
@@ -518,11 +478,65 @@ class Language {
 }
 
 class SpanishLanguage extends Language {
+	constructor() {
+		super()
+		this.verbFormTitles={
+			nonpers: ['','безличные формы'], // don't display group title
+			inf: ['Infinitivo','инфинитив'],
+			ger: ['Gerundio','для образования аналога continuous в английском по схеме спряжённый-estar + Ger. ("estoy estudiando" = "I am studying")'],
+			par: ['Participio','страдательное(?) причастие прошедшего времени, меняется по родам и числам (apagado = выключенный, apagada = выключенная)'],
+			pres: ['Presente','Presente'],
+			pret: ['Pretérito','Pretérito indefinido'],
+			imp: ['Imperfecto','Pretérito imperfecto'],
+			fut: ['Futuro','Futuro'],
+			cond: ['Condicional','Condicional'],
+			subj: ['Subjuntivo','Presente de subjuntivo'],
+			im: ['Imperativo','Imperativo'],
+			im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
+			im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
+			im1p: ['nosotros','nosotros, nosotras: давайте мы сделаем'],
+			im2p: ['vosotros','vosotros, vosotras: (множественное) вы сделайте'],
+			im3p: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
+		}
+		for (const [prefix,v0,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
+			['pres','',        ['делаю','делаешь','делает','делает','делаем','делаете','делают']],
+			['pret','',        ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+			['fut' ,'',        ['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
+			['cond','',        ['бы сделал(а)','бы сделал(а)','бы сделал','бы сделала','бы сделали','бы сделали','бы сделали']],
+			['subj','(чтобы) ',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+			['imp' ,'',        ['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+		]) {
+			this.verbFormTitles[prefix+'1s']=['yo',`yo: ${v0}я ${v1s}`]
+			this.verbFormTitles[prefix+'2s']=['tú',`tú: ${v0}ты ${v2s}`]
+			this.verbFormTitles[prefix+'3s']=['él',`él: ${v0}он ${v3sm}; ella: она ${v3sf}; usted: (вежливое) ${v0}вы ${v2p}`]
+			this.verbFormTitles[prefix+'1p']=['nosotros',`nosotros, nosotras: ${v0}мы ${v1p}`]
+			this.verbFormTitles[prefix+'2p']=['vosotros',`vosotros, vosotras: (множественное) ${v0}вы ${v2p}`]
+			this.verbFormTitles[prefix+'3p']=['ellos',`ellos, ellas: ${v0}они ${v3p}; ustedes: (вежливое множественное) ${v0}вы ${v2p}`]
+		}
+		this.compactableVerbFormTitles={
+			pres3: ['él<em>los</em>',      this.verbFormTitles.pres3s[1]+'; '+this.verbFormTitles.pres3p[1]],
+			pret2: ['tú/<em>vosotros</em>',this.verbFormTitles.pret2s[1]+'; '+this.verbFormTitles.pret2p[1]],
+			imp2: ['tú/<em>vosotros</em>', this.verbFormTitles.imp2s[1] +'; '+this.verbFormTitles.imp2p[1]],
+			imp3: ['él<em>los</em>',       this.verbFormTitles.imp3s[1] +'; '+this.verbFormTitles.imp3p[1]],
+			fut3: ['él<em>los</em>',       this.verbFormTitles.fut3s[1] +'; '+this.verbFormTitles.fut3p[1]],
+			cond1: ['yo/<em>nosotros</em>',this.verbFormTitles.cond1s[1]+'; '+this.verbFormTitles.cond1p[1]],
+			cond2: ['tú/<em>vosotros</em>',this.verbFormTitles.cond2s[1]+'; '+this.verbFormTitles.cond2p[1]],
+			cond3: ['él<em>los</em>',      this.verbFormTitles.cond3s[1]+'; '+this.verbFormTitles.cond3p[1]],
+			subj3: ['él<em>los</em>',      this.verbFormTitles.subj3s[1]+'; '+this.verbFormTitles.subj3p[1]],
+			im3: ['usted<em>es</em>','usted, ustedes: (вежливое) вы сделайте'],
+		}
+	}
 	get title() {
 		return 'испанский'
 	}
 	get code() {
 		return 'es'
+	}
+	getVerbFormTitle(formId) {
+		return this.verbFormTitles[formId] || this.compactableVerbFormTitles[formId]
+	}
+	isVerbFormCompactible(formId) {
+		return formId in this.compactableVerbFormTitles
 	}
 	getVerbs() {
 		return this.verbs
@@ -549,18 +563,18 @@ class SpanishLanguage extends Language {
 			const formGroupRows=[]
 			if (sortType!='number') {
 				for (const p of [1,2,3]) {
-					if (sortType=='person-compact' && formGroupId+p in compactableVerbForms) {
+					if (sortType=='person-compact' && this.isVerbFormCompactible(formGroupId+p)) {
 						formGroupRows.push([1,formGroupId+p])
 						continue
 					}
 					for (const n of ['s','p']) {
-						if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
 					}
 				}
 			} else {
 				for (const n of ['s','p']) {
 					for (const p of [1,2,3]) {
-						if (verbForms[formGroupId+p+n]) formGroupRows.push([0,formGroupId+p+n])
+						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
 					}
 				}
 			}
@@ -792,6 +806,21 @@ class ItalianLanguage extends Language {
 	get code() {
 		return 'it'
 	}
+	getVerbFormTitle(formId) {
+		return {
+			nonpers: ['','безличные формы'], // don't display group title
+			inf: ['infinito','инфинитив'],
+			//par: ['participio passato','страдательное(?) причастие прошедшего времени, меняется по родам и числам'],
+			par: ['<abbr title=participio>p.</abbr><abbr title=passato>pass.</abbr>','страдательное(?) причастие прошедшего времени, меняется по родам и числам'],
+			pres: ['presente','presente'],
+			pres1s: ['io',`я делаю`],
+			pres2s: ['tu',`ты делаешь`],
+			pres3s: ['lui/lei',`он/она делает`],
+			pres1p: ['noi',`мы делаем`],
+			pres2p: ['voi',`вы делаете`],
+			pres3p: ['loro',`они делают`],
+		}[formId]
+	}
 	getVerbs() {
 		return this.verbs
 	}
@@ -962,7 +991,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 		}
 	}
 	for (const [formGroupId,formGroupRows] of language.getVerbFormOrder(sortType,formSet)) {
-		const [formGroupName]=verbForms[formGroupId]
+		const [formGroupName]=language.getVerbFormTitle(formGroupId)
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		let firstInGroup=true
@@ -978,7 +1007,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
 			}
 			firstInGroup=false
-			const [formText,formNote]=(compactRow?compactableVerbForms:verbForms)[formId]
+			const [formText,formNote]=language.getVerbFormTitle(formId)
 			const $formCell=document.createElement('th')
 			if (!formGroupName) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
@@ -1083,8 +1112,8 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 function createConjugationGame($container,formSet) {
 	let language=languages.es
 	const gameVerbs=[]
-	for (const verbs of language.listVerbs('topic')) { // TODO receive list of verbs, for example to play with 20 most frequent verbs
-		for (const formId in verb.listForms()) {
+	for (const verb of language.listVerbs('topic')) { // TODO receive list of verbs, for example to play with 20 most frequent verbs
+		for (const formId of verb.listForms()) {
 			if (formId=='inf') continue
 			if (formId in formSet && !formSet[formId]) continue
 			const [formGroupId,]=formId.split(/(\d)/)
@@ -1116,11 +1145,11 @@ function createConjugationGame($container,formSet) {
 		const $formRow=$tbody.insertRow()
 		const [formGroupId,n]=formId.split(/(\d)/)
 		if (n) {
-			const [,formGroupTitle]=verbForms[formGroupId]
-			const [formTitle]=verbForms[formId]
+			const [,formGroupTitle]=language.getVerbFormTitle(formGroupId)
+			const [formTitle]=language.getVerbFormTitle(formId)
 			$formRow.insertAdjacentHTML('beforeend',`<th>${formGroupTitle},<th>${formTitle}`)
 		} else {
-			const [formTitle]=verbForms[formId]
+			const [formTitle]=language.getVerbFormTitle(formId)
 			$formRow.insertAdjacentHTML('beforeend',`<th colspan=2>${formTitle}`)
 		}
 		const $formInputTd=$formRow.insertCell()
@@ -1211,7 +1240,7 @@ function createOptions($featureContainer,$optionsContainer) {
 			needToCreateFeature=true
 		}
 		for (const value of lang.listSelectableVerbForms()) createControl($block,
-			`<label><input type=checkbox value=${value+(forms[langId][value]?' checked':'')}> ${verbForms[value][0]}</label>`,
+			`<label><input type=checkbox value=${value+(forms[langId][value]?' checked':'')}> ${lang.getVerbFormTitle(value)[0]}</label>`,
 		handler)
 	}
 	{
