@@ -545,7 +545,7 @@ class SpanishLanguage extends Language {
 		return ['pres','pret','imp','fut','cond','subj','im']
 	}
 	listSelectableVerbForms() {
-		return ['par','ger',...this.listPersonalVerbForms()]
+		return ['ger','par',...this.listPersonalVerbForms()]
 	}
 	getVerbFormOrder(sortType,formSet) {
 		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
@@ -767,6 +767,12 @@ class ItalianVerb extends Verb {
 		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
 		if (formId=='inf') {
 			return stem+'|'+infEnd
+		} else if (formId=='ger') {
+			if (infEnd=='are') {
+				return stem+'|ando'
+			} else {
+				return stem+'|endo'
+			}
 		} else if (formId=='par') {
 			if (infEnd=='are') {
 				return stem+'|ato'
@@ -812,6 +818,7 @@ class ItalianLanguage extends Language {
 			inf: ['infinito','инфинитив'],
 			//par: ['participio passato','страдательное(?) причастие прошедшего времени, меняется по родам и числам'],
 			par: ['<abbr title=participio>p.</abbr><abbr title=passato>pass.</abbr>','страдательное(?) причастие прошедшего времени, меняется по родам и числам'],
+			ger: ['gerundio','для образования аналога continuous в английском по схеме спряжённый-stare + ger.'],
 			pres: ['presente','presente'],
 			pres1s: ['io',`я делаю`],
 			pres2s: ['tu',`ты делаешь`],
@@ -828,12 +835,13 @@ class ItalianLanguage extends Language {
 		return ['pres']
 	}
 	listSelectableVerbForms() {
-		return ['par',...this.listPersonalVerbForms()]
+		return ['ger','par',...this.listPersonalVerbForms()]
 	}
 	getVerbFormOrder(sortType,formSet) {
 		return [
 			['nonpers',[
 				[0,'inf'],
+				[0,'ger'],
 				[0,'par'],
 			]],
 			['pres',[
@@ -878,6 +886,7 @@ class ItalianLanguage extends Language {
 				pres3p:'{v}|a{nn}o',
 			}),
 			v('fare','делать').replace({
+				ger:'f{ac}|endo',
 				par:'f|a{tt}o',
 				pres1s:'f{acci}|o',
 				pres2s:'f{a}|i',
@@ -910,6 +919,7 @@ class ItalianLanguage extends Language {
 				pres3p:'ven{g}|ono',
 			}),
 			v('dire','сказать').replace({
+				ger:'d{ic}|endo',
 				par:'d|[e]{tt}o',
 				pres_s:'d{ic}|o,d{ic}|i,d{ic}|e',
 				pres1p:'d{ic}|iamo',
