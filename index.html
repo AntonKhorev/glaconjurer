@@ -763,6 +763,7 @@ class ItalianVerb extends Verb {
 		if (formId in this.forms) return this.forms[formId]
 		let stem=this.title.slice(0,-3)
 		let infEnd=this.title.slice(-3)
+		let tl=infEnd[0]
 		let stemNoI=stem
 		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
 		if (formId=='inf') {
@@ -801,6 +802,18 @@ class ItalianVerb extends Verb {
 			} else {
 				return stem+'|ono'
 			}
+		} else if (formId=='imp1s') {
+			return stem+'|'+tl+'vo'
+		} else if (formId=='imp2s') {
+			return stem+'|'+tl+'vi'
+		} else if (formId=='imp3s') {
+			return stem+'|'+tl+'va'
+		} else if (formId=='imp1p') {
+			return stem+'|'+tl+'vamo'
+		} else if (formId=='imp2p') {
+			return stem+'|'+tl+'vate'
+		} else if (formId=='imp3p') {
+			return stem+'|'+tl+'vano'
 		}
 	}
 }
@@ -826,13 +839,20 @@ class ItalianLanguage extends Language {
 			pres1p: ['noi',`мы делаем`],
 			pres2p: ['voi',`вы делаете`],
 			pres3p: ['loro',`они делают`],
+			imp: ['imperfetto','imperfetto'],
+			imp1s: ['io',`я делал`],
+			imp2s: ['tu',`ты делал`],
+			imp3s: ['lui/lei',`он/она делал(а)`],
+			imp1p: ['noi',`мы делали`],
+			imp2p: ['voi',`вы делали`],
+			imp3p: ['loro',`они делали`],
 		}[formId]
 	}
 	getVerbs() {
 		return this.verbs
 	}
 	listPersonalVerbForms() {
-		return ['pres']
+		return ['pres','imp']
 	}
 	listSelectableVerbForms() {
 		return ['ger','par',...this.listPersonalVerbForms()]
@@ -851,6 +871,14 @@ class ItalianLanguage extends Language {
 				[0,'pres1p'],
 				[0,'pres2p'],
 				[0,'pres3p'],
+			]],
+			['imp',[
+				[0,'imp1s'],
+				[0,'imp2s'],
+				[0,'imp3s'],
+				[0,'imp1p'],
+				[0,'imp2p'],
+				[0,'imp3p'],
 			]],
 		]
 	}
@@ -875,6 +903,7 @@ class ItalianLanguage extends Language {
 			v('essere','быть').replace({
 				par:'{st}|[a]to',
 				pres__:'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
+				imp__:'e{r}|{}o,e{r}|{}i,e{r}|{}a,e{r}|[a]vamo,e{r}|[a]vate,e{r}|{}ano',
 			}),
 			v('avere','иметь').replace({
 				pres_s:'{h}|o,{ha}|i,{h}|[a]',
@@ -886,12 +915,13 @@ class ItalianLanguage extends Language {
 				pres3p:'{v}|a{nn}o',
 			}),
 			v('fare','делать').replace({
-				ger:'f{ac}|endo',
+				ger:'f{ac}|[e]ndo',
 				par:'f|a{tt}o',
 				pres1s:'f{acci}|o',
 				pres2s:'f{a}|i',
 				pres1p:'f{acc}|iamo',
 				pres3p:'f|a{nn}o',
+				imp__:'f{ac}|[e]vo,f{ac}|[e]vi,f{ac}|[e]va,f{ac}|[e]vamo,f{ac}|[e]vate,f{ac}|[e]vano',
 			}),
 			v('sapere',['знать','знать факт/навык']).replace({
 				pres_s:'s{}|o,sa{}|i,s{}|[a]',
@@ -924,11 +954,13 @@ class ItalianLanguage extends Language {
 				pres_s:'d{ic}|o,d{ic}|i,d{ic}|e',
 				pres1p:'d{ic}|iamo',
 				pres3p:'d{ic}|ono',
+				imp__:'d{ic}|[e]vo,d{ic}|[e]vi,d{ic}|[e]va,d{ic}|[e]vamo,d{ic}|[e]vate,d{ic}|[e]vano',
 			}),
 			v('bere','пить').replace({
 				ger:'b{ev}|endo',
 				par:'b{ev}|uto',
 				pres__:'b{ev}|o,b{ev}|i,b{ev}|e,b{ev}|iamo,b{ev}|ete,b{ev}|ono',
+				imp__:'b{ev}|evo,b{ev}|evi,b{ev}|eva,b{ev}|evamo,b{ev}|evate,b{ev}|evano',
 			}),
 			v('uscire','выходить').replace({
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
