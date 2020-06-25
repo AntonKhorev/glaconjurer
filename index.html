@@ -829,6 +829,9 @@ class ItalianLanguage extends Language {
 	get code() {
 		return 'it'
 	}
+	isVerbFormCompactible(formId) {
+		return formId=='imp3'
+	}
 	getVerbFormTitle(formId) {
 		return {
 			nonpers: ['','безличные формы'], // don't display group title
@@ -850,6 +853,7 @@ class ItalianLanguage extends Language {
 			imp1p: ['noi',`мы делали`],
 			imp2p: ['voi',`вы делали`],
 			imp3p: ['loro',`они делали`],
+			imp3: ['lui/lei/<em>loro</em>','он/она/они делал(а/и)'],
 		}[formId]
 	}
 	getVerbs() {
