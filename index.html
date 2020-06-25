@@ -759,6 +759,7 @@ class ItalianVerb extends Verb {
 		this.title=title
 		this.translation=translation
 		this.forms={}
+		this.iscFlag=false
 	}
 	get wiktionary() {
 		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
@@ -769,6 +770,7 @@ class ItalianVerb extends Verb {
 		let infEnd=this.title.slice(-3)
 		let tl=infEnd[0]
 		let stemNoI=stem
+		let iscEndBar=this.iscFlag?'|{isc}':'|'
 		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
 		if (formId=='inf') {
 			return stem+'|'+infEnd
@@ -787,25 +789,17 @@ class ItalianVerb extends Verb {
 				return stem+'|ito'
 			}
 		} else if (formId=='pres1s') {
-			return stem+'|o'
+			return stem+iscEndBar+'o'
 		} else if (formId=='pres2s') {
-			return stemNoI+'|i'
+			return stemNoI+iscEndBar+'i'
 		} else if (formId=='pres3s') {
-			if (infEnd=='are') {
-				return stem+'|a'
-			} else {
-				return stem+'|e'
-			}
+			return stem+iscEndBar+(infEnd=='are' ? 'a' : 'e')
 		} else if (formId=='pres1p') {
 			return stemNoI+'|iamo'
 		} else if (formId=='pres2p') {
 			return stem+'|'+infEnd[0]+'te'
 		} else if (formId=='pres3p') {
-			if (infEnd=='are') {
-				return stem+'|ano'
-			} else {
-				return stem+'|ono'
-			}
+			return stem+iscEndBar+(infEnd=='are' ? 'ano' : 'ono')
 		} else if (formId=='imp1s') {
 			return stem+'|'+tl+'vo'
 		} else if (formId=='imp2s') {
@@ -819,6 +813,10 @@ class ItalianVerb extends Verb {
 		} else if (formId=='imp3p') {
 			return stem+'|'+tl+'vano'
 		}
+	}
+	isc() {
+		this.iscFlag=true
+		return this
 	}
 }
 
@@ -878,6 +876,8 @@ class ItalianLanguage extends Language {
 		[1,'почти'],
 		[2,'-i-'],
 			v('studiare','изучать'),
+		[2,'-isc-'],
+			v('capire','понимать').isc(),
 		[1,'неправильные причастия'],
 			v('leggere','читать').replace({par:'l{}|[e]{tt}o'}),
 			v('vedere','видеть').replace({par:'v{}|[i]{st}o'}),
