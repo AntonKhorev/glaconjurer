@@ -399,7 +399,46 @@ class Language {
 		return this.listPersonalVerbForms()
 	}
 	getVerbFormOrder(sortType,formSet) {
-		return [] // [formGroupId, [[isCompactable,formId], ...]], ...
+		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
+		{
+			const formGroupId='nonpers'
+			const formGroupRows=[]
+			const nonpersonalFormIds={inf:true}
+			for (const formId of this.listSelectableVerbForms()) {
+				nonpersonalFormIds[formId]=true
+			}
+			for (const formId of this.listPersonalVerbForms()) {
+				delete nonpersonalFormIds[formId]
+			}
+			for (const formId in nonpersonalFormIds) {
+				if (formId in formSet && !formSet[formId]) continue
+				formGroupRows.push([0,formId])
+			}
+			a.push([formGroupId,formGroupRows])
+		}
+		for (const formGroupId of this.listPersonalVerbForms()) {
+			if (formGroupId in formSet && !formSet[formGroupId]) continue
+			const formGroupRows=[]
+			if (sortType!='number') {
+				for (const p of [1,2,3]) {
+					if (sortType=='person-compact' && this.isVerbFormCompactible(formGroupId+p)) {
+						formGroupRows.push([1,formGroupId+p])
+						continue
+					}
+					for (const n of ['s','p']) {
+						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
+					}
+				}
+			} else {
+				for (const n of ['s','p']) {
+					for (const p of [1,2,3]) {
+						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
+					}
+				}
+			}
+			a.push([formGroupId,formGroupRows])
+		}
+		return a
 	}
 	listVerbOrders() {
 		return [
@@ -546,41 +585,6 @@ class SpanishLanguage extends Language {
 	}
 	listSelectableVerbForms() {
 		return ['ger','par',...this.listPersonalVerbForms()]
-	}
-	getVerbFormOrder(sortType,formSet) {
-		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
-		{
-			const formGroupId='nonpers'
-			const formGroupRows=[]
-			for (const formId of ['inf','ger','par']) {
-				if (formId in formSet && !formSet[formId]) continue
-				formGroupRows.push([0,formId])
-			}
-			a.push([formGroupId,formGroupRows])
-		}
-		for (const formGroupId of this.listPersonalVerbForms()) {
-			if (formGroupId in formSet && !formSet[formGroupId]) continue
-			const formGroupRows=[]
-			if (sortType!='number') {
-				for (const p of [1,2,3]) {
-					if (sortType=='person-compact' && this.isVerbFormCompactible(formGroupId+p)) {
-						formGroupRows.push([1,formGroupId+p])
-						continue
-					}
-					for (const n of ['s','p']) {
-						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
-					}
-				}
-			} else {
-				for (const n of ['s','p']) {
-					for (const p of [1,2,3]) {
-						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
-					}
-				}
-			}
-			a.push([formGroupId,formGroupRows])
-		}
-		return a
 	}
 	provideTopicVerbs() {
 		const v3=(...args)=>(new SpanishVerb(...args))
@@ -856,31 +860,6 @@ class ItalianLanguage extends Language {
 	}
 	listSelectableVerbForms() {
 		return ['ger','par',...this.listPersonalVerbForms()]
-	}
-	getVerbFormOrder(sortType,formSet) {
-		return [
-			['nonpers',[
-				[0,'inf'],
-				[0,'ger'],
-				[0,'par'],
-			]],
-			['pres',[
-				[0,'pres1s'],
-				[0,'pres2s'],
-				[0,'pres3s'],
-				[0,'pres1p'],
-				[0,'pres2p'],
-				[0,'pres3p'],
-			]],
-			['imp',[
-				[0,'imp1s'],
-				[0,'imp2s'],
-				[0,'imp3s'],
-				[0,'imp1p'],
-				[0,'imp2p'],
-				[0,'imp3p'],
-			]],
-		]
 	}
 	provideTopicVerbs() {
 		const v=(...args)=>(new ItalianVerb(...args))
