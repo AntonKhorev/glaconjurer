@@ -163,6 +163,13 @@ body {
 <body>
 <script>
 class Verb {
+	constructor(title,translation) {
+		this.title=title
+		if (typeof translation == 'string' || Array.isArray(translation)) {
+			translation={ru:translation}
+		}
+		this.translation=translation
+	}
 	replace(forms) {
 		for (const [k,v] of Object.entries(forms)) {
 			const formIds=this.formIdsFromPattern(k)
@@ -213,9 +220,7 @@ class Verb {
 // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Plantillas_auxiliares_de_flexi%C3%B3n
 class SpanishVerb extends Verb {
 	constructor(title,translation) {
-		super()
-		this.title=title
-		this.translation=translation
+		super(title,translation)
 		this.forms={}
 		this.formNotes={}
 		let [infStem,infEnd]=title.split(/(..)$/)
@@ -419,7 +424,7 @@ class Language {
 		for (const formGroupId of this.listPersonalVerbForms()) {
 			if (formGroupId in formSet && !formSet[formGroupId]) continue
 			const formGroupRows=[]
-			if (sortType!='number') {
+			if (sortType=='person' || sortType=='person-compact') {
 				for (const p of [1,2,3]) {
 					if (sortType=='person-compact' && this.isVerbFormCompactible(formGroupId+p)) {
 						formGroupRows.push([1,formGroupId+p])
@@ -755,9 +760,7 @@ class SpanishLanguage extends Language {
 
 class ItalianVerb extends Verb {
 	constructor(title,translation) {
-		super()
-		this.title=title
-		this.translation=translation
+		super(title,translation)
 		this.forms={}
 		this.iscFlag=false
 	}
@@ -868,20 +871,20 @@ class ItalianLanguage extends Language {
 		return [
 		[1,'правильные'],
 		[2,'1-е <abbr title=спряжение>спряж.</abbr>'],
-			v('abitare','проживать'),
+			v('abitare',{ru:'проживать',es:'habitar'}),
 		[2,'2-е <abbr title=спряжение>спряж.</abbr>'],
-			v('vendere','продавать'),
+			v('vendere',{ru:'продавать',es:'vender'}),
 		[2,'3-е <abbr title=спряжение>спряж.</abbr>'],
-			v('sentire','чувствовать'),
+			v('sentire',{ru:'чувствовать',es:'sentir'}),
 		[1,'почти'],
 		[2,'-i-'],
-			v('studiare','изучать'),
+			v('studiare',{ru:'изучать',es:'estudiar'}),
 		[2,'-isc-'],
-			v('capire','понимать').isc(),
+			v('capire',{ru:'понимать',es:'comprender'}).isc(),
 		[1,'неправильные причастия'],
-			v('scrivere','писать').replace({par:'scr{}|[i]{tt}o'}),
-			v('leggere','читать').replace({par:'l{}|[e]{tt}o'}),
-			v('vedere','видеть').replace({par:'v{}|[i]{st}o'}),
+			v('scrivere',{ru:'писать',es:'escribir'}).replace({par:'scr{}|[i]{tt}o'}),
+			v('leggere',{ru:'читать',es:'leer'}).replace({par:'l{}|[e]{tt}o'}),
+			v('vedere',{ru:'видеть',es:'ver'}).replace({par:'v{}|[i]{st}o'}),
 			v('rispondere','отвечать').replace({par:'risp{}|[o]{st}o'}),
 			v('perdere','терять').replace({par:'p{}|[e]{rs}o'}),
 			v('offrire','предлагать').replace({par:'off{}|[e]{rt}o'}),
@@ -1032,7 +1035,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 		let firstInGroup=true
 		for (const [compactRow,formId] of formGroupRows) {
 			const $row=$tbody.insertRow()
-			if (!compactRow && sortType!='number') {
+			if (!compactRow && (sortType=='person' || sortType=='person-compact')) {
 				$row.classList.add('number-'+formId.slice(-1))
 			}
 			if (firstInGroup && formGroupName) {
@@ -1112,6 +1115,16 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 				$cell.dataset.verb=verb
 				$cell.addEventListener('click',cellClickHandler)
 				$cell.addEventListener('animationend',cellAnimationEndHandler)
+				if (sortType=='number-compare') {
+					const compCode=languageType=='es'?'it':'es'
+					const compLang=languages[compCode]
+					if (verb.translation[compCode]) {
+						const compVerb=compLang.getVerbs()[verb.translation[compCode]]
+						if (compVerb) {
+							$cell.insertAdjacentHTML('beforeend','<br>'+getFormHtml(compVerb.getForm(formId)))
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1125,7 +1138,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 			$cell.setAttribute('colspan',2)
 			$row.appendChild($cell)
 			for (const verb of language.listVerbs(orderType)) {
-				const [translation,translationNote]=readPair(verb.translation)
+				const [translation,translationNote]=readPair(verb.translation.ru)
 				const $cell=$row.insertCell()
 				$cell.innerHTML=translation
 				if (translationNote) $cell.setAttribute('title',translationNote)
@@ -1313,6 +1326,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		}
 		for (const [value,text] of [
 			['number','обычный порядок'],
+			['number-compare','...со сравнением с другим языком'],
 			['person','группировка по лицам'],
 			['person-compact','...с уплотнением'],
 		]) createControl($block,
