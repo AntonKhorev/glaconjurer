@@ -864,7 +864,7 @@ class ItalianLanguage extends Language {
 		return 'it'
 	}
 	isVerbFormCompactible(formId) {
-		return formId=='imp3'
+		return formId=='imp3' || formId=='cond3'
 	}
 	getVerbFormTitle(formId) {
 		return {
@@ -902,6 +902,7 @@ class ItalianLanguage extends Language {
 			cond1p: ['noi',`мы бы сделали`],
 			cond2p: ['voi',`вы бы сделали`],
 			cond3p: ['loro',`они бы сделали`],
+			cond3: ['lui/lei/<em>loro</em>','он/она/они бы сделал(а/и)'],
 			im: ['imperativo','imperativo'],
 			im2s: ['tu','ты сделай; для не-are глаголов форма обычно совпадает с presente'],
 			//im3s: ['Lei','(вежливое) вы сделайте'],
