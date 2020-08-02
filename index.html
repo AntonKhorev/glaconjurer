@@ -764,6 +764,7 @@ class ItalianVerb extends Verb {
 		super(title,translation)
 		this.forms={}
 		this.iscFlag=false
+		this.futStem=undefined
 	}
 	get wiktionary() {
 		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
@@ -776,6 +777,11 @@ class ItalianVerb extends Verb {
 		let stemNoI=stem
 		let iscEndBar=this.iscFlag?'|{isc}':'|'
 		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
+		let futBase=stem+'|'+(infEnd=='ire' ? 'i' : 'e')
+		if (this.futStem!==undefined) {
+			futBase=this.futStem+'|{}'
+			if (this.futStem.includes('|')) futBase=this.futStem
+		}
 		if (formId=='inf') {
 			return stem+'|'+infEnd
 		} else if (formId=='ger') {
@@ -816,6 +822,18 @@ class ItalianVerb extends Verb {
 			return stem+'|'+tl+'vate'
 		} else if (formId=='imp3p') {
 			return stem+'|'+tl+'vano'
+		} else if (formId=='fut1s')  { return futBase+'r|ò'
+		} else if (formId=='fut2s')  { return futBase+'r|ai'
+		} else if (formId=='fut3s')  { return futBase+'r|à'
+		} else if (formId=='fut1p')  { return futBase+'r|emo'
+		} else if (formId=='fut2p')  { return futBase+'r|ete'
+		} else if (formId=='fut3p')  { return futBase+'r|anno'
+		} else if (formId=='cond1s') { return futBase+'r|ei'
+		} else if (formId=='cond2s') { return futBase+'r|esti'
+		} else if (formId=='cond3s') { return futBase+'r|ebbe'
+		} else if (formId=='cond1p') { return futBase+'r|emmo'
+		} else if (formId=='cond2p') { return futBase+'r|este'
+		} else if (formId=='cond3p') { return futBase+'r|ebbero'
 		} else if (formId=='im2s') {
 			if (infEnd=='are') {
 				return stem+iscEndBar+'a'
@@ -830,6 +848,10 @@ class ItalianVerb extends Verb {
 	}
 	isc() {
 		this.iscFlag=true
+		return this
+	}
+	fut(stem) {
+		this.futStem=stem
 		return this
 	}
 }
@@ -866,6 +888,20 @@ class ItalianLanguage extends Language {
 			imp2p: ['voi',`вы делали`],
 			imp3p: ['loro',`они делали`],
 			imp3: ['lui/lei/<em>loro</em>','он/она/они делал(а/и)'],
+			fut: ['futuro','futuro semplice; утверждения и предсказания о будущем'],
+			fut1s: ['io',`я сделаю`],
+			fut2s: ['tu',`ты сделаешь`],
+			fut3s: ['lui/lei',`он/она сделает`],
+			fut1p: ['noi',`мы сделаем`],
+			fut2p: ['voi',`вы сделаете`],
+			fut3p: ['loro',`они сделают`],
+			cond: ['condizionale','condizionale presente; будущие гипотетические ситуации, желания, вежливые просьбы и советы'],
+			cond1s: ['io',`я бы сделал`],
+			cond2s: ['tu',`ты бы сделал`],
+			cond3s: ['lui/lei',`он/она бы сделал(а)`],
+			cond1p: ['noi',`мы бы сделали`],
+			cond2p: ['voi',`вы бы сделали`],
+			cond3p: ['loro',`они бы сделали`],
 			im: ['imperativo','imperativo'],
 			im2s: ['tu','ты сделай; для не-are глаголов форма обычно совпадает с presente'],
 			//im3s: ['Lei','(вежливое) вы сделайте'],
@@ -878,7 +914,7 @@ class ItalianLanguage extends Language {
 		return this.verbs
 	}
 	listPersonalVerbForms() {
-		return ['pres','imp','im']
+		return ['pres','imp','fut','cond','im']
 	}
 	listSelectableVerbForms() {
 		return ['ger','par',...this.listPersonalVerbForms()]
@@ -901,33 +937,33 @@ class ItalianLanguage extends Language {
 		[1,'неправильные причастия'],
 			v('scrivere',{ru:'писать',es:'escribir'}).replace({par:'scr{}|[i]{tt}o'}),
 			v('leggere',{ru:'читать',es:'leer'}).replace({par:'l{}|[e]{tt}o'}),
-			v('vedere',{ru:'видеть',es:'ver'}).replace({par:'v{}|[i]{st}o'}),
 			v('rispondere','отвечать').replace({par:'risp{}|[o]{st}o'}),
 			v('perdere','терять').replace({par:'p{}|[e]{rs}o'}),
 			v('offrire','предлагать').replace({par:'off{}|[e]{rt}o'}),
 			v('aprire','открывать').replace({par:'ap{}|[e]{rt}o'}),
 			v('chiudere','закрывать').replace({par:'chi{}|u[s]o'}),
+			v('vedere',{ru:'видеть',es:'ver'}).fut('ved').replace({par:'v{}|[i]{st}o'}),
 		[1,'неправильные'],
-			v('essere','быть').replace({
+			v('essere','быть').fut('{s}|[a]').replace({
 				par:'{st}|[a]to',
 				pres__:'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
 				imp__:'e{r}|{}o,e{r}|{}i,e{r}|{}a,e{r}|[a]vamo,e{r}|[a]vate,e{r}|{}ano',
 				im2s:'{si}|i',
 				im2p:'{si}|ate',
 			}),
-			v('avere','иметь').replace({
+			v('avere','иметь').fut('av').replace({
 				pres_s:'{h}|o,{ha}|i,{h}|[a]',
 				pres1p:'a{bb}|iamo',
 				pres3p:'{h}|[a]{nn}o',
 				im2s:'a{bb}|i',
 				im2p:'a{bb}|{i}ate',
 			}),
-			v('andare','идти').replace({
+			v('andare','идти').fut('and').replace({
 				pres_s:'{vad}|o,{va}|i,{v}|a',
 				pres3p:'{v}|a{nn}o',
 				im2s:"{va}|{'}", // TODO: va, vai
 			}),
-			v('fare','делать').replace({
+			v('fare','делать').fut('f|[a]').replace({
 				ger:'f{ac}|[e]ndo',
 				par:'f|a{tt}o',
 				pres1s:'f{acci}|o',
@@ -937,33 +973,33 @@ class ItalianLanguage extends Language {
 				imp__:'f{ac}|[e]vo,f{ac}|[e]vi,f{ac}|[e]va,f{ac}|[e]vamo,f{ac}|[e]vate,f{ac}|[e]vano',
 				im2s:'f{a}|i', // TODO: fa'
 			}),
-			v('sapere',['знать','знать факт/навык']).replace({
+			v('sapere',['знать','знать факт/навык']).fut('sap').replace({
 				pres_s:'s{}|o,sa{}|i,s{}|[a]',
 				pres1p:'sa{pp}|iamo',
-				pres3p:'s|[a]{nn}o',
+				pres3p:'s{}|[a]{nn}o',
 				im2s:'sa{pp}|i',
 				im2p:'sa{pp}|{i}ate',
 			}),
-			v('volere','хотеть').replace({
+			v('volere','хотеть').fut('vo[r]').replace({
 				pres_s:'vo{gli}|o,v{uo}|i,v{uol}|e',
 				pres1p:'vo{gl}|iamo',
 				pres3p:'vo{gli}|ono',
 				//im2s: TODO: vogli
 				//im2p: TODO: vogliate
 			}),
-			v('dovere','<abbr title=быть>б.</abbr> должным').replace({
+			v('dovere','<abbr title=быть>б.</abbr> должным').fut('dov').replace({
 				pres_s:'d[e]v|o,d[e]v|i,d[e]v|e', // TODO debbo, debbono
 				pres1p:'do{bb}|iamo',
 				pres3p:'d[e]v|ono',
 				im__:undefined,
 			}),
-			v('potere','мочь').replace({
+			v('potere','мочь').fut('pot').replace({
 				pres_s:'po{ss}|o,p{uo}{}|i,p[u]{}|[ò]',
 				pres1p:'po{ss}|iamo',
 				pres3p:'po{ss}|ono',
 				im__:undefined,
 			}),
-			v('venire','приходить').replace({
+			v('venire','приходить').fut('ve[r]').replace({
 				par:'ven|[u]to',
 				pres_s:'ven{g}|o,v{ie}n|i,v{ie}n|e',
 				pres3p:'ven{g}|ono',
@@ -977,7 +1013,7 @@ class ItalianLanguage extends Language {
 				imp__:'d{ic}|[e]vo,d{ic}|[e]vi,d{ic}|[e]va,d{ic}|[e]vamo,d{ic}|[e]vate,d{ic}|[e]vano',
 				im2s:"d|i{'}",
 			}),
-			v('bere','пить').replace({
+			v('bere','пить').fut('b{er}').replace({
 				ger:'b{ev}|endo',
 				par:'b{ev}|uto',
 				pres__:'b{ev}|o,b{ev}|i,b{ev}|e,b{ev}|iamo,b{ev}|ete,b{ev}|ono',
@@ -987,7 +1023,7 @@ class ItalianLanguage extends Language {
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
 				pres3p:'[e]sc|ono',
 			}),
-			v('stare','оставаться').replace({
+			v('stare','оставаться').fut('st|[a]').replace({
 				pres2s:'st{a}|i',
 				pres3p:'st|a{nn}o',
 				im2s:'st{a}|i',
