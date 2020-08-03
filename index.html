@@ -77,6 +77,9 @@ body {
 .conjtable tbody th[colspan] {
 	left: 0;
 }
+.conjtable tr.compare {
+	opacity: 0.7;
+}
 .conjtable tr.join-below td span,
 .conjtable tr.join-below th {
 	padding-bottom: 0;
@@ -1185,6 +1188,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 				}
 			} else {
 				$formCell.innerHTML=`(${verbLanguage.code})`
+				$row.classList.add('compare')
 			}
 			const getFormHtml=(form)=>{
 				if (form===undefined) return ''
