@@ -77,12 +77,12 @@ body {
 .conjtable tbody th[colspan] {
 	left: 0;
 }
-.conjtable tr.number-s td span,
-.conjtable tr.number-s th {
+.conjtable tr.join-below td span,
+.conjtable tr.join-below th {
 	padding-bottom: 0;
 }
-.conjtable tr.number-p:not(:first-child) td span,
-.conjtable tr.number-p:not(:first-child) th {
+.conjtable tr.join-above td span,
+.conjtable tr.join-above th {
 	padding-top: 0;
 }
 .conjtable th.group {
@@ -390,7 +390,11 @@ class Language {
 		}
 	}
 	getVerbFormTitle(formId) {
-		return ['','']
+		//return ['','']
+		return undefined
+	}
+	hasVerbForm(formId) {
+		return this.getVerbFormTitle(formId)
 	}
 	isVerbFormCompactible(formId) {
 		return false
@@ -404,8 +408,22 @@ class Language {
 	listSelectableVerbForms() {
 		return this.listPersonalVerbForms()
 	}
-	getVerbFormOrder(sortType,formSet) {
-		const a=[] // [formGroupId, [[isCompactable,formId], ...]], ...
+	getVerbFormOrder(sortType,formSet,compareLanguages) { // TODO this is table representation stuff now, shouldn't be in this class
+		const a=[] // [formGroupId, [[verbLanguage,joinAbove,joinBelow,formId,[verbFormId,...]], ...]], ...
+		const pushUncomparedRowJoint=(formGroupRows,unfilteredFormIds)=>{
+			let formIds=unfilteredFormIds.filter(formId=>this.hasVerbForm(formId))
+			for (let i=0;i<formIds.length;i++) {
+				formGroupRows.push([this,i>0,i<formIds.length-1,formIds[i],[formIds[i]]])
+			}
+		}
+		const pushComparedRowJoint=(formGroupRows,formId)=>{
+			let languageList=[this]
+			if (sortType=='number-compare') languageList=[this,...compareLanguages]
+			languageList=languageList.filter(lang=>lang.hasVerbForm(formId))
+			for (let i=0;i<languageList.length;i++) {
+				formGroupRows.push([languageList[i],i>0,i<languageList.length-1,formId,[formId]])
+			}
+		}
 		{
 			const formGroupId='nonpers'
 			const formGroupRows=[]
@@ -418,7 +436,7 @@ class Language {
 			}
 			for (const formId in nonpersonalFormIds) {
 				if (formId in formSet && !formSet[formId]) continue
-				formGroupRows.push([0,formId])
+				pushComparedRowJoint(formGroupRows,formId)
 			}
 			a.push([formGroupId,formGroupRows])
 		}
@@ -428,17 +446,19 @@ class Language {
 			if (sortType=='person' || sortType=='person-compact') {
 				for (const p of [1,2,3]) {
 					if (sortType=='person-compact' && this.isVerbFormCompactible(formGroupId+p)) {
-						formGroupRows.push([1,formGroupId+p])
+						formGroupRows.push([this,0,0,formGroupId+p,[formGroupId+p+'s',formGroupId+p+'p']])
 						continue
 					}
-					for (const n of ['s','p']) {
-						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
-					}
+					pushUncomparedRowJoint(formGroupRows,['s','p'].map(n=>(formGroupId+p+n)))
 				}
 			} else {
 				for (const n of ['s','p']) {
-					for (const p of [1,2,3]) {
-						if (this.getVerbFormTitle(formGroupId+p+n)) formGroupRows.push([0,formGroupId+p+n])
+					if (sortType=='number-compare') {
+						for (const p of [1,2,3]) {
+							pushComparedRowJoint(formGroupRows,formGroupId+p+n)
+						}
+					} else {
+						pushUncomparedRowJoint(formGroupRows,[1,2,3].map(p=>(formGroupId+p+n)))
 					}
 				}
 			}
@@ -1091,9 +1111,9 @@ const readPair=(a)=>Array.isArray(a)?a:[a,'']
 function createConjugationTable($container,languageType,sortType,formSet,orderType) {
 	let language=languages[languageType]
 	function cellClickHandler() {
-		if (this.dataset.formId2) {
+		//if (this.dataset.formId2) {
 			this.classList.add('combination')
-		}
+		//}
 	}
 	function cellAnimationEndHandler() {
 		this.classList.remove('combination')
@@ -1131,16 +1151,18 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 			}
 		}
 	}
-	for (const [formGroupId,formGroupRows] of language.getVerbFormOrder(sortType,formSet)) {
+	const compareLanguages=[
+		languages[languageType=='es'?'it':'es']
+	]
+	for (const [formGroupId,formGroupRows] of language.getVerbFormOrder(sortType,formSet,compareLanguages)) {
 		const [formGroupName]=language.getVerbFormTitle(formGroupId)
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
 		let firstInGroup=true
-		for (const [compactRow,formId] of formGroupRows) {
+		for (const [verbLanguage,joinAbove,joinBelow,formId,verbFormIds] of formGroupRows) {
 			const $row=$tbody.insertRow()
-			if (!compactRow && (sortType=='person' || sortType=='person-compact')) {
-				$row.classList.add('number-'+formId.slice(-1))
-			}
+			if (joinAbove) $row.classList.add('join-above')
+			if (joinBelow) $row.classList.add('join-below')
 			if (firstInGroup && formGroupName) {
 				let cls='group'
 				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'"
@@ -1148,17 +1170,21 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 				$row.insertAdjacentHTML('beforeend',`<th class=${cls} rowspan=${formGroupRows.length}><span>${formGroupName}</span>`)
 			}
 			firstInGroup=false
-			const [formText,formNote]=language.getVerbFormTitle(formId)
 			const $formCell=document.createElement('th')
 			if (!formGroupName) $formCell.setAttribute('colspan',2)
 			$row.appendChild($formCell)
-			$formCell.innerHTML=formText
-			$formCell.setAttribute('title',formNote)
-			const formRawText=formText.replace(/<[^>]*>/g,'')
-			if (formGroupName && formRawText.length>10) {
-				$formCell.classList.add('very-long')
-			} else if (formGroupName && formRawText.length>5) {
-				$formCell.classList.add('long')
+			if (verbLanguage.code==languageType) {
+				const [formText,formNote]=language.getVerbFormTitle(formId)
+				$formCell.innerHTML=formText
+				$formCell.setAttribute('title',formNote)
+				const formRawText=formText.replace(/<[^>]*>/g,'')
+				if (formGroupName && formRawText.length>10) {
+					$formCell.classList.add('very-long')
+				} else if (formGroupName && formRawText.length>5) {
+					$formCell.classList.add('long')
+				}
+			} else {
+				$formCell.innerHTML=`(${verbLanguage.code})`
 			}
 			const getFormHtml=(form)=>{
 				if (form===undefined) return ''
@@ -1182,52 +1208,36 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 				if (i!=j+1) return [false]
 				return [true,longForm.slice(0,i),longForm.slice(i,i+d),longForm.slice(i+d)]
 			}
-			for (const verb of language.listVerbs(orderType)) {
+			for (const baseVerb of language.listVerbs(orderType)) {
 				const $cell=$row.insertCell()
-				if (compactRow) {
-					const form1=verb.getForm(formId+'s')
-					const form2=verb.getForm(formId+'p')
-					if (form1 && form2) {
-						const [isCombined,preMarked,inMarked,postMarked]=combineForms(form1,form2)
-						if (isCombined) {
-							$cell.innerHTML=getFormHtml(`${preMarked}<em>${inMarked}</em>${postMarked}`)
-						} else {
-							$cell.innerHTML=getFormHtml(form1)+" / "+getFormHtml(form2)
-						}
-					}
-					const formNote1=verb.getFormNote(formId+'s')
-					const formNote2=verb.getFormNote(formId+'p')
-					let formNote
-					if (formNote1 && formNote2) {
-						if (formNote1==formNote2) {
-							formNote=formNote1
-						} else {
-							formNote=formNote1+' / '+formNote2
-						}
-					} else {
-						formNote=formNote1||formNote2
-					}
-					if (formNote) $cell.setAttribute('title',formNote)
-					$cell.dataset.formId=formId+'s'
-					$cell.dataset.formId2=formId+'p'
-				} else {
-					$cell.innerHTML=getFormHtml(verb.getForm(formId))
-					if (verb.getFormNote(formId)) $cell.setAttribute('title',verb.getFormNote(formId))
-					$cell.dataset.formId=formId
+				let verb=baseVerb
+				if (verbLanguage.code!=languageType) {
+					verb=verbLanguage.getVerbs()[verb.translation[verbLanguage.code]]
+					$cell.setAttribute('lang',verbLanguage.code)
 				}
-				$cell.dataset.verb=verb
-				$cell.addEventListener('click',cellClickHandler)
-				$cell.addEventListener('animationend',cellAnimationEndHandler)
-				if (sortType=='number-compare') {
-					const compCode=languageType=='es'?'it':'es'
-					const compLang=languages[compCode]
-					if (verb.translation[compCode]) {
-						const compVerb=compLang.getVerbs()[verb.translation[compCode]]
-						if (compVerb) {
-							$cell.insertAdjacentHTML('beforeend','<br>'+getFormHtml(compVerb.getForm(formId)))
-						}
+				if (!verb) continue
+				const verbForms=verbFormIds.map(id=>verb.getForm(id))
+				let doneVerbForms=false
+				if (verbForms.length==2) {
+					const [isCombined,preMarked,inMarked,postMarked]=combineForms(...verbForms)
+					if (isCombined) {
+						$cell.innerHTML=getFormHtml(`${preMarked}<em>${inMarked}</em>${postMarked}`)
+						$cell.addEventListener('click',cellClickHandler)
+						$cell.addEventListener('animationend',cellAnimationEndHandler)
+						doneVerbForms=true
 					}
 				}
+				if (!doneVerbForms) {
+					$cell.innerHTML=verbForms.map(getFormHtml).join(" / ")
+				}
+				const uniqueFormNotes={}
+				for (const note of verbFormIds.map(id=>verb.getFormNote(id))) {
+					if (note) uniqueFormNotes[note]=true
+				}
+				const combinedNote=Object.keys(uniqueFormNotes).join(" / ")
+				if (combinedNote) $cell.setAttribute('title',combinedNote)
+				//$cell.dataset.formId=formId
+				//$cell.dataset.verb=verb.title
 			}
 		}
 	}
