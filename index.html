@@ -746,6 +746,18 @@ class SpanishLanguage extends Language {
 			v3('trabajar','работать'),
 			v3('ocurrir','происходить'),
 			v3('recibir','получать'),
+			v3('terminar','кончать'),
+			v3('permitir','разрешать'),
+			v3('aparecer','появляться').yo('apare{zc}'), // TODO merge with parecer
+			v3('conseguir','получать').vowel('i','i'), // TODO merge with seguir
+			v3('comenzar','начинать').vowel('ie'),
+			v3('servir','служить').vowel('i','i'),
+			v3('sacar','вынимать'),
+			v3('necesitar','нуждаться'),
+			v3('mantener','содержать').vowel('ie').yo('manten{g}').pret('mant[uv]').fut('manten{d}').replace({
+				im2s:'mantén|{}',
+			}), // TODO merge with tener, won't quite work for im2s
+			v3('resultar','получаться'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -754,7 +766,8 @@ class SpanishLanguage extends Language {
 			'saber,querer,llegar,pasar,deber,poner,parecer,quedar,creer,hablar,'+
 			'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
 			'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
-			'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar'
+			'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar,'+
+			'terminar,permitir,aparecer,conseguir,comenzar,servir,sacar,necesitar,mantener,resultar'
 		).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 	}
 }
