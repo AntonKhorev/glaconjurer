@@ -624,7 +624,7 @@ class SpanishLanguage extends Language {
 			v3('contar','считать').vowel('ue'),
 		[2,'o→<strong class=insert>ue</strong>,<strong>u</strong>'],
 			v3('dormir','спать').vowel('ue','u'),
-		[1,'u→<strong class=insert>ue</strong>'],
+		[2,'u→<strong class=insert>ue</strong>'],
 			v3('jugar','играть').vowel('ue'),
 		[1,'изменения согласных'],
 		[2,'c→<strong class=insert>zc</strong>'],
@@ -637,6 +637,16 @@ class SpanishLanguage extends Language {
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 			v3('escribir','писать').replace({
 				par:'escri[t]|{}o',
+			}),
+			v3('abrir','открывать').replace({
+				par:'ab{iert}|{}o',
+			}),
+		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr> + другие'],
+			v3('elegir','выбирать').vowel('i','i').replace({
+				par:'ele{ct}|{}o', // TODO also elegido
+			}),
+			v3('volver','возвращаться').vowel('ue').replace({
+				par:'v{ue}l[t]|{}o',
 			}),
 		[1,'irregularidad propia','индивидуальное спряжение'],
 			v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
@@ -679,7 +689,7 @@ class SpanishLanguage extends Language {
 				pres1p:'o|[í]mos',
 				im2p:'o|[í]d',
 			}),
-			v3('traer','приносить').yo('tra{ig}').pret('tra{j}'),
+			v3('traer','приносить').yendo().yo('tra{ig}').pret('tra{j}'),
 			v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
 				pres__:'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
 				im2s:'h{}|e',
@@ -714,12 +724,6 @@ class SpanishLanguage extends Language {
 				im2s:'sal|{}',
 			}),
 		[1,'оставшиеся глаголы в произвольном порядке'],
-			v3('elegir','выбирать').vowel('i','i').replace({
-				par:'ele{ct}|{}o',
-			}),
-			v3('volver','возвращаться').vowel('ue').replace({
-				par:'v{ue}l[t]|{}o',
-			}),
 			v3('leer','читать').yendo(),
 			v3('seguir','следовать').vowel('i','i'),
 			v3('empezar','начинать').vowel('ie'),
@@ -758,6 +762,13 @@ class SpanishLanguage extends Language {
 				im2s:'mantén|{}',
 			}), // TODO merge with tener, won't quite work for im2s
 			v3('resultar','получаться'),
+			v3('caer','падать').yendo().yo('ca{ig}'),
+			v3('cambiar','менять'),
+			v3('presentar','представлять'),
+			v3('crear','создавать'),
+			v3('considerar','обдумывать'),
+			v3('acabar','кончать'),
+			v3('convertir','становиться').vowel('ie','i'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -767,7 +778,8 @@ class SpanishLanguage extends Language {
 			'llevar,dejar,seguir,encontrar,llamar,venir,pensar,salir,volver,tomar,'+
 			'conocer,vivir,sentir,tratar,mirar,contar,empezar,esperar,buscar,existir,'+
 			'entrar,trabajar,escribir,perder,producir,ocurrir,entender,pedir,recibir,recordar,'+
-			'terminar,permitir,aparecer,conseguir,comenzar,servir,sacar,necesitar,mantener,resultar'
+			'terminar,permitir,aparecer,conseguir,comenzar,servir,sacar,necesitar,mantener,resultar,'+
+			'leer,caer,cambiar,presentar,crear,abrir,considerar,oír,acabar,convertir'
 		).split(',') // Mark Davies, A Frequency Dictionary of Spanish, 2006
 	}
 }
