@@ -620,11 +620,11 @@ class SpanishLanguage extends Language {
 		return [
 		[1,'правильные'],
 		[2,'1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол'],
-			v3('pasar',{ru:'проходить',it:'passare'}),
+			v3('pasar'),
 		[2,'2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол'],
-			v3('deber',{ru:'<abbr title=быть>б.</abbr> должным',it:'dovere'}),
+			v3('deber'),
 		[2,'3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол'],
-			v3('vivir',{ru:'жить',it:'vivere'}),
+			v3('vivir'),
 		[1,'орфографические изменения'],
 		[2,'c→<strong class=insert>qu</strong>'],
 			v3('buscar','искать'),
@@ -640,7 +640,7 @@ class SpanishLanguage extends Language {
 		[2,'e→<strong class=insert>ie</strong>'],
 			v3('pensar','думать').vowel('ie'),
 		[2,'e→<strong class=insert>ie</strong>,<strong>i</strong>'],
-			v3('sentir',{ru:'чувствовать',it:'sentire'}).vowel('ie','i'),
+			v3('sentir').vowel('ie','i'),
 		[2,'e→<strong>i</strong>'],
 			v3('pedir','просить').vowel('i','i'),
 		[2,'o→<strong class=insert>ue</strong>'],
@@ -658,10 +658,10 @@ class SpanishLanguage extends Language {
 		[2,'-<strong>y</strong>endo'],
 			v3('creer','верить').yendo(),
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
-			v3('escribir',{ru:'писать',it:'scrivere'}).replace({
+			v3('escribir').replace({
 				par:'escri[t]|{}o',
 			}),
-			v3('abrir','открывать').replace({
+			v3('abrir').replace({
 				par:'ab{iert}|{}o',
 			}),
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr> + другие'],
@@ -672,20 +672,20 @@ class SpanishLanguage extends Language {
 				par:'v{ue}l[t]|{}o',
 			}),
 		[1,'irregularidad propia','индивидуальное спряжение'],
-			v3('estar',['быть','быть временно, быть в указанном месте']).pret('est{uv}').replace({
+			v3('estar').pret('est{uv}').replace({
 				pres_s:'est|o{y},est|[á]s,est|[á]',
 				pres3p:'est|[á]n',
 				im2s:'est|[á]',im3s:'est|[é]',im3p:'est|[é]n',
 				subj_s:'est|[é],est|[é]s,est|[é]',
 				subj3p:'est|[é]n',
 			}),
-			v3('ser',['быть','быть постоянно, быть в указанный момент времени']).yo('s{e}').replace({
+			v3('ser').yo('s{e}').replace({
 				pres__:'s|o{y},{er}|es,{es}|[],s|[o]mos,s|[o]is,s|[o]n',
 				pret__:'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
 				imp__:'{er}|{}|a,{er}|{}|as,{er}|{}|a,{ér}|{}|amos,{er}|{}|ais,{er}|{}|an',
 				im2s:'s|[é]',
 			}),
-			v3('ir','идти').yo('{vay}').replace({
+			v3('ir').yo('{vay}').replace({
 				ger:'|[y]endo',
 				pres__:'{v}|o{y},{v}|[a]s,{v}|[a],{v}|[a]mos,{v}|{ai}s,{v}|[a]n',
 				pret__:'{fu}|[i],{fu}|iste,{fu}|[e],{fu}|imos,{fu}|isteis,{fu}|{}eron',
@@ -701,7 +701,7 @@ class SpanishLanguage extends Language {
 				subj3s:'d|[é]',
 				im3s:'d|[é]',
 			}),
-			v3('ver','видеть').yo('v{e}').imp('v{e}').replace({
+			v3('ver').yo('v{e}').imp('v{e}').replace({
 				par:'v|i{st}o',
 				pres2p:'v|[e]is',
 				pret1s:'v|[i]',
@@ -713,23 +713,23 @@ class SpanishLanguage extends Language {
 				im2p:'o|[í]d',
 			}),
 			v3('traer','приносить').yendo().yo('tra{ig}').pret('tra{j}'),
-			v3('haber',['иметь','вспомогательный для сложных времён']).yo('ha[y]').pret('h[u]b').fut('hab').replace({
+			v3('haber').yo('ha[y]').pret('h[u]b').fut('hab').replace({
 				pres__:'h{}|[e],h{}|[a]s,h{}|[a],h{}|emos,hab|éis,h{}|[a]n',
 				im2s:'h{}|e',
 			}),
-			v3('saber',['знать','знать факт/навык']).yo('s[ep]').pret('s[up]').fut('sab').replace({
+			v3('saber').yo('s[ep]').pret('s[up]').fut('sab').replace({
 				pres1s:'s{}|[é]',
 			}),
-			v3('poder','мочь').vowel('ue').pret('p[u]d').fut('pod').replace({
+			v3('poder').vowel('ue').pret('p[u]d').fut('pod').replace({
 				ger:'p[u]d|iendo', // TODO vowel-raising
 			}),
-			v3('querer','хотеть').vowel('ie').pret('qu[is]').fut('quer'),
-			v3('hacer','делать').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
+			v3('querer').vowel('ie').pret('qu[is]').fut('quer'),
+			v3('hacer').yo('ha[g]').pret('h[i]c').fut('ha{}').replace({
 				par:'h{ech}|{}o',
 				pret3s:'h[iz]|[o]', // TODO this is otho change
 				im2s:'ha[z]|{}',
 			}),
-			v3('decir','сказать').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
+			v3('decir').vowel('i','i').yo('d[ig]').pret('d[ij]').fut('d[i]{}').replace({
 				par:'d{ich}|{}o',
 				im2s:'d[i]{}|{}',
 			}),
@@ -740,17 +740,17 @@ class SpanishLanguage extends Language {
 			v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
 				im2s:'ten|{}',
 			}),
-			v3('venir','приходить').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
+			v3('venir').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
 				im2s:'ven|{}',
 			}),
-			v3('salir','выходить').yo('sal{g}').fut('sal{d}').replace({
+			v3('salir').yo('sal{g}').fut('sal{d}').replace({
 				im2s:'sal|{}',
 			}),
 		[1,'оставшиеся глаголы в произвольном порядке'],
-			v3('leer',{ru:'читать',it:'leggere'}).yendo(),
+			v3('leer').yendo(),
 			v3('seguir','следовать').vowel('i','i'),
 			v3('empezar','начинать').vowel('ie'),
-			v3('perder','терять').vowel('ie'),
+			v3('perder').vowel('ie'),
 			v3('entender','понимать').vowel('ie'),
 			v3('encontrar','находить').vowel('ue'),
 			v3('recordar','помнить').vowel('ue'),
@@ -793,15 +793,15 @@ class SpanishLanguage extends Language {
 			v3('acabar','кончать'),
 			v3('convertir','становиться').vowel('ie','i'),
 			// added for translations from Italian
-			v3('habitar',{ru:'проживать',it:'abitare'}),
-			v3('vender',{ru:'продавать',it:'vendere'}),
-			v3('estudiar',{ru:'изучать',it:'studiare'}),
-			v3('comprender',{ru:'понимать',it:'capire'}),
-			v3('responder',{ru:'отвечать',it:'rispondere'}),
-			v3('ofrecer','предлагать').yo('ofre{zc}'),
-			v3('cerrar','закрывать').vowel('ie'),
-			v3('beber','пить'),
-			v3('gustar','нравиться'),
+			v3('habitar'),
+			v3('vender'),
+			v3('estudiar'),
+			v3('comprender'),
+			v3('responder'),
+			v3('ofrecer').yo('ofre{zc}'),
+			v3('cerrar').vowel('ie'),
+			v3('beber'),
+			v3('gustar'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -983,46 +983,46 @@ class ItalianLanguage extends Language {
 		return [
 		[1,'правильные'],
 		[2,'1-е <abbr title=спряжение>спряж.</abbr>'],
-			v('abitare',{ru:'проживать',es:'habitar'}),
+			v('abitare'),
 		[2,'2-е <abbr title=спряжение>спряж.</abbr>'],
-			v('vendere',{ru:'продавать',es:'vender'}),
+			v('vendere'),
 		[2,'3-е <abbr title=спряжение>спряж.</abbr>'],
-			v('sentire',{ru:'чувствовать',es:'sentir'}),
+			v('sentire'),
 		[1,'почти'],
 		[2,'-i-'],
-			v('studiare',{ru:'изучать',es:'estudiar'}),
+			v('studiare'),
 		[2,'-isc-'],
-			v('capire',{ru:'понимать',es:'comprender'}).isc(),
+			v('capire').isc(),
 		[1,'неправильные причастия'],
-			v('scrivere',{ru:'писать',es:'escribir'}).replace({par:'scr{}|[i]{tt}o'}),
-			v('leggere',{ru:'читать',es:'leer'}).replace({par:'l{}|[e]{tt}o'}),
-			v('rispondere',{ru:'отвечать',es:'responder'}).replace({par:'risp{}|[o]{st}o'}),
-			v('perdere',{ru:'терять',es:'perder'}).replace({par:'p{}|[e]{rs}o'}),
-			v('offrire',{ru:'предлагать',es:'ofrecer'}).replace({par:'off{}|[e]{rt}o'}),
-			v('aprire',{ru:'открывать',es:'abrir'}).replace({par:'ap{}|[e]{rt}o'}),
-			v('chiudere',{ru:'закрывать',es:'cerrar'}).replace({par:'chi{}|u[s]o'}),
-			v('vedere',{ru:'видеть',es:'ver'}).fut('ved').replace({par:'v{}|[i]{st}o'}),
+			v('scrivere').replace({par:'scr{}|[i]{tt}o'}),
+			v('leggere').replace({par:'l{}|[e]{tt}o'}),
+			v('rispondere').replace({par:'risp{}|[o]{st}o'}),
+			v('perdere').replace({par:'p{}|[e]{rs}o'}),
+			v('offrire').replace({par:'off{}|[e]{rt}o'}),
+			v('aprire').replace({par:'ap{}|[e]{rt}o'}),
+			v('chiudere').replace({par:'chi{}|u[s]o'}),
+			v('vedere').fut('ved').replace({par:'v{}|[i]{st}o'}),
 		[1,'неправильные'],
-			v('essere',{ru:'быть',es:'ser'}).fut('{s}|[a]').replace({
+			v('essere').fut('{s}|[a]').replace({
 				par:'{st}|[a]to',
 				pres__:'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
 				imp__:'e{r}|{}o,e{r}|{}i,e{r}|{}a,e{r}|[a]vamo,e{r}|[a]vate,e{r}|{}ano',
 				im2s:'{si}|i',
 				im2p:'{si}|ate',
 			}),
-			v('avere',{ru:'иметь',es:'haber'}).fut('av').replace({
+			v('avere').fut('av').replace({
 				pres_s:'{h}|o,{ha}|i,{h}|[a]',
 				pres1p:'a{bb}|iamo',
 				pres3p:'{h}|[a]{nn}o',
 				im2s:'a{bb}|i',
 				im2p:'a{bb}|{i}ate',
 			}),
-			v('andare',{ru:'идти',es:'ir'}).fut('and').replace({
+			v('andare').fut('and').replace({
 				pres_s:'{vad}|o,{va}|i,{v}|a',
 				pres3p:'{v}|a{nn}o',
 				im2s:"{va}|{'}", // TODO: va, vai
 			}),
-			v('fare',{ru:'делать',es:'hacer'}).fut('f|[a]').replace({
+			v('fare').fut('f|[a]').replace({
 				ger:'f{ac}|[e]ndo',
 				par:'f|a{tt}o',
 				pres1s:'f{acci}|o',
@@ -1032,38 +1032,38 @@ class ItalianLanguage extends Language {
 				imp__:'f{ac}|[e]vo,f{ac}|[e]vi,f{ac}|[e]va,f{ac}|[e]vamo,f{ac}|[e]vate,f{ac}|[e]vano',
 				im2s:'f{a}|i', // TODO: fa'
 			}),
-			v('sapere',{ru:['знать','знать факт/навык'],es:'saber'}).fut('sap').replace({
+			v('sapere').fut('sap').replace({
 				pres_s:'s{}|o,sa{}|i,s{}|[a]',
 				pres1p:'sa{pp}|iamo',
 				pres3p:'s{}|[a]{nn}o',
 				im2s:'sa{pp}|i',
 				im2p:'sa{pp}|{i}ate',
 			}),
-			v('volere',{ru:'хотеть',es:'querer'}).fut('vo[r]').replace({
+			v('volere').fut('vo[r]').replace({
 				pres_s:'vo{gli}|o,v{uo}|i,v{uol}|e',
 				pres1p:'vo{gl}|iamo',
 				pres3p:'vo{gli}|ono',
 				//im2s: TODO: vogli
 				//im2p: TODO: vogliate
 			}),
-			v('dovere',{ru:'<abbr title=быть>б.</abbr> должным',es:'deber'}).fut('dov').replace({
+			v('dovere').fut('dov').replace({
 				pres_s:'d[e]v|o,d[e]v|i,d[e]v|e', // TODO debbo, debbono
 				pres1p:'do{bb}|iamo',
 				pres3p:'d[e]v|ono',
 				im__:undefined,
 			}),
-			v('potere',{ru:'мочь',es:'poder'}).fut('pot').replace({
+			v('potere').fut('pot').replace({
 				pres_s:'po{ss}|o,p{uo}{}|i,p[u]{}|[ò]',
 				pres1p:'po{ss}|iamo',
 				pres3p:'po{ss}|ono',
 				im__:undefined,
 			}),
-			v('venire',{ru:'приходить',es:'venir'}).fut('ve[r]').replace({
+			v('venire').fut('ve[r]').replace({
 				par:'ven|[u]to',
 				pres_s:'ven{g}|o,v{ie}n|i,v{ie}n|e',
 				pres3p:'ven{g}|ono',
 			}),
-			v('dire',{ru:'сказать',es:'decir'}).replace({
+			v('dire').replace({
 				ger:'d{ic}|endo',
 				par:'d|[e]{tt}o',
 				pres_s:'d{ic}|o,d{ic}|i,d{ic}|e',
@@ -1072,30 +1072,30 @@ class ItalianLanguage extends Language {
 				imp__:'d{ic}|[e]vo,d{ic}|[e]vi,d{ic}|[e]va,d{ic}|[e]vamo,d{ic}|[e]vate,d{ic}|[e]vano',
 				im2s:"d|i{'}",
 			}),
-			v('bere',{ru:'пить',es:'beber'}).fut('b{er}').replace({
+			v('bere').fut('b{er}').replace({
 				ger:'b{ev}|endo',
 				par:'b{ev}|uto',
 				pres__:'b{ev}|o,b{ev}|i,b{ev}|e,b{ev}|iamo,b{ev}|ete,b{ev}|ono',
 				imp__:'b{ev}|evo,b{ev}|evi,b{ev}|eva,b{ev}|evamo,b{ev}|evate,b{ev}|evano',
 			}),
-			v('uscire',{ru:'выходить',es:'salir'}).replace({
+			v('uscire').replace({
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
 				pres3p:'[e]sc|ono',
 			}),
-			v('stare',{ru:'оставаться',es:'estar'}).fut('st|[a]').replace({
+			v('stare').fut('st|[a]').replace({
 				pres2s:'st{a}|i',
 				pres3p:'st|a{nn}o',
 				im2s:'st{a}|i',
 			}),
-			v('piacere',{ru:'нравиться',es:'gustar'}).replace({ // possibly ortho change ce -> ci(vowel)
+			v('piacere').replace({ // possibly ortho change ce -> ci(vowel)
 				par:'piac{i}|uto',
 				pres1s:'piac{ci}|o',
 				pres1p:'piac{c}|iamo',
 				pres3p:'piac{ci}|ono',
 			}),
 		[1,'прочие'], // для перевода
-			v('passare',{ru:'проходить',es:'pasar'}),
-			v('vivere',{ru:'жить',es:'vivir'}).fut('viv').replace({par:'vi{ss}|uto'}),
+			v('passare'),
+			v('vivere').fut('viv').replace({par:'vi{ss}|uto'}),
 		]
 	}
 	// freq:
@@ -1110,6 +1110,41 @@ class ItalianLanguage extends Language {
 const languages={
 	es: new SpanishLanguage(),
 	it: new ItalianLanguage(),
+}
+
+for (const [es,it,ru] of [
+	['abrir','aprire','открывать'],
+	['beber','bere','пить'],
+	['comprender','capire','понимать'],
+	['cerrar','chiudere','закрывать'],
+	['deber','dovere','<abbr title=быть>б.</abbr> должным'],
+	['decir','dire','сказать'],
+	['escribir','scrivere','писать'],
+	['estar','stare',{es:['быть','быть временно, быть в указанном месте'],it:'оставаться'}],
+	['estudiar','studiare','изучать'],
+	['gustar','piacere','нравиться'],
+	['haber','avere',['иметь','вспомогательный для сложных времён']], // also es:tener
+	['habitar','abitare','проживать'],
+	['hacer','fare','делать'],
+	['ir','andare','идти'],
+	['leer','leggere','читать'],
+	['ofrecer','offrire','предлагать'],
+	['pasar','passare','проходить'],
+	['perder','perdere','терять'],
+	['poder','potere','мочь'],
+	['querer','volere','хотеть'],
+	['responder','rispondere','отвечать'],
+	['saber','sapere',['знать','знать факт/навык']],
+	['salir','uscire','выходить'],
+	['sentir','sentire','чувствовать'],
+	['ser','essere',{es:['быть','быть постоянно, быть в указанный момент времени'],it:'быть'}],
+	['vender','vendere','продавать'],
+	['venir','venire','приходить'],
+	['ver','vedere','видеть'],
+	['vivir','vivere','жить'],
+]) {
+	languages.es.getVerbs()[es].translation={ru:ru.es||ru,it}
+	languages.it.getVerbs()[it].translation={ru:ru.it||ru,es}
 }
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
