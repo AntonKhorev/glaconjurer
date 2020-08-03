@@ -620,11 +620,11 @@ class SpanishLanguage extends Language {
 		return [
 		[1,'правильные'],
 		[2,'1ª <abbr title=conjugación>conj.</abbr>','Primera conjugación, правильный -ar-глагол'],
-			v3('pasar','проходить'),
+			v3('pasar',{ru:'проходить',it:'passare'}),
 		[2,'2ª <abbr title=conjugación>conj.</abbr>','Segunda conjugación, правильный -er-глагол'],
-			v3('deber','<abbr title=быть>б.</abbr> должным'),
+			v3('deber',{ru:'<abbr title=быть>б.</abbr> должным',it:'dovere'}),
 		[2,'3ª <abbr title=conjugación>conj.</abbr>','Tercera conjugación, правильный -ir-глагол'],
-			v3('vivir','жить'),
+			v3('vivir',{ru:'жить',it:'vivere'}),
 		[1,'орфографические изменения'],
 		[2,'c→<strong class=insert>qu</strong>'],
 			v3('buscar','искать'),
@@ -640,7 +640,7 @@ class SpanishLanguage extends Language {
 		[2,'e→<strong class=insert>ie</strong>'],
 			v3('pensar','думать').vowel('ie'),
 		[2,'e→<strong class=insert>ie</strong>,<strong>i</strong>'],
-			v3('sentir','чувствовать').vowel('ie','i'),
+			v3('sentir',{ru:'чувствовать',it:'sentire'}).vowel('ie','i'),
 		[2,'e→<strong>i</strong>'],
 			v3('pedir','просить').vowel('i','i'),
 		[2,'o→<strong class=insert>ue</strong>'],
@@ -658,7 +658,7 @@ class SpanishLanguage extends Language {
 		[2,'-<strong>y</strong>endo'],
 			v3('creer','верить').yendo(),
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
-			v3('escribir','писать').replace({
+			v3('escribir',{ru:'писать',it:'scrivere'}).replace({
 				par:'escri[t]|{}o',
 			}),
 			v3('abrir','открывать').replace({
@@ -747,7 +747,7 @@ class SpanishLanguage extends Language {
 				im2s:'sal|{}',
 			}),
 		[1,'оставшиеся глаголы в произвольном порядке'],
-			v3('leer','читать').yendo(),
+			v3('leer',{ru:'читать',it:'leggere'}).yendo(),
 			v3('seguir','следовать').vowel('i','i'),
 			v3('empezar','начинать').vowel('ie'),
 			v3('perder','терять').vowel('ie'),
@@ -793,11 +793,11 @@ class SpanishLanguage extends Language {
 			v3('acabar','кончать'),
 			v3('convertir','становиться').vowel('ie','i'),
 			// added for translations from Italian
-			v3('habitar','проживать'),
-			v3('vender','продавать'),
-			v3('estudiar','изучать'),
-			v3('comprender','понимать'),
-			v3('responder','отвечать'),
+			v3('habitar',{ru:'проживать',it:'abitare'}),
+			v3('vender',{ru:'продавать',it:'vendere'}),
+			v3('estudiar',{ru:'изучать',it:'studiare'}),
+			v3('comprender',{ru:'понимать',it:'capire'}),
+			v3('responder',{ru:'отвечать',it:'rispondere'}),
 			v3('ofrecer','предлагать').yo('ofre{zc}'),
 			v3('cerrar','закрывать').vowel('ie'),
 			v3('beber','пить'),
@@ -1093,6 +1093,9 @@ class ItalianLanguage extends Language {
 				pres1p:'piac{c}|iamo',
 				pres3p:'piac{ci}|ono',
 			}),
+		[1,'прочие'], // для перевода
+			v('passare',{ru:'проходить',es:'pasar'}),
+			v('vivere',{ru:'жить',es:'vivir'}).fut('viv').replace({par:'vi{ss}|uto'}),
 		]
 	}
 	// freq:
