@@ -417,9 +417,9 @@ class Language {
 			}
 		}
 		const pushComparedRowJoint=(formGroupRows,formId)=>{
+			if (!this.hasVerbForm(formId)) return
 			let languageList=[this]
-			if (sortType=='number-compare') languageList=[this,...compareLanguages]
-			languageList=languageList.filter(lang=>lang.hasVerbForm(formId))
+			if (sortType=='number-compare') languageList=[this,...compareLanguages.filter(lang=>lang.hasVerbForm(formId))]
 			for (let i=0;i<languageList.length;i++) {
 				formGroupRows.push([languageList[i],i>0,i<languageList.length-1,formId,[formId]])
 			}
