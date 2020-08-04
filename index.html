@@ -321,7 +321,7 @@ class SpanishVerb extends Verb {
 		this.forms[formId]=newStem+'|'+end
 	}
 	vowel(v,va) {
-		for (const formId of [ // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.er , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.ar
+		for (const formId of [ // https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.er , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.-ie-ue-.ar , https://es.wiktionary.org/wiki/Plantilla:es.v.conj.2.ar
 			'pres1s','pres2s','pres3s','pres3p',
 			'subj1s','subj2s','subj3s','subj3p',
 			'im2s','im3s','im3p'
@@ -346,7 +346,8 @@ class SpanishVerb extends Verb {
 			this.forms[formId]=this.forms[formId].replace(/\|i/,'|[y]')
 		}
 		for (const formId of ['par','pret2s','pret1p','pret2p']) {
-			this.forms[formId]=this.forms[formId].replace(/\|i/,'|[í]')
+			//this.forms[formId]=this.forms[formId].replace(/\|i/,'|[í]')
+			this.forms[formId]=this.forms[formId].replace(/(?<=[^u]\|)i/,'[í]')
 		}
 		this.formNotes.ger='после гласной -iendo меняется на -yendo'
 		return this
@@ -649,6 +650,8 @@ class SpanishLanguage extends Language {
 			v3('dormir','спать').vowel('ue','u'),
 		[2,'u→<strong class=insert>ue</strong>'],
 			v3('jugar','играть').vowel('ue'),
+		[2,'i→<strong>í</strong>'],
+			v3('enviar','посылать').vowel('í'),
 		[1,'изменения согласных'],
 		[2,'c→<strong class=insert>zc</strong>'],
 			v3('conocer',['знать','знать человека/место']).yo('cono{zc}'),
@@ -657,6 +660,8 @@ class SpanishLanguage extends Language {
 		[1,'прочие изменения'],
 		[2,'-<strong>y</strong>endo'],
 			v3('creer','верить').yendo(),
+		[2,'+u→<strong class=insert>uy</strong>'],
+			v3('construir','строить').yendo().vowel('uy').yo('constr{uy}'),
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr>'], // https://es.wiktionary.org/wiki/Categor%C3%ADa:ES:Verbos_con_participio_irregular
 			v3('escribir').replace({
 				par:'escri[t]|{}o',
