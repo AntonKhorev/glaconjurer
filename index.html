@@ -14,11 +14,13 @@ body {
 	position: fixed;
 	top: 0;
 	left: 0;
-	/*
-	width: 10em;
-	height: 2em;
-	*/
 	background: white;
+}
+#options .opener button,
+#options .closer button {
+	height: 2.8rem;
+	width: 5.5rem;
+	padding: 0;
 }
 #options .dialog {
 	display: none;
@@ -69,13 +71,23 @@ body {
 .conjtable tbody th {
 	position: sticky;
 	background: white;
-	left: 1.4rem;
 }
 .conjtable tbody th.group {
 	left: 0;
+	width: 1rem;
 }
-.conjtable tbody th[colspan] {
+.conjtable tbody th.group span {
+	width: 1rem;
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+}
+.conjtable tbody th.spangroup {
 	left: 0;
+	min-width: 5.1rem;
+}
+.conjtable tbody th.subgroup {
+	left: 1.4rem;
+	min-width: 3.7rem;
 }
 .conjtable tr.compare {
 	opacity: 0.7;
@@ -87,14 +99,6 @@ body {
 .conjtable tr.join-above td span,
 .conjtable tr.join-above th {
 	padding-top: 0;
-}
-.conjtable th.group {
-	width: 1rem;
-}
-.conjtable th.group span {
-	width: 1rem;
-	writing-mode: vertical-rl;
-	transform: rotate(180deg);
 }
 .conjtable td[title],
 .conjtable th[title] {
@@ -1253,7 +1257,12 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 			}
 			firstInGroup=false
 			const $formCell=document.createElement('th')
-			if (!formGroupName) $formCell.setAttribute('colspan',2)
+			if (formGroupName) {
+				$formCell.classList.add('subgroup')
+			} else {
+				$formCell.classList.add('spangroup')
+				$formCell.setAttribute('colspan',2)
+			}
 			$row.appendChild($formCell)
 			if (verbLanguage.code==languageType) {
 				const [formText,formNote]=language.getVerbFormTitle(formId)
