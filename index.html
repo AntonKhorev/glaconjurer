@@ -227,8 +227,8 @@ class SpanishVerb extends Verb {
 		super(title,translation)
 		this.forms={}
 		this.formNotes={}
-		let [infStem,infEnd]=title.split(/(..)$/)
-		if (infEnd=='ír') infEnd='ir'
+		;[this.stem,this.them]=title.split(/(.).$/)
+		if (this.them=='í') this.them='i'
 		const formIds=(
 			'inf,ger,par,'+
 			'pres1s,pres2s,pres3s,pres1p,pres2p,pres3p,'+
@@ -244,7 +244,7 @@ class SpanishVerb extends Verb {
 		const formEndsPretEir='í,iste,ió,imos,isteis,ieron,'
 		const formEndsImpEir='í|a,í|as,í|a,í|amos,í|ais,í|an,'
 		const formEnds={
-		ar:(
+		a:(
 			'ar,ando,ado,'+
 			'o,as,a,amos,áis,an,'+
 			'é,aste,ó,amos,asteis,aron,'+
@@ -254,7 +254,7 @@ class SpanishVerb extends Verb {
 			'e,es,e,emos,éis,en,'+
 			'a,e,emos,ad,en'
 		).split(','),
-		er:(
+		e:(
 			'er,iendo,ido,'+
 			'o,es,e,emos,éis,en,'+
 			formEndsPretEir+
@@ -264,7 +264,7 @@ class SpanishVerb extends Verb {
 			'a,as,a,amos,áis,an,'+
 			'e,a,amos,ed,an'
 		).split(','),
-		ir:(
+		i:(
 			'ir,iendo,ido,'+
 			'o,es,e,imos,ís,en,'+
 			formEndsPretEir+
@@ -274,9 +274,9 @@ class SpanishVerb extends Verb {
 			'a,as,a,amos,áis,an,'+
 			'e,a,amos,id,an'
 		).split(','),
-		}[infEnd]
+		}[this.them]
 		for (const [i,formId] of formIds.entries()) {
-			let stem=infStem
+			let stem=this.stem
 			let end=formEnds[i]
 			const replace=(replacements,endPattern)=>{
 				const stemMatch=stem.match(new RegExp('(?:'+Object.keys(replacements).join('|')+')$'))
@@ -286,12 +286,12 @@ class SpanishVerb extends Verb {
 					const [e]=endMatch
 					const r=replacements[s]
 					stem=stem.replace(new RegExp(s+'$'),r.length==s.length?'['+r+']':'{'+r+'}')
-					this.formNotes[formId]=`у -${s}${infEnd}-глаголов -${s}${e}- меняется на -${r}${e}-`
+					this.formNotes[formId]=`у -${s}${this.them}r-глаголов -${s}${e}- меняется на -${r}${e}-`
 				}
 			}
-			if (infEnd[0]=='a') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.aou
+			if (this.them=='a') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.aou
 				replace({c:'qu',z:'c',gu:'gü',g:'gu'},/^[eéií]/)
-			} else if (infEnd[0]=='e' || infEnd[0]=='i') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.ei
+			} else if (this.them=='e' || this.them=='i') { // https://es.wiktionary.org/wiki/Plantilla:mutacion.es.nexo.ei
 				replace({qu:'c',c:'z',g:'j',gu:'g','gü':'gu'},/^[aáoó]/)
 			}
 			this.forms[formId]=stem+'|'+end
@@ -304,6 +304,34 @@ class SpanishVerb extends Verb {
 		return Object.keys(this.forms)
 	}
 	getForm(formId) {
+		if (formId.match(/^imp(?:ra|se)[123][sp]$/)) {
+			let stem=this.forms.pret3p.slice(0,-3)
+			if (formId=='impra1p' || formId=='impse1p') {
+				stem=stem.replace(/[ae](?=[\[\]{}]*$)/,x=>{
+					if (x=='a') {
+						return 'á'
+					} else if (x=='e') {
+						return 'é'
+					} else {
+						return x
+					}
+				})
+			}
+			return stem+'|'+{
+				impra1s:'ra',
+				impra2s:'ras',
+				impra3s:'ra',
+				impra1p:'ramos', // TODO add stress
+				impra2p:'rais',
+				impra3p:'ran',
+				impse1s:'se',
+				impse2s:'ses',
+				impse3s:'se',
+				impse1p:'semos', // TODO add stress
+				impse2p:'seis',
+				impse3p:'sen',
+			}[formId]
+		}
 		return this.forms[formId]
 	}
 	getFormNote(formId) {
@@ -560,6 +588,8 @@ class SpanishLanguage extends Language {
 			fut: ['Futuro','Futuro'],
 			cond: ['Condicional','Condicional'],
 			subj: ['Subjuntivo','Presente de subjuntivo'],
+			impra: ["<abbr title='Imperfecto de subjuntivo'>Imp. subj.</abbr> -ra",'Pretérito imperfecto de subjuntivo -ra'],
+			impse: ["<abbr title='Imperfecto de subjuntivo'>Imp. subj.</abbr> -se",'Pretérito imperfecto de subjuntivo -se'],
 			im: ['Imperativo','Imperativo'],
 			im2s: ['tú','tú: ты сделай; форма глагола обычно совпадает с 3-м лицом ед. ч. Presente'],
 			im3s: ['usted','usted: (вежливое) вы сделайте; форма глагола обычно совпадает императивом для tú, только окончание a меняется на e и наоборот'],
@@ -568,12 +598,14 @@ class SpanishLanguage extends Language {
 			im3p: ['ustedes','ustedes: (вежливое множественное) вы сделайте'],
 		}
 		for (const [prefix,v0,[v1s,v2s,v3sm,v3sf,v1p,v2p,v3p]] of [
-			['pres','',        ['делаю','делаешь','делает','делает','делаем','делаете','делают']],
-			['pret','',        ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
-			['fut' ,'',        ['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
-			['cond','',        ['бы сделал(а)','бы сделал(а)','бы сделал','бы сделала','бы сделали','бы сделали','бы сделали']],
-			['subj','(чтобы) ',['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
-			['imp' ,'',        ['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+			['pres','',         ['делаю','делаешь','делает','делает','делаем','делаете','делают']],
+			['pret','',         ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+			['fut' ,'',         ['сделаю','сделаешь','сделает','сделает','сделаем','сделаете','сделают']],
+			['cond','',         ['бы сделал(а)','бы сделал(а)','бы сделал','бы сделала','бы сделали','бы сделали','бы сделали']],
+			['subj','(чтобы) ', ['сделал(а)','сделал(а)','сделал','сделала','сделали','сделали','сделали']],
+			['impra','(чтобы) ',['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+			['impse','(чтобы) ',['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
+			['imp' ,'',         ['делал(а)','делал(а)','делал','делала','делали','делали','делали']],
 		]) {
 			this.verbFormTitles[prefix+'1s']=['yo',`yo: ${v0}я ${v1s}`]
 			this.verbFormTitles[prefix+'2s']=['tú',`tú: ${v0}ты ${v2s}`]
@@ -611,7 +643,7 @@ class SpanishLanguage extends Language {
 		return this.verbs
 	}
 	listPersonalVerbForms() {
-		return ['pres','pret','imp','fut','cond','subj','im']
+		return ['pres','pret','imp','fut','cond','subj','impra','impse','im']
 	}
 	listSelectableVerbForms() {
 		return ['ger','par',...this.listPersonalVerbForms()]
