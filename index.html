@@ -382,7 +382,14 @@ class SpanishVerb extends Verb {
 		}
 		for (const formId of ['par','pret2s','pret1p','pret2p']) {
 			//this.forms[formId]=this.forms[formId].replace(/\|i/,'|[í]')
-			this.forms[formId]=this.forms[formId].replace(/(?<=[^u]\|)i/,'[í]')
+			//this.forms[formId]=this.forms[formId].replace(/(?<=[^u]\|)i/,'[í]') // https://bugzilla.mozilla.org/show_bug.cgi?id=1225665
+			this.forms[formId]=this.forms[formId].replace(/(.)\|i/,(match,p1)=>{
+				if (p1=='u') {
+					return p1+'|i'
+				} else {
+					return p1+'|[í]'
+				}
+			})
 		}
 		this.formNotes.ger='после гласной -iendo меняется на -yendo'
 		return this
