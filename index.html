@@ -1001,14 +1001,14 @@ class ItalianLanguage extends Language {
 			imp2p: ['voi',`вы делали`],
 			imp3p: ['loro',`они делали`],
 			imp3: ['lui/lei/<em>loro</em>','он/она/они делал(а/и)'],
-			fut: ['futuro','futuro semplice; утверждения и предсказания о будущем'],
+			fut: ['futuro','futuro semplice'], // утверждения и предсказания о будущем
 			fut1s: ['io',`я сделаю`],
 			fut2s: ['tu',`ты сделаешь`],
 			fut3s: ['lui/lei',`он/она сделает`],
 			fut1p: ['noi',`мы сделаем`],
 			fut2p: ['voi',`вы сделаете`],
 			fut3p: ['loro',`они сделают`],
-			cond: ['condizionale','condizionale presente; будущие гипотетические ситуации, желания, вежливые просьбы и советы'],
+			cond: ['condizionale','condizionale presente'], // будущие гипотетические ситуации, желания, вежливые просьбы и советы
 			cond1s: ['io',`я бы сделал`],
 			cond2s: ['tu',`ты бы сделал`],
 			cond3s: ['lui/lei',`он/она бы сделал(а)`],
@@ -1204,7 +1204,7 @@ for (const [es,it,ru] of [
 
 const readPair=(a)=>Array.isArray(a)?a:[a,'']
 
-function createConjugationTable($container,languageType,sortType,formSet,orderType) {
+function createConjugationTable($container,languageType,sortType,formSet,orderType,tableType) {
 	let language=languages[languageType]
 	function cellClickHandler() {
 		//if (this.dataset.formId2) {
@@ -1229,7 +1229,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 	}
 	{ // header row 1
 		const $row=$thead.insertRow()
-		$row.innerHTML="<th colspan=2>"
+		$row.innerHTML=tableType=='side'?"<th colspan=2>":"<th>"
 		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
 			let colspan=0
 			for (const [subcategory,...verbIds] of subcategories) {
@@ -1240,7 +1240,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 	}
 	{ // header row 2
 		const $row=$thead.insertRow()
-		$row.innerHTML="<th colspan=2>"
+		$row.innerHTML=tableType=='side'?"<th colspan=2>":"<th>"
 		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
 			for (const [subcategory,...verbIds] of subcategories) {
 				catCell($row,subcategory,verbIds.length)
@@ -1251,15 +1251,19 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 		languages[languageType=='es'?'it':'es']
 	]
 	for (const [formGroupId,formGroupRows] of language.getVerbFormOrder(sortType,formSet,compareLanguages)) {
-		const [formGroupName]=language.getVerbFormTitle(formGroupId)
+		const [formGroupName,formGroupLongName]=language.getVerbFormTitle(formGroupId)
 		const $tbody=document.createElement('tbody')
 		$table.appendChild($tbody)
+		if (tableType!='side') {
+			const nCols=[...language.listVerbs(orderType)].length+1
+			$tbody.insertRow().insertAdjacentHTML('beforeend',`<th colspan=${nCols}>${formGroupLongName}`)
+		}
 		let firstInGroup=true
 		for (const [verbLanguage,joinAbove,joinBelow,formId,verbFormIds] of formGroupRows) {
 			const $row=$tbody.insertRow()
 			if (joinAbove) $row.classList.add('join-above')
 			if (joinBelow) $row.classList.add('join-below')
-			if (firstInGroup && formGroupName) {
+			if (tableType=='side' && firstInGroup && formGroupName) {
 				let cls='group'
 				if (formGroupRows.length<5 && formGroupName.length>10) cls="'group long'"
 				if (formGroupRows.length<4 && formGroupName.length>10) cls="'group very-long'"
@@ -1267,22 +1271,28 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 			}
 			firstInGroup=false
 			const $formCell=document.createElement('th')
-			if (formGroupName) {
-				$formCell.classList.add('subgroup')
+			if (tableType=='side') {
+				if (formGroupName) {
+					$formCell.classList.add('subgroup')
+				} else {
+					$formCell.classList.add('spangroup')
+					$formCell.setAttribute('colspan',2)
+				}
 			} else {
 				$formCell.classList.add('spangroup')
-				$formCell.setAttribute('colspan',2)
 			}
 			$row.appendChild($formCell)
 			if (verbLanguage.code==languageType) {
 				const [formText,formNote]=language.getVerbFormTitle(formId)
 				$formCell.innerHTML=formText
 				$formCell.setAttribute('title',formNote)
-				const formRawText=formText.replace(/<[^>]*>/g,'')
-				if (formGroupName && formRawText.length>10) {
-					$formCell.classList.add('very-long')
-				} else if (formGroupName && formRawText.length>5) {
-					$formCell.classList.add('long')
+				if (tableType!='side' || formGroupName) {
+					const formRawText=formText.replace(/<[^>]*>/g,'')
+					if (formRawText.length>10) {
+						$formCell.classList.add('very-long')
+					} else if (formRawText.length>5) {
+						$formCell.classList.add('long')
+					}
 				}
 			} else {
 				$formCell.innerHTML=`(${verbLanguage.code})`
@@ -1538,7 +1548,7 @@ function createOptions($featureContainer,$optionsContainer) {
 		if (feature=='conjgame') {
 			createConjugationGame($featureContainer,options.forms[options.language])
 		} else {
-			createConjugationTable($featureContainer,options.language,options.sort,options.forms[options.language],options.order)
+			createConjugationTable($featureContainer,options.language,options.sort,options.forms[options.language],options.order,options.table)
 		}
 	}
 	createFeature()
