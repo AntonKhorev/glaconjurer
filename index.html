@@ -1225,6 +1225,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 	$table.setAttribute('lang',language.code)
 	const $thead=document.createElement('thead')
 	$table.appendChild($thead)
+	const blankLead=tableType=='side'?"<th colspan=2>":"<th>"
 	const catCell=($row,parent,colspan)=>{
 		let [title,titleNote]=readPair(parent)
 		const $cell=document.createElement('th')
@@ -1235,7 +1236,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 	}
 	{ // header row 1
 		const $row=$thead.insertRow()
-		$row.innerHTML=tableType=='side'?"<th colspan=2>":"<th>"
+		$row.innerHTML=blankLead
 		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
 			let colspan=0
 			for (const [subcategory,...verbIds] of subcategories) {
@@ -1246,7 +1247,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 	}
 	{ // header row 2
 		const $row=$thead.insertRow()
-		$row.innerHTML=tableType=='side'?"<th colspan=2>":"<th>"
+		$row.innerHTML=blankLead
 		for (const [category,...subcategories] of language.getVerbOrder(orderType)) {
 			for (const [subcategory,...verbIds] of subcategories) {
 				catCell($row,subcategory,verbIds.length)
@@ -1365,9 +1366,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 		{
 			const $row=$tbody.insertRow()
 			$row.setAttribute('lang','ru')
-			const $cell=document.createElement('th')
-			$cell.setAttribute('colspan',2)
-			$row.appendChild($cell)
+			$row.innerHTML=blankLead
 			for (const verb of language.listVerbs(orderType)) {
 				const [translation,translationNote]=readPair(verb.translation.ru)
 				const $cell=$row.insertCell()
@@ -1377,9 +1376,7 @@ function createConjugationTable($container,languageType,sortType,formSet,orderTy
 		}
 		{
 			const $row=$tbody.insertRow()
-			const $cell=document.createElement('th')
-			$cell.setAttribute('colspan',2)
-			$row.appendChild($cell)
+			$row.innerHTML=blankLead
 			for (const verb of language.listVerbs(orderType)) {
 				$row.insertCell().innerHTML=verb.wiktionary
 			}
