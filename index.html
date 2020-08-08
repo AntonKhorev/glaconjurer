@@ -1492,11 +1492,16 @@ function createOptions($featureContainer,$optionsContainer) {
 		$control.addEventListener('change',handler)
 		$block.appendChild($control)
 	}
-	const createSelectBlock=(title,label,currentValue,valuesAndTexts,handler)=>{
-		const $block=createBlock(title,label)
-		createControl($block,`<select id=${label}>`+
+	const createSelectBlock=(title,name,currentValue,valuesAndTexts,handler)=>{
+		const selectId='options-'+name
+		const $block=createBlock(title,selectId)
+		createControl($block,`<select id=${selectId}>`+
 			valuesAndTexts.map(([v,t])=>`<option value=${v+(v==currentValue?' selected':'')}>${t}</option>`).join('')
-		+"</select>",handler)
+		+"</select>",ev=>{
+			let newValue=ev.target.value
+			localStorage.setItem('glaconjurer-'+name,newValue)
+			handler(newValue)
+		})
 		return $block
 	}
 	let form$blocks={}
@@ -1515,43 +1520,39 @@ function createOptions($featureContainer,$optionsContainer) {
 		handler)
 	}
 	$dialog.appendChild(
-		createSelectBlock("Язык",'options-language',languageOption,Object.values(languages).map(language=>[language.code,language.title]),ev=>{
+		createSelectBlock("Язык",'language',languageOption,Object.values(languages).map(language=>[language.code,language.title]),newValue=>{
 			form$blocks[languageOption].classList.remove('open')
-			languageOption=ev.target.value
+			languageOption=newValue
 			form$blocks[languageOption].classList.add('open')
-			localStorage.setItem('glaconjurer-language',languageOption)
 			needToCreateFeature=true
 		})
 	)
 	$dialog.appendChild(
-		createSelectBlock("Режим",'options-feature',featureOption,[
+		createSelectBlock("Режим",'feature',featureOption,[
 			['conjtable','таблица спряжений'],
 			['conjgame','игра'],
-		],ev=>{
-			featureOption=ev.target.value
-			localStorage.setItem('glaconjurer-feature',featureOption)
+		],newValue=>{
+			featureOption=newValue
 			needToCreateFeature=true
 		})
 	)
 	$dialog.appendChild(
-		createSelectBlock("Вид таблицы спряжений",'options-table',tableOption,[
+		createSelectBlock("Вид таблицы спряжений",'table',tableOption,[
 			['side','время сбоку от форм глаголов'],
 			['top','время сверху от форм глаголов'],
-		],ev=>{
-			tableOption=ev.target.value
-			localStorage.setItem('glaconjurer-table',tableOption)
+		],newValue=>{
+			tableOption=newValue
 			if (featureOption=='conjtable') needToCreateFeature=true
 		})
 	)
 	$dialog.appendChild(
-		createSelectBlock("Отображение спряжений по лицам и числам",'options-sort',sortOption,[
+		createSelectBlock("Отображение спряжений по лицам и числам",'sort',sortOption,[
 			['number','обычный порядок'],
 			['number-compare','...со сравнением с другим языком'],
 			['person','группировка по лицам'],
 			['person-compact','...с уплотнением'],
-		],ev=>{
-			sortOption=ev.target.value
-			localStorage.setItem('glaconjurer-sort',sortOption)
+		],newValue=>{
+			sortOption=newValue
 			if (featureOption=='conjtable') needToCreateFeature=true
 		})
 	)
