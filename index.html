@@ -899,7 +899,7 @@ class ItalianVerb extends Verb {
 	get wiktionary() {
 		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
 	}
-	getForm(formId) {
+	getForm(formId) { // https://it.wiktionary.org/wiki/Template:It-conj
 		if (formId in this.forms) return this.forms[formId]
 		let stem=this.title.slice(0,-3)
 		let infEnd=this.title.slice(-3)
@@ -970,10 +970,22 @@ class ItalianVerb extends Verb {
 			} else {
 				return this.getForm('pres2s')
 			}
+		} else if (formId=='im3s') {
+			if (infEnd=='are') {
+				return stemNoI+iscEndBar+'i'
+			} else {
+				return stemNoI+iscEndBar+'a'
+			}
 		} else if (formId=='im1p') {
 			return this.getForm('pres1p')
 		} else if (formId=='im2p') {
 			return this.getForm('pres2p')
+		} else if (formId=='im3p') {
+			if (infEnd=='are') {
+				return stemNoI+iscEndBar+'ino'
+			} else {
+				return stemNoI+iscEndBar+'ano'
+			}
 		}
 	}
 	isc() {
@@ -1035,10 +1047,10 @@ class ItalianLanguage extends Language {
 			cond3: ['lui/lei/<em>loro</em>','он/она/они бы сделал(а/и)'],
 			im: ['imperativo','imperativo'],
 			im2s: ['tu','ты сделай; для не-are глаголов форма обычно совпадает с presente'],
-			//im3s: ['Lei','(вежливое) вы сделайте'],
+			im3s: ['Lei','(вежливое) вы сделайте'],
 			im1p: ['noi','давайте мы сделаем; форма обычно совпадает с presente'],
 			im2p: ['voi','(множественное) вы сделайте; форма обычно совпадает с presente'],
-			//im3p: ['loro'],
+			im3p: ['Loro','(вежливое множественное) вы сделайте'],
 		}[formId]
 	}
 	getVerbs() {
@@ -1086,20 +1098,21 @@ class ItalianLanguage extends Language {
 				par:'{st}|[a]to',
 				pres__:'{son}|o,{se}|i,{}|[è],{s}|iamo,{si}|ete,{son}|o',
 				imp__:'e{r}|{}o,e{r}|{}i,e{r}|{}a,e{r}|[a]vamo,e{r}|[a]vate,e{r}|{}ano',
-				im2s:'{si}|i',
-				im2p:'{si}|ate',
+				im2_:'{si}|i,{si}|ate',
+				im3_:'{si}|a,{si}|ano',
 			}),
 			v('avere').fut('av').replace({
 				pres_s:'{h}|o,{ha}|i,{h}|[a]',
 				pres1p:'a{bb}|iamo',
 				pres3p:'{h}|[a]{nn}o',
-				im2s:'a{bb}|i',
-				im2p:'a{bb}|{i}ate',
+				im2_:'a{bb}|i,a{bb}|{i}ate',
+				im3_:'a{bb}|{i}a,a{bb}|{i}ano',
 			}),
 			v('andare').fut('and').replace({
 				pres_s:'{vad}|o,{va}|i,{v}|a',
 				pres3p:'{v}|a{nn}o',
-				im2s:"{va}|{'}", // TODO: va, vai
+				im2s:"{va}|{'}", // TODO: vai = full form
+				im3_:'{vad}|[a],{vad}|[a]no',
 			}),
 			v('fare').fut('f|[a]').replace({
 				ger:'f{ac}|[e]ndo',
@@ -1109,20 +1122,22 @@ class ItalianLanguage extends Language {
 				pres1p:'f{acc}|iamo',
 				pres3p:'f|a{nn}o',
 				imp__:'f{ac}|[e]vo,f{ac}|[e]vi,f{ac}|[e]va,f{ac}|[e]vamo,f{ac}|[e]vate,f{ac}|[e]vano',
-				im2s:'f{a}|i', // TODO: fa'
+				im2s:'f{a}|[i]', // TODO: fa' = short form
+				im3_:'f{acci}|[a],f{acci}|[a]no',
 			}),
 			v('sapere').fut('sap').replace({
 				pres_s:'s{}|o,sa{}|i,s{}|[a]',
 				pres1p:'sa{pp}|iamo',
 				pres3p:'s{}|[a]{nn}o',
-				im2s:'sa{pp}|i',
-				im2p:'sa{pp}|{i}ate',
+				im2_:'sa{pp}|i,sa{pp}|{i}ate',
+				im3_:'sa{pp}|{i}a,sa{pp}|{i}ano',
 			}),
 			v('volere').fut('vo[r]').replace({
 				pres_s:'vo{gli}|o,v{uo}|i,v{uol}|e',
 				pres1p:'vo{gl}|iamo',
 				pres3p:'vo{gli}|ono',
 				//im2s: TODO: vogli
+				im3_:'vo{gli}|a,vo{gli}|ano',
 				//im2p: TODO: vogliate
 			}),
 			v('dovere').fut('dov').replace({
@@ -1141,6 +1156,7 @@ class ItalianLanguage extends Language {
 				par:'ven|[u]to',
 				pres_s:'ven{g}|o,v{ie}n|i,v{ie}n|e',
 				pres3p:'ven{g}|ono',
+				im3_:'ven{g}|a,ven{g}|ano',
 			}),
 			v('dire').replace({
 				ger:'d{ic}|endo',
@@ -1150,33 +1166,39 @@ class ItalianLanguage extends Language {
 				pres3p:'d{ic}|ono',
 				imp__:'d{ic}|[e]vo,d{ic}|[e]vi,d{ic}|[e]va,d{ic}|[e]vamo,d{ic}|[e]vate,d{ic}|[e]vano',
 				im2s:"d|i{'}",
+				im3_:'d{ic}|a,d{ic}|ano',
 			}),
 			v('bere').fut('b{er}').replace({
 				ger:'b{ev}|endo',
 				par:'b{ev}|uto',
 				pres__:'b{ev}|o,b{ev}|i,b{ev}|e,b{ev}|iamo,b{ev}|ete,b{ev}|ono',
 				imp__:'b{ev}|evo,b{ev}|evi,b{ev}|eva,b{ev}|evamo,b{ev}|evate,b{ev}|evano',
+				im3_:'b{ev}|a,b{ev}|ano',
 			}),
 			v('uscire').replace({
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
 				pres3p:'[e]sc|ono',
+				im3_:'[e]sc|a,[e]sc|ano',
 			}),
 			v('stare').fut('st|[a]').replace({
 				pres2s:'st{a}|i',
 				pres3p:'st|a{nn}o',
 				im2s:'st{a}|i',
+				im3_:'st|{i}[a],st|{i}[a]no',
 			}),
 			v('piacere').replace({ // possibly ortho change ce -> ci(vowel)
 				par:'piac{i}|uto',
 				pres1s:'piac{ci}|o',
 				pres1p:'piac{c}|iamo',
 				pres3p:'piac{ci}|ono',
+				im3_:'piac{ci}|a,piac{ci}|ano',
 			}),
 			v('morire').replace({
 				par:'m{}|[o]{rt}o',
 				pres_s:'m{uo}{}{i}|o,m{uo}r|i,m{uo}r|e',
 				pres3p:'m{uo}{}{i}|ono',
 				// также есть форма будущего morrò - но она, видимо, устаревшая
+				im3_:'m{uo}{}{i}|a,m{uo}{}{i}|ano',
 			}),
 		[1,'прочие'], // для перевода
 			v('passare'),
