@@ -725,6 +725,12 @@ class SpanishLanguage extends Language {
 			v3('abrir').replace({
 				par:'ab{iert}|{}o',
 			}),
+			v3('romper','ломать').replace({
+				par:'ro{t}|{}o',
+			}),
+			v3('pudrir','разлагать').replace({
+				par:'p[o]dr|ido',
+			}),
 		[2,'<abbr title=participio>part.</abbr> <abbr title=irregular>irreg.</abbr> + другие'],
 			v3('elegir','выбирать').vowel('i','i').replace({
 				par:'ele{ct}|{}o', // TODO also elegido
