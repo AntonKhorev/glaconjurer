@@ -900,13 +900,13 @@ class ItalianVerb extends Verb {
 		return "<a href=https://it.wiktionary.org/wiki/Appendice:Coniugazioni/Italiano/"+this.title+">[w]</a>"
 	}
 	getForm(formId) { // https://it.wiktionary.org/wiki/Template:It-conj
+		const replaceEnd=(s,e)=>s.replace(/\|.*$/,'|'+e)
+		const removeDoubleI=(s)=>s.replace(/i\|i/,'{}|i')
 		if (formId in this.forms) return this.forms[formId]
 		let stem=this.title.slice(0,-3)
 		let infEnd=this.title.slice(-3)
 		let tl=infEnd[0]
-		let stemNoI=stem
-		let iscEndBar=this.iscFlag?'|{isc}':'|'
-		if (stem.slice(-1)=='i') stemNoI=stem.slice(0,-1)+'{}'
+		let iscEndBar=this.iscFlag?'{isc}|':'|'
 		let futBase=stem+'|'+(infEnd=='ire' ? 'i' : 'e')
 		if (this.futStem!==undefined) {
 			futBase=this.futStem+'|{}'
@@ -931,11 +931,11 @@ class ItalianVerb extends Verb {
 		} else if (formId=='pres1s') {
 			return stem+iscEndBar+'o'
 		} else if (formId=='pres2s') {
-			return stemNoI+iscEndBar+'i'
+			return removeDoubleI(stem+iscEndBar+'i')
 		} else if (formId=='pres3s') {
 			return stem+iscEndBar+(infEnd=='are' ? 'a' : 'e')
 		} else if (formId=='pres1p') {
-			return stemNoI+'|iamo'
+			return removeDoubleI(stem+'|iamo')
 		} else if (formId=='pres2p') {
 			return stem+'|'+infEnd[0]+'te'
 		} else if (formId=='pres3p') {
@@ -971,21 +971,13 @@ class ItalianVerb extends Verb {
 				return this.getForm('pres2s')
 			}
 		} else if (formId=='im3s') {
-			if (infEnd=='are') {
-				return stemNoI+iscEndBar+'i'
-			} else {
-				return stemNoI+iscEndBar+'a'
-			}
+			return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'i':'a')))
 		} else if (formId=='im1p') {
 			return this.getForm('pres1p')
 		} else if (formId=='im2p') {
 			return this.getForm('pres2p')
 		} else if (formId=='im3p') {
-			if (infEnd=='are') {
-				return stemNoI+iscEndBar+'ino'
-			} else {
-				return stemNoI+iscEndBar+'ano'
-			}
+			return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'ino':'ano')))
 		}
 	}
 	isc() {
@@ -1137,7 +1129,6 @@ class ItalianLanguage extends Language {
 				pres1p:'vo{gl}|iamo',
 				pres3p:'vo{gli}|ono',
 				//im2s: TODO: vogli
-				im3_:'vo{gli}|a,vo{gli}|ano',
 				//im2p: TODO: vogliate
 			}),
 			v('dovere').fut('dov').replace({
@@ -1156,7 +1147,6 @@ class ItalianLanguage extends Language {
 				par:'ven|[u]to',
 				pres_s:'ven{g}|o,v{ie}n|i,v{ie}n|e',
 				pres3p:'ven{g}|ono',
-				im3_:'ven{g}|a,ven{g}|ano',
 			}),
 			v('dire').replace({
 				ger:'d{ic}|endo',
@@ -1166,19 +1156,16 @@ class ItalianLanguage extends Language {
 				pres3p:'d{ic}|ono',
 				imp__:'d{ic}|[e]vo,d{ic}|[e]vi,d{ic}|[e]va,d{ic}|[e]vamo,d{ic}|[e]vate,d{ic}|[e]vano',
 				im2s:"d|i{'}",
-				im3_:'d{ic}|a,d{ic}|ano',
 			}),
 			v('bere').fut('b{er}').replace({
 				ger:'b{ev}|endo',
 				par:'b{ev}|uto',
 				pres__:'b{ev}|o,b{ev}|i,b{ev}|e,b{ev}|iamo,b{ev}|ete,b{ev}|ono',
 				imp__:'b{ev}|evo,b{ev}|evi,b{ev}|eva,b{ev}|evamo,b{ev}|evate,b{ev}|evano',
-				im3_:'b{ev}|a,b{ev}|ano',
 			}),
 			v('uscire').replace({
 				pres_s:'[e]sc|o,[e]sc|i,[e]sc|e',
 				pres3p:'[e]sc|ono',
-				im3_:'[e]sc|a,[e]sc|ano',
 			}),
 			v('stare').fut('st|[a]').replace({
 				pres2s:'st{a}|i',
@@ -1191,14 +1178,12 @@ class ItalianLanguage extends Language {
 				pres1s:'piac{ci}|o',
 				pres1p:'piac{c}|iamo',
 				pres3p:'piac{ci}|ono',
-				im3_:'piac{ci}|a,piac{ci}|ano',
 			}),
 			v('morire').replace({
 				par:'m{}|[o]{rt}o',
 				pres_s:'m{uo}{}{i}|o,m{uo}r|i,m{uo}r|e',
 				pres3p:'m{uo}{}{i}|ono',
 				// также есть форма будущего morrò - но она, видимо, устаревшая
-				im3_:'m{uo}{}{i}|a,m{uo}{}{i}|ano',
 			}),
 		[1,'прочие'], // для перевода
 			v('passare'),
