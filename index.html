@@ -876,6 +876,7 @@ class SpanishLanguage extends Language {
 			}),
 			v3('permanecer').yo('permane{zc}'),
 			v3('pagar'),
+			v3('bastar'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -1080,7 +1081,7 @@ class ItalianLanguage extends Language {
 		return [
 		[1,'правильные'],
 		[2,'1-е <abbr title=спряжение>спряж.</abbr>'],
-			v('abitare'),
+			v('bastare'),
 		[2,'2-е <abbr title=спряжение>спряж.</abbr>'],
 			v('vendere'),
 		[2,'3-е <abbr title=спряжение>спряж.</abbr>'],
@@ -1228,6 +1229,8 @@ class ItalianLanguage extends Language {
 		[1,'прочие'], // для перевода
 			v('passare'),
 			v('vivere').fut('viv').replace({par:'vi{ss}|uto'}),
+			v('abitare'),
+			v('parlare'),
 		]
 	}
 	// freq:
@@ -1246,6 +1249,7 @@ const languages={
 
 for (const [es,it,ru] of [
 	['abrir','aprire','открывать'],
+	['bastar','bastare','хватать'],
 	['beber','bere','пить'],
 	['cerrar','chiudere','закрывать'],
 	['comprender','capire','понимать'],
@@ -1259,6 +1263,7 @@ for (const [es,it,ru] of [
 	['gustar','piacere','нравиться'],
 	['haber','avere',['иметь','вспомогательный для сложных времён']], // also es:tener
 	['habitar','abitare','проживать'],
+	['hablar','parlare','говорить'],
 	['hacer','fare','делать'],
 	['ir','andare','идти'],
 	['jugar','giocare','играть'],
