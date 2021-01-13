@@ -759,7 +759,7 @@ class SpanishLanguage extends Language {
 				imp__:'{ib}|{}|a,{ib}|{}|as,{ib}|{}|a,{íb}|{}|amos,{ib}|{}|ais,{ib}|{}|an',
 				im2s:'{v}|e',
 			}),
-			v3('dar','давать').pret('d').replace({
+			v3('dar').pret('d').replace({
 				pres1s:'d|o{y}',
 				pres2p:'d|[a]is',
 				pret1s:'d|[i]',
@@ -1117,6 +1117,13 @@ class ItalianLanguage extends Language {
 				im2s:'f{a}|[i]', // TODO: fa' = short form
 				im3_:'f{acci}|[a],f{acci}|[a]no',
 			}),
+			v('dare').fut('d|[a]').replace({
+				pres2s:'d{a}|i',
+				pres3s:'d|[à]',
+				pres3p:'d|a{nn}o',
+				im2s:'d{a}|[i]', // TODO: da', dà = short form
+				im3_:'d|i{a},d|i{a}no',
+			}),
 			v('sapere').fut('sap').replace({
 				pres_s:'s{}|o,sa{}|i,s{}|[a]',
 				pres1p:'sa{pp}|iamo',
@@ -1210,6 +1217,7 @@ for (const [es,it,ru] of [
 	['cerrar','chiudere','закрывать'],
 	['comprender','capire','понимать'],
 	['conocer','conoscere',['знать','знать человека/место, быть знакомым']],
+	['dar','dare','давать'],
 	['deber','dovere','<abbr title=быть>б.</abbr> должным'],
 	['decir','dire','сказать'],
 	['escribir','scrivere','писать'],
