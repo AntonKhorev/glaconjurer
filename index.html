@@ -705,7 +705,7 @@ class SpanishLanguage extends Language {
 		[2,'o→<strong class=insert>ue</strong>,<strong>u</strong>'],
 			v3('dormir','спать').vowel('ue','u'),
 		[2,'u→<strong class=insert>ue</strong>'],
-			v3('jugar','играть').vowel('ue'),
+			v3('jugar').vowel('ue'),
 		[2,'i→<strong>í</strong>'],
 			v3('enviar','посылать').vowel('í'),
 		[1,'изменения согласных'],
@@ -875,6 +875,7 @@ class SpanishLanguage extends Language {
 				par:'m{uert}|{}o',
 			}),
 			v3('permanecer').yo('permane{zc}'),
+			v3('pagar'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -909,6 +910,9 @@ class ItalianVerb extends Verb {
 		let tl=infEnd[0]
 		let iscEndBar=this.iscFlag?'{isc}|':'|'
 		let futBase=stem+'|'+(infEnd=='ire' ? 'i' : 'e')
+		if (infEnd=='are' && stem.match(/[cg]$/)) {
+			futBase=stem+'{h}|e'
+		}
 		if (this.futStem!==undefined) {
 			futBase=this.futStem+'|{}'
 			if (this.futStem.includes('|')) futBase=this.futStem
@@ -932,11 +936,19 @@ class ItalianVerb extends Verb {
 		} else if (formId=='pres1s') {
 			return stem+iscEndBar+'o'
 		} else if (formId=='pres2s') {
-			return removeDoubleI(stem+iscEndBar+'i')
+			if (infEnd=='are' && stem.match(/[cg]$/)) {
+				return stem+'{h}|i'
+			} else {
+				return removeDoubleI(stem+iscEndBar+'i')
+			}
 		} else if (formId=='pres3s') {
 			return stem+iscEndBar+(infEnd=='are' ? 'a' : 'e')
 		} else if (formId=='pres1p') {
-			return removeDoubleI(stem+'|iamo')
+			if (infEnd=='are' && stem.match(/[cg]$/)) {
+				return stem+'{h}|iamo'
+			} else {
+				return removeDoubleI(stem+'|iamo')
+			}
 		} else if (formId=='pres2p') {
 			return stem+'|'+infEnd[0]+'te'
 		} else if (formId=='pres3p') {
@@ -972,13 +984,21 @@ class ItalianVerb extends Verb {
 				return this.getForm('pres2s')
 			}
 		} else if (formId=='im3s') {
-			return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'i':'a')))
+			if (infEnd=='are' && stem.match(/[cg]$/)) {
+				return stem+'{h}|i'
+			} else {
+				return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'i':'a')))
+			}
 		} else if (formId=='im1p') {
 			return this.getForm('pres1p')
 		} else if (formId=='im2p') {
 			return this.getForm('pres2p')
 		} else if (formId=='im3p') {
-			return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'ino':'ano')))
+			if (infEnd=='are' && stem.match(/[cg]$/)) {
+				return stem+'{h}|ino'
+			} else {
+				return removeDoubleI((replaceEnd(this.getForm('pres1s'),infEnd=='are'?'ino':'ano')))
+			}
 		}
 	}
 	isc() {
@@ -1068,6 +1088,9 @@ class ItalianLanguage extends Language {
 		[1,'почти'],
 		[2,'-i-'],
 			v('studiare'),
+		[2,'орфографические'],
+			v('pagare'),
+			v('giocare'),
 		[2,'-isc-'],
 			v('capire').isc(),
 		[1,'неправильные причастия'],
@@ -1238,11 +1261,13 @@ for (const [es,it,ru] of [
 	['habitar','abitare','проживать'],
 	['hacer','fare','делать'],
 	['ir','andare','идти'],
+	['jugar','giocare','играть'],
 	['leer','leggere','читать'],
 	['meter','mettere','класть'],
 	['morir','morire','умирать'],
 	['nacer','nascere','рождаться'],
 	['ofrecer','offrire','предлагать'],
+	['pagar','pagare','платить'],
 	['pasar','passare','проходить'],
 	['perder','perdere','терять'],
 	['permanecer','rimanere','оставаться'],
