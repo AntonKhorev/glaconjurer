@@ -877,6 +877,7 @@ class SpanishLanguage extends Language {
 			v3('permanecer').yo('permane{zc}'),
 			v3('pagar'),
 			v3('bastar'),
+			v3('partir'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -1085,7 +1086,7 @@ class ItalianLanguage extends Language {
 		[2,'2-е <abbr title=спряжение>спряж.</abbr>'],
 			v('vendere'),
 		[2,'3-е <abbr title=спряжение>спряж.</abbr>'],
-			v('sentire'),
+			v('partire'),
 		[1,'почти'],
 		[2,'-i-'],
 			v('studiare'),
@@ -1231,6 +1232,7 @@ class ItalianLanguage extends Language {
 			v('vivere').fut('viv').replace({par:'vi{ss}|uto'}),
 			v('abitare'),
 			v('parlare'),
+			v('sentire'),
 		]
 	}
 	// freq:
@@ -1285,6 +1287,7 @@ for (const [es,it,ru] of [
 	['ser','essere',{es:['быть','быть постоянно, быть в указанный момент времени'],it:'быть'}],
 	['tener','tenere',{es:'иметь',it:'держать'}],
 	['tomar','prendere','брать'],
+	['partir','partire','уезжать'],
 	['vender','vendere','продавать'],
 	['venir','venire','приходить'],
 	['ver','vedere','видеть'],
