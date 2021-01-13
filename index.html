@@ -874,6 +874,7 @@ class SpanishLanguage extends Language {
 			v3('morir').vowel('ue','u').replace({
 				par:'m{uert}|{}o',
 			}),
+			v3('permanecer').yo('permane{zc}'),
 		]
 	}
 	provideFrequencyVerbs() {
@@ -1150,6 +1151,11 @@ class ItalianLanguage extends Language {
 				pres3p:'po{ss}|ono',
 				im__:undefined,
 			}),
+			v('rimanere').fut('rima[r]').replace({
+				par:'rim{}|[a]{st}o',
+				pres1s:'riman{g}|o',
+				pres3p:'riman{g}|ono',
+			}),
 			v('tenere').fut('te[r]').replace({
 				pres_s:'ten{g}|o,t{ie}n|i,t{ie}n|e',
 				pres3p:'ten{g}|ono',
@@ -1239,6 +1245,7 @@ for (const [es,it,ru] of [
 	['ofrecer','offrire','предлагать'],
 	['pasar','passare','проходить'],
 	['perder','perdere','терять'],
+	['permanecer','rimanere','оставаться'],
 	['poder','potere','мочь'],
 	['querer','volere','хотеть'],
 	['responder','rispondere','отвечать'],
