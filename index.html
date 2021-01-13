@@ -804,7 +804,7 @@ class SpanishLanguage extends Language {
 				par:'p{uest}|{}o',
 				im2s:'pon|{}',
 			}),
-			v3('tener','иметь').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
+			v3('tener').vowel('ie').yo('ten{g}').pret('t[uv]').fut('ten{d}').replace({
 				im2s:'ten|{}',
 			}),
 			v3('venir').vowel('ie','i').yo('ven{g}').pret('v[i]n').fut('ven{d}').replace({
@@ -1150,6 +1150,10 @@ class ItalianLanguage extends Language {
 				pres3p:'po{ss}|ono',
 				im__:undefined,
 			}),
+			v('tenere').fut('te[r]').replace({
+				pres_s:'ten{g}|o,t{ie}n|i,t{ie}n|e',
+				pres3p:'ten{g}|ono',
+			}),
 			v('venire').fut('ve[r]').replace({
 				par:'ven|[u]to',
 				pres_s:'ven{g}|o,v{ie}n|i,v{ie}n|e',
@@ -1242,6 +1246,7 @@ for (const [es,it,ru] of [
 	['salir','uscire','выходить'],
 	['sentir','sentire','чувствовать'],
 	['ser','essere',{es:['быть','быть постоянно, быть в указанный момент времени'],it:'быть'}],
+	['tener','tenere',{es:'иметь',it:'держать'}],
 	['tomar','prendere','брать'],
 	['vender','vendere','продавать'],
 	['venir','venire','приходить'],
