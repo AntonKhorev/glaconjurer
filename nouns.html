@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang=ru>
+<head>
+<meta charset=utf-8>
+<style>
+.ending {
+	color: green;
+}
+</style>
+</head>
+<body>
+<h1>Существительные, изменения по родам и числам</h1>
+<div id=nouns-container></div>
+<script>
+const $container=document.getElementById('nouns-container')
+$container.innerHTML=''
+writeTable($container)
+
+function writeTable($container) {
+	const $table=document.createElement('table')
+	writeHeader($table)
+	writeUsual($table)
+	$container.append($table)
+}
+
+function writeHeader($table) {
+	const $row=$table.insertRow()
+	for (const [genderAbbr,genderFull] of [
+		[`м.р.`,`мужской род`],
+		[`ж.р.`,`женский род`],
+	]) {
+		for (const [numberAbbr,numberFull] of [
+			[`ед.ч.`,`единственное число`],
+			[`мн.ч.`,`множественное число`],
+		]) {
+			const $cell=document.createElement('th')
+			const $gender=document.createElement('abbr')
+			$gender.innerText=genderAbbr
+			$gender.title=genderFull
+			const $number=document.createElement('abbr')
+			$number.innerText=numberAbbr
+			$number.title=numberFull
+			$cell.append($gender,' ',$number)
+			$row.append($cell)
+		}
+	}
+}
+
+function writeUsual($table) {
+	writeExplanation($table,`обычные окончания и изменения по родам/числам`)
+	const $row=$table.insertRow()
+	writeWord($row,"ragazz","o")
+	writeWord($row,"ragazz","i")
+	writeWord($row,"ragazz","a")
+	writeWord($row,"ragazz","e")
+}
+
+function writeExplanation($table,text) {
+	const $row=$table.insertRow()
+	const $cell=$row.insertCell()
+	$cell.colSpan=4
+	$cell.innerText=text
+}
+
+function writeWord($row,wordStem,wordEnding) {
+	const $cell=$row.insertCell()
+	const $stem=document.createElement('span')
+	$stem.classList.add('stem')
+	$stem.innerText=wordStem
+	const $ending=document.createElement('span')
+	$ending.classList.add('ending')
+	$ending.innerText=wordEnding
+	$cell.append($stem,$ending)
+}
+</script>
+</body>
+</html>
