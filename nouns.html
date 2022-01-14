@@ -2,8 +2,12 @@
 <html lang=ru>
 <head>
 <meta charset=utf-8>
+<meta name=viewport content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
 <title>Существительные</title>
 <style>
+th {
+	font-size: 2rem;
+}
 .ending {
 	color: green;
 }
@@ -26,22 +30,19 @@ function writeTable($container) {
 
 function writeHeader($table) {
 	const $row=$table.insertRow()
-	for (const [genderAbbr,genderFull] of [
-		[`м.р.`,`мужской род`],
-		[`ж.р.`,`женский род`],
+	for (const [genderSymbol,genderTitle] of [
+		[`♂`,`мужской род`],
+		[`♀`,`женский род`],
 	]) {
-		for (const [numberAbbr,numberFull] of [
-			[`ед.ч.`,`единственное число`],
-			[`мн.ч.`,`множественное число`],
+		for (const [number,numberTitle] of [
+			[1,`единственное число`],
+			[2,`множественное число`],
 		]) {
 			const $cell=document.createElement('th')
-			const $gender=document.createElement('abbr')
-			$gender.innerText=genderAbbr
-			$gender.title=genderFull
-			const $number=document.createElement('abbr')
-			$number.innerText=numberAbbr
-			$number.title=numberFull
-			$cell.append($gender,' ',$number)
+			const $genderAndNumber=document.createElement('span')
+			$genderAndNumber.innerText=genderSymbol.repeat(number)
+			$genderAndNumber.title=`${genderTitle}, ${numberTitle}`
+			$cell.append($genderAndNumber)
 			$row.append($cell)
 		}
 	}
