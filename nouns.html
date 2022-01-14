@@ -8,6 +8,14 @@
 th {
 	font-size: 2rem;
 }
+td :link,
+td :visited {
+	color: black;
+	text-decoration: none;
+}
+td :link:hover {
+	text-decoration: underline;
+}
 .ending {
 	color: green;
 }
@@ -30,10 +38,10 @@ function writeTable($container) {
 
 function writeHeader($table) {
 	const $row=$table.insertRow()
-	for (const [genderSymbol,genderTitle] of [
-		[`♂`,`мужской род`],
-		[`♀`,`женский род`],
-	]) {
+	writeNumberCols(`♂`,`мужской род`)
+	$row.insertCell()
+	writeNumberCols(`♀`,`женский род`)
+	function writeNumberCols(genderSymbol,genderTitle) {
 		for (const [number,numberTitle] of [
 			[1,`единственное число`],
 			[2,`множественное число`],
@@ -50,11 +58,10 @@ function writeHeader($table) {
 
 function writeUsual($table) {
 	writeExplanation($table,`обычные окончания и изменения по родам/числам`)
-	const $row=$table.insertRow()
-	writeWord($row,"ragazz","o")
-	writeWord($row,"ragazz","i")
-	writeWord($row,"ragazz","a")
-	writeWord($row,"ragazz","e")
+	writeWordQuartetRow($table,"ragazz","o","i","a","e")
+	writeWordPairsRow($table,"libr","cas","o","i","a","e")
+	writeWordQuartetRow($table,"nipot","e","i","e","i")
+	writeWordPairsRow($table,"can","chiav","e","i","e","i")
 }
 
 function writeExplanation($table,text) {
@@ -64,15 +71,47 @@ function writeExplanation($table,text) {
 	$cell.innerText=text
 }
 
+function writeWordQuartetRow($table,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
+	const $row=$table.insertRow()
+	writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF)
+}
+
+function writeWordPairsRow($table,wordStemM,wordStemF,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
+	const $row=$table.insertRow()
+	writeWordPair($row,wordStemM,wordEndingM,wordEndingMM)
+	writeGap($row)
+	writeWordPair($row,wordStemF,wordEndingF,wordEndingFF)
+}
+
+function writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
+	writeWordPair($row,wordStem,wordEndingM,wordEndingMM)
+	const $cell=$row.insertCell()
+	$cell.innerText="⟷"
+	writeWordPair($row,wordStem,wordEndingF,wordEndingFF)
+}
+
+function writeWordPair($row,wordStem,wordEndingSingular,wordEndingPlural) {
+	writeWord($row,wordStem,wordEndingSingular)
+	writeWord($row,wordStem,wordEndingPlural)
+}
+
 function writeWord($row,wordStem,wordEnding) {
 	const $cell=$row.insertCell()
+	const $word=document.createElement('a')
+	const word=wordStem+wordEnding
+	$word.href=`https://it.wiktionary.org/wiki/${word}`
 	const $stem=document.createElement('span')
 	$stem.classList.add('stem')
 	$stem.innerText=wordStem
 	const $ending=document.createElement('span')
 	$ending.classList.add('ending')
 	$ending.innerText=wordEnding
-	$cell.append($stem,$ending)
+	$word.append($stem,$ending)
+	$cell.append($word)
+}
+
+function writeGap($row) {
+	const $cell=$row.insertCell()
 }
 </script>
 </body>
