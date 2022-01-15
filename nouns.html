@@ -26,20 +26,26 @@ td :link:hover {
 <div id=controls-container></div>
 <div id=table-container></div>
 <script>
-let articlesSetting=false
+let articlesSetting='none'
 rewriteControls(document.getElementById('controls-container'))
 rewriteTable(document.getElementById('table-container'))
 
 function rewriteControls($container) {
 	$container.innerHTML=''
 	const $label=document.createElement('label')
-	const $checkbox=document.createElement('input')
-	$checkbox.type='checkbox'
-	$checkbox.addEventListener('input',()=>{
-		articlesSetting=$checkbox.checked
+	const $select=document.createElement('select')
+	for (const [value,text] of [
+		['none','нет'],
+		['def','определённый'],
+		['indef','неопределённый'],
+	]) {
+		$select.add(new Option(text,value))
+	}
+	$select.addEventListener('input',()=>{
+		articlesSetting=$select.value
 		rewriteTable(document.getElementById('table-container'))
 	})
-	$label.append($checkbox,` артикли`)
+	$label.append(`артикли: `,$select)
 	$container.append($label)
 }
 
@@ -113,8 +119,10 @@ function writeWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural)
 function writeWord($row,gender,number,wordStem,wordEnding) {
 	const word=wordStem+wordEnding
 	const $cell=$row.insertCell()
-	if (articlesSetting==true) {
-		$cell.append(getArticle(gender,number,word)+" ")
+	if (articlesSetting=='def') {
+		$cell.append(getDefArticle(gender,number,word)+" ")
+	} else if (articlesSetting=='indef') {
+		$cell.append(getIndefArticle(gender,number,word)+" ")
 	}
 	const $word=document.createElement('a')
 	$word.href=`https://it.wiktionary.org/wiki/${word}`
@@ -132,7 +140,7 @@ function writeGap($row) {
 	const $cell=$row.insertCell()
 }
 
-function getArticle(gender,number,word) {
+function getDefArticle(gender,number,word) {
 	if (gender=='m') {
 		if (number==1) {
 			return "il"
@@ -144,6 +152,22 @@ function getArticle(gender,number,word) {
 			return "la"
 		} else {
 			return "le"
+		}
+	}
+}
+
+function getIndefArticle(gender,number,word) {
+	if (gender=='m') {
+		if (number==1) {
+			return "un"
+		} else {
+			return "dei"
+		}
+	} else {
+		if (number==1) {
+			return "una"
+		} else {
+			return "delle"
 		}
 	}
 }
