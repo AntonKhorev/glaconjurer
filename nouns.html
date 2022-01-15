@@ -23,13 +23,28 @@ td :link:hover {
 </head>
 <body>
 <h1>Существительные, изменения по родам и числам</h1>
-<div id=nouns-container></div>
+<div id=controls-container></div>
+<div id=table-container></div>
 <script>
-const $container=document.getElementById('nouns-container')
-$container.innerHTML=''
-writeTable($container)
+let articlesSetting=false
+rewriteControls(document.getElementById('controls-container'))
+rewriteTable(document.getElementById('table-container'))
 
-function writeTable($container) {
+function rewriteControls($container) {
+	$container.innerHTML=''
+	const $label=document.createElement('label')
+	const $checkbox=document.createElement('input')
+	$checkbox.type='checkbox'
+	$checkbox.addEventListener('input',()=>{
+		articlesSetting=$checkbox.checked
+		rewriteTable(document.getElementById('table-container'))
+	})
+	$label.append($checkbox,` артикли`)
+	$container.append($label)
+}
+
+function rewriteTable($container) {
+	$container.innerHTML=''
 	const $table=document.createElement('table')
 	writeHeader($table)
 	writeUsual($table)
@@ -78,27 +93,30 @@ function writeWordQuartetRow($table,wordStem,wordEndingM,wordEndingMM,wordEnding
 
 function writeWordPairsRow($table,wordStemM,wordStemF,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
 	const $row=$table.insertRow()
-	writeWordPair($row,wordStemM,wordEndingM,wordEndingMM)
+	writeWordPair($row,'m',wordStemM,wordEndingM,wordEndingMM)
 	writeGap($row)
-	writeWordPair($row,wordStemF,wordEndingF,wordEndingFF)
+	writeWordPair($row,'f',wordStemF,wordEndingF,wordEndingFF)
 }
 
 function writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
-	writeWordPair($row,wordStem,wordEndingM,wordEndingMM)
+	writeWordPair($row,'m',wordStem,wordEndingM,wordEndingMM)
 	const $cell=$row.insertCell()
 	$cell.innerText="⟷"
-	writeWordPair($row,wordStem,wordEndingF,wordEndingFF)
+	writeWordPair($row,'f',wordStem,wordEndingF,wordEndingFF)
 }
 
-function writeWordPair($row,wordStem,wordEndingSingular,wordEndingPlural) {
-	writeWord($row,wordStem,wordEndingSingular)
-	writeWord($row,wordStem,wordEndingPlural)
+function writeWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural) {
+	writeWord($row,gender,1,wordStem,wordEndingSingular)
+	writeWord($row,gender,2,wordStem,wordEndingPlural)
 }
 
-function writeWord($row,wordStem,wordEnding) {
-	const $cell=$row.insertCell()
-	const $word=document.createElement('a')
+function writeWord($row,gender,number,wordStem,wordEnding) {
 	const word=wordStem+wordEnding
+	const $cell=$row.insertCell()
+	if (articlesSetting==true) {
+		$cell.append(getArticle(gender,number,word)+" ")
+	}
+	const $word=document.createElement('a')
 	$word.href=`https://it.wiktionary.org/wiki/${word}`
 	const $stem=document.createElement('span')
 	$stem.classList.add('stem')
@@ -112,6 +130,22 @@ function writeWord($row,wordStem,wordEnding) {
 
 function writeGap($row) {
 	const $cell=$row.insertCell()
+}
+
+function getArticle(gender,number,word) {
+	if (gender=='m') {
+		if (number==1) {
+			return "il"
+		} else {
+			return "i"
+		}
+	} else {
+		if (number==1) {
+			return "la"
+		} else {
+			return "le"
+		}
+	}
 }
 </script>
 </body>
