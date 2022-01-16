@@ -16,6 +16,12 @@ td :visited {
 td :link:hover {
 	text-decoration: underline;
 }
+.explanation[colspan="5"] {
+	background: #DDF;
+}
+.explanation[colspan="2"] {
+	background: #FFD;
+}
 .ending {
 	color: green;
 }
@@ -78,17 +84,54 @@ function writeHeader($table) {
 }
 
 function writeUsual($table) {
-	writeExplanation($table,`обычные окончания и изменения по родам/числам`)
+	writeExplanationRow($table,`обычные окончания и изменения по родам/числам`)
+	writeExplanationPairRow($table,
+		`слова, заканчивающиеся на -o, обычно мужского рода; во множественном числе окончание меняется на -i`,
+		`слова, заканчивающиеся на -a, обычно женского рода; во множественном числе окончание меняется на -e`
+	)
 	writeWordQuartetRow($table,"ragazz","o","i","a","e")
-	writeWordPairsRow($table,"libr","cas","o","i","a","e")
+	writeWordPairsRow($table,["libr","o","i"],["cas","a","e"])
+	writeExplanationRow($table,
+		`слова, заканчивающиеся на -e, могут быть как мужского, так и женского рода; во множественном числе окончание меняется на -i`
+	)
 	writeWordQuartetRow($table,"nipot","e","i","e","i")
-	writeWordPairsRow($table,"can","chiav","e","i","e","i")
+	writeWordPairsRow($table,["can","e","i"],["chiav","e","i"])
+	writeExplanationRow($table,`орфографические изменения`)
+	writeExplanationPairRow($table,
+		null,
+		`слова, заканчивающиеся на -ca и -ga, во множественном числе заканчиваются на -che и -ghe`
+	)
+	writeWordPairsRow($table,null,["banc","a","he"])
+	writeWordPairsRow($table,null,["pag","a","he"])
+	writeExplanationRow($table,`суффиксы, типичные для определённого рода`)
+	writeExplanationPairRow($table,
+		null,
+		`слова, заканчивающиеся на -zione или -sione, обычно женского рода; часто они обозначают абстракции`
+	)
+	writeWordPairsRow($table,null,["stazion","e","i"])
+	writeWordPairsRow($table,null,["passion","e","i"])
 }
 
-function writeExplanation($table,text) {
+function writeExplanationRow($table,text) {
 	const $row=$table.insertRow()
 	const $cell=$row.insertCell()
-	$cell.colSpan=4
+	$cell.classList.add('explanation')
+	$cell.colSpan=5
+	$cell.innerText=text
+}
+
+function writeExplanationPairRow($table,textM,textF) {
+	const $row=$table.insertRow()
+	writeGenderExplanation($row,textM)
+	writeGap($row)
+	writeGenderExplanation($row,textF)
+}
+
+function writeGenderExplanation($row,text) {
+	const $cell=$row.insertCell()
+	$cell.colSpan=2
+	if (text==null) return
+	$cell.classList.add('explanation')
 	$cell.innerText=text
 }
 
@@ -97,21 +140,29 @@ function writeWordQuartetRow($table,wordStem,wordEndingM,wordEndingMM,wordEnding
 	writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF)
 }
 
-function writeWordPairsRow($table,wordStemM,wordStemF,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
+function writeWordPairsRow($table,wordStemAndEndingsM,wordStemAndEndingsF) {
 	const $row=$table.insertRow()
-	writeWordPair($row,'m',wordStemM,wordEndingM,wordEndingMM)
+	if (wordStemAndEndingsM==null) {
+		writeGenderWordPairSkip($row)
+	} else {
+		writeGenderWordPair($row,'m',...wordStemAndEndingsM)
+	}
 	writeGap($row)
-	writeWordPair($row,'f',wordStemF,wordEndingF,wordEndingFF)
+	if (wordStemAndEndingsF==null) {
+		writeGenderWordPairSkip($row)
+	} else {
+		writeGenderWordPair($row,'f',...wordStemAndEndingsF)
+	}
 }
 
 function writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
-	writeWordPair($row,'m',wordStem,wordEndingM,wordEndingMM)
+	writeGenderWordPair($row,'m',wordStem,wordEndingM,wordEndingMM)
 	const $cell=$row.insertCell()
 	$cell.innerText="⟷"
-	writeWordPair($row,'f',wordStem,wordEndingF,wordEndingFF)
+	writeGenderWordPair($row,'f',wordStem,wordEndingF,wordEndingFF)
 }
 
-function writeWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural) {
+function writeGenderWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural) {
 	writeWord($row,gender,1,wordStem,wordEndingSingular)
 	writeWord($row,gender,2,wordStem,wordEndingPlural)
 }
@@ -134,6 +185,11 @@ function writeWord($row,gender,number,wordStem,wordEnding) {
 	$ending.innerText=wordEnding
 	$word.append($stem,$ending)
 	$cell.append($word)
+}
+
+function writeGenderWordPairSkip($row) {
+	const $cell=$row.insertCell()
+	$cell.colSpan=2
 }
 
 function writeGap($row) {
