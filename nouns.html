@@ -91,6 +91,7 @@ function rewriteTable($container) {
 	writeHeaderSection($table)
 	writeUsualSection($table)
 	writeOrthoSection($table)
+	writeIoSection($table)
 	writeUnchangingSection($table)
 	writeTypicalSection($table)
 	$container.append($table)
@@ -138,7 +139,7 @@ function writeUsualSection($table) {
 function writeOrthoSection($table) {
 	const $section=$table.createTBody()
 	writeSectionHeaderRow($section,
-		`орфографические изменения`
+		`орфографические изменения после c/g`
 	)
 	writeExplanationPairRow($section,
 		`слова, заканчивающиеся на -co/-go, во множественном числе заканчиваются на -ci/-gi или на -chi/-ghi`,
@@ -176,6 +177,27 @@ function writeOrthoSection($table) {
 		null
 	)
 	writeWordPairsRow($section,["caric","o","hi"],null)
+}
+
+function writeIoSection($table) {
+	const $section=$table.createTBody()
+	writeSectionHeaderRow($section,
+		`окончания -io/-ia/-ie`
+	)
+	writeExplanationPairRow($section,
+		`если в -io безударная i, удвоения -ii во множественном числе не происходит`,
+		`если в -cia/-gia безударная i, она пропадает во множественном числе`
+	)
+	writeWordPairsRow($section,["negoz","io","i"],null)
+	writeWordPairsRow($section,["uffic","io","i"],["docc","ia","e"])
+	writeWordPairsRow($section,null,["piogg","ia","e"])
+	writeExplanationPairRow($section,
+		`если в -io ударная i, удвоение -ii во множественном числе есть`,
+		`если в -cia/-gia ударная i, она сохраняется во множественном числе`
+	)
+	writeWordQuartetRow($section,"zi","o","i","a","e")
+	writeWordPairsRow($section,null,["farmaci","a","e"])
+	writeWordPairsRow($section,null,["bugi","a","e"])
 }
 
 function writeUnchangingSection($table) {
