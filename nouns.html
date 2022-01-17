@@ -98,11 +98,20 @@ function writeUsual($table) {
 	writeWordPairsRow($table,["can","e","i"],["chiav","e","i"])
 	writeExplanationRow($table,`орфографические изменения`)
 	writeExplanationPairRow($table,
-		null,
+		`слова, заканчивающиеся на -co и -go, во множественном числе заканчиваются на -ci и -gi или на -chi и -ghi`,
 		`слова, заканчивающиеся на -ca и -ga, во множественном числе заканчиваются на -che и -ghe`
 	)
-	writeWordPairsRow($table,null,["banc","a","he"])
-	writeWordPairsRow($table,null,["pag","a","he"])
+	writeExplanationPairRow($table,
+		`если в слове мужского рода перед -co/-go согласная, используются окончание -chi/-ghi`,
+		`окончания -che и -ghe всегда используются для слов женского рода`
+	)
+	writeWordPairsRow($table,["parc","o","hi"],["banc","a","he"])
+	writeWordPairsRow($table,["fung","o","hi"],["pag","a","he"])
+	writeExplanationPairRow($table,
+		`если в слове мужского рода перед -co/-go гласная, используются окончание -ci/-gi`,
+		null
+	)
+	writeWordQuartetRow($table,"amic","o","i","a","he")
 	writeExplanationRow($table,`суффиксы, типичные для определённого рода`)
 	writeExplanationPairRow($table,
 		null,
@@ -171,9 +180,9 @@ function writeWord($row,gender,number,wordStem,wordEnding) {
 	const word=wordStem+wordEnding
 	const $cell=$row.insertCell()
 	if (articlesSetting=='def') {
-		$cell.append(getDefArticle(gender,number,word)+" ")
+		$cell.append(getDefArticle(gender,number,word))
 	} else if (articlesSetting=='indef') {
-		$cell.append(getIndefArticle(gender,number,word)+" ")
+		$cell.append(getIndefArticle(gender,number,word))
 	}
 	const $word=document.createElement('a')
 	$word.href=`https://it.wiktionary.org/wiki/${word}`
@@ -199,15 +208,27 @@ function writeGap($row) {
 function getDefArticle(gender,number,word) {
 	if (gender=='m') {
 		if (number==1) {
-			return "il"
+			if (isStartsWithVowel(word)) {
+				return "l'"
+			} else {
+				return "il "
+			}
 		} else {
-			return "i"
+			if (isStartsWithVowel(word)) {
+				return "gli "
+			} else {
+				return "i "
+			}
 		}
 	} else {
 		if (number==1) {
-			return "la"
+			if (isStartsWithVowel(word)) {
+				return "l'"
+			} else {
+				return "la "
+			}
 		} else {
-			return "le"
+			return "le "
 		}
 	}
 }
@@ -215,17 +236,25 @@ function getDefArticle(gender,number,word) {
 function getIndefArticle(gender,number,word) {
 	if (gender=='m') {
 		if (number==1) {
-			return "un"
+			return "un "
 		} else {
-			return "dei"
+			return "dei "
 		}
 	} else {
 		if (number==1) {
-			return "una"
+			if (isStartsWithVowel(word)) {
+				return "un'"
+			} else {
+				return "una "
+			}
 		} else {
-			return "delle"
+			return "delle "
 		}
 	}
+}
+
+function isStartsWithVowel(word) {
+	return "aeiou".includes(word[0])
 }
 </script>
 </body>
