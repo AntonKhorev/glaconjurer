@@ -5,8 +5,15 @@
 <meta name=viewport content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
 <title>Существительные</title>
 <style>
-th {
+thead th {
 	font-size: 2rem;
+}
+tbody tr:first-child th {
+	border-top: 2px dotted black;
+	background: #DFD;
+}
+td.small {
+	font-size: .7rem;
 }
 td :link,
 td :visited {
@@ -32,12 +39,34 @@ td :link:hover {
 <div id=controls-container></div>
 <div id=table-container></div>
 <script>
-let articlesSetting='none'
+let articleSetting='none'
+let explanationSetting=true
 rewriteControls(document.getElementById('controls-container'))
 rewriteTable(document.getElementById('table-container'))
 
 function rewriteControls($container) {
 	$container.innerHTML=''
+	writeExplanationControl($container)
+	writeArticleControl($container)
+}
+
+function writeExplanationControl($container) {
+	const $div=document.createElement('div')
+	const $label=document.createElement('label')
+	const $checkbox=document.createElement('input')
+	$checkbox.type='checkbox'
+	$checkbox.checked=true
+	$checkbox.addEventListener('input',()=>{
+		explanationSetting=$checkbox.checked
+		rewriteTable(document.getElementById('table-container'))
+	})
+	$label.append($checkbox,` объяснения`)
+	$div.append($label)
+	$container.append($div)
+}
+
+function writeArticleControl($container) {
+	const $div=document.createElement('div')
 	const $label=document.createElement('label')
 	const $select=document.createElement('select')
 	for (const [value,text] of [
@@ -48,17 +77,18 @@ function rewriteControls($container) {
 		$select.add(new Option(text,value))
 	}
 	$select.addEventListener('input',()=>{
-		articlesSetting=$select.value
+		articleSetting=$select.value
 		rewriteTable(document.getElementById('table-container'))
 	})
 	$label.append(`артикли: `,$select)
-	$container.append($label)
+	$div.append($label)
+	$container.append($div)
 }
 
 function rewriteTable($container) {
 	$container.innerHTML=''
 	const $table=document.createElement('table')
-	writeHeader($table)
+	writeHeaderSection($table)
 	writeUsualSection($table)
 	writeOrthoSection($table)
 	writeUnchangingSection($table)
@@ -66,8 +96,9 @@ function rewriteTable($container) {
 	$container.append($table)
 }
 
-function writeHeader($table) {
-	const $row=$table.insertRow()
+function writeHeaderSection($table) {
+	const $section=$table.createTHead()
+	const $row=$section.insertRow()
 	writeNumberCols(`♂`,`мужской род`)
 	$row.insertCell()
 	writeNumberCols(`♀`,`женский род`)
@@ -87,105 +118,120 @@ function writeHeader($table) {
 }
 
 function writeUsualSection($table) {
-	writeExplanationRow($table,
+	const $section=$table.createTBody()
+	writeSectionHeaderRow($section,
 		`обычные окончания и изменения по родам/числам`
 	)
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		`слова, заканчивающиеся на -o, обычно мужского рода; во множественном числе окончание меняется на -i`,
 		`слова, заканчивающиеся на -a, обычно женского рода; во множественном числе окончание меняется на -e`
 	)
-	writeWordQuartetRow($table,"ragazz","o","i","a","e")
-	writeWordPairsRow($table,["libr","o","i"],["cas","a","e"])
-	writeExplanationRow($table,
+	writeWordQuartetRow($section,"ragazz","o","i","a","e")
+	writeWordPairsRow($section,["libr","o","i"],["cas","a","e"])
+	writeExplanationRow($section,
 		`слова, заканчивающиеся на -e, могут быть как мужского, так и женского рода; во множественном числе окончание меняется на -i`
 	)
-	writeWordQuartetRow($table,"nipot","e","i","e","i")
-	writeWordPairsRow($table,["can","e","i"],["chiav","e","i"])
+	writeWordQuartetRow($section,"nipot","e","i","e","i")
+	writeWordPairsRow($section,["can","e","i"],["chiav","e","i"])
 }
 
 function writeOrthoSection($table) {
-	writeExplanationRow($table,
+	const $section=$table.createTBody()
+	writeSectionHeaderRow($section,
 		`орфографические изменения`
 	)
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		`слова, заканчивающиеся на -co/-go, во множественном числе заканчиваются на -ci/-gi или на -chi/-ghi`,
 		`слова, заканчивающиеся на -ca/-ga, во множественном числе заканчиваются на -che/-ghe`
 	)
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		`для слов мужского рода нет правила выбора между -ci/-gi и -chi/-ghi, которое было бы верно всегда`,
 		`окончания -che/-ghe всегда используются для слов женского рода`
 	)
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		`иногда приводится такое правило: если перед -co/-go стоит гласная - используется -ci/-gi, если согласная - -chi/-ghi; ниже приводится другое правило, которое даётся чаще`,
 		null
 	)
 	// https://www.thoughtco.com/italian-plural-nouns-ending-in-o-2011411
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		`если в слове ударение на предпоследний слог, как обычно и бывает, - используется окончание -chi/-ghi`,
 		null
 	)
-	writeWordQuartetRow($table,"cuoc","o","hi","a","he")
-	writeWordPairsRow($table,["parc","o","hi"],["banc","a","he"])
-	writeWordPairsRow($table,["lag","o","hi"],["pag","a","he"])
-	writeExplanationPairRow($table,
+	writeWordQuartetRow($section,"cuoc","o","hi","a","he")
+	writeWordPairsRow($section,["parc","o","hi"],["banc","a","he"])
+	writeWordPairsRow($section,["lag","o","hi"],["pag","a","he"])
+	writeExplanationPairRow($section,
 		`исключения`,
 		null
 	)
-	writeWordQuartetRow($table,"amic","o","i","a","he")
-	writeExplanationPairRow($table,
+	writeWordQuartetRow($section,"amic","o","i","a","he")
+	writeExplanationPairRow($section,
 		`если в слове ударение на третий с конца слог ("sdrucciolo"), - используется окончание -ci/-gi`,
 		null
 	)
-	writeWordPairsRow($table,["medic","o","i"],null)
-	writeWordQuartetRow($table,"psicolog","o","i","a","he")
-	writeExplanationPairRow($table,
+	writeWordPairsRow($section,["medic","o","i"],null)
+	writeWordQuartetRow($section,"psicolog","o","i","a","he")
+	writeExplanationPairRow($section,
 		`исключения`,
 		null
 	)
-	writeWordPairsRow($table,["caric","o","hi"],null)
+	writeWordPairsRow($section,["caric","o","hi"],null)
 }
 
 function writeUnchangingSection($table) {
-	writeExplanationRow($table,
+	const $section=$table.createTBody()
+	writeSectionHeaderRow($section,
 		`слова, не меняющиеся во множественном числе`
 	)
-	writeExplanationRow($table,
+	writeExplanationRow($section,
 		`слова, заканчивающиеся на гласную под ударением`
 	)
-	writeWordPairsRow($table,["caff","è","è"],["citt","à","à"])
-	writeExplanationRow($table,
+	writeWordPairsRow($section,["caff","è","è"],["citt","à","à"])
+	writeExplanationRow($section,
 		`иностранные слова, заканчивающиеся на согласную; они мужского рода`
 	)
-	writeWordPairsRow($table,["bar","",""],null)
-	writeExplanationRow($table,
+	writeWordPairsRow($section,["bar","",""],null)
+	writeExplanationRow($section,
 		`сокращённые слова`
 	)
-	writeWordPairsRow($table,["cinema","",""],["moto","",""])
-	writeWordPairsRow($table,["cinematograf","o","i"],["motociclett","a","e"])
+	writeWordPairsRow($section,["cinema","",""],["moto","",""])
+	writeWordPairsRow($section,["cinematograf","o","i"],["motociclett","a","e"],true)
 }
 
 function writeTypicalSection($table) {
-	writeExplanationRow($table,
+	const $section=$table.createTBody()
+	writeSectionHeaderRow($section,
 		`суффиксы, типичные для определённого рода`
 	)
-	writeExplanationPairRow($table,
+	writeExplanationPairRow($section,
 		null,
 		`слова, заканчивающиеся на -zione или -sione, обычно женского рода; часто они обозначают абстракции`
 	)
-	writeWordPairsRow($table,null,["stazion","e","i"])
-	writeWordPairsRow($table,null,["passion","e","i"])
+	writeWordPairsRow($section,null,["stazion","e","i"])
+	writeWordPairsRow($section,null,["passion","e","i"])
 }
 
-function writeExplanationRow($table,text) {
-	const $row=$table.insertRow()
+function writeSectionHeaderRow($section,text) {
+	const $row=$section.insertRow()
+	const $cell=document.createElement('th')
+	$row.append($cell)
+	// $cell.classList.add('explanation')
+	$cell.colSpan=5
+	$cell.innerText=text
+}
+
+function writeExplanationRow($section,text) {
+	if (!explanationSetting) return
+	const $row=$section.insertRow()
 	const $cell=$row.insertCell()
 	$cell.classList.add('explanation')
 	$cell.colSpan=5
 	$cell.innerText=text
 }
 
-function writeExplanationPairRow($table,textM,textF) {
-	const $row=$table.insertRow()
+function writeExplanationPairRow($section,textM,textF) {
+	if (!explanationSetting) return
+	const $row=$section.insertRow()
 	writeGenderExplanation($row,textM)
 	writeGap($row)
 	writeGenderExplanation($row,textF)
@@ -199,44 +245,47 @@ function writeGenderExplanation($row,text) {
 	$cell.innerText=text
 }
 
-function writeWordQuartetRow($table,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
-	const $row=$table.insertRow()
-	writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF)
+function writeWordQuartetRow($section,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF,small=false) {
+	const $row=$section.insertRow()
+	writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF,small)
 }
 
-function writeWordPairsRow($table,wordStemAndEndingsM,wordStemAndEndingsF) {
-	const $row=$table.insertRow()
+function writeWordPairsRow($section,wordStemAndEndingsM,wordStemAndEndingsF,small=false) {
+	const $row=$section.insertRow()
 	if (wordStemAndEndingsM==null) {
 		writeGenderWordPairSkip($row)
 	} else {
-		writeGenderWordPair($row,'m',...wordStemAndEndingsM)
+		writeGenderWordPair($row,'m',...wordStemAndEndingsM,small)
 	}
 	writeGap($row)
 	if (wordStemAndEndingsF==null) {
 		writeGenderWordPairSkip($row)
 	} else {
-		writeGenderWordPair($row,'f',...wordStemAndEndingsF)
+		writeGenderWordPair($row,'f',...wordStemAndEndingsF,small)
 	}
 }
 
-function writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF) {
-	writeGenderWordPair($row,'m',wordStem,wordEndingM,wordEndingMM)
+function writeWordQuartet($row,wordStem,wordEndingM,wordEndingMM,wordEndingF,wordEndingFF,small=false) {
+	writeGenderWordPair($row,'m',wordStem,wordEndingM,wordEndingMM,small)
 	const $cell=$row.insertCell()
 	$cell.innerText="⟷"
-	writeGenderWordPair($row,'f',wordStem,wordEndingF,wordEndingFF)
+	writeGenderWordPair($row,'f',wordStem,wordEndingF,wordEndingFF,small)
 }
 
-function writeGenderWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural) {
-	writeWord($row,gender,1,wordStem,wordEndingSingular)
-	writeWord($row,gender,2,wordStem,wordEndingPlural)
+function writeGenderWordPair($row,gender,wordStem,wordEndingSingular,wordEndingPlural,small=false) {
+	writeWord($row,gender,1,wordStem,wordEndingSingular,small)
+	writeWord($row,gender,2,wordStem,wordEndingPlural,small)
 }
 
-function writeWord($row,gender,number,wordStem,wordEnding) {
+function writeWord($row,gender,number,wordStem,wordEnding,small=false) {
 	const word=wordStem+wordEnding
 	const $cell=$row.insertCell()
-	if (articlesSetting=='def') {
+	if (small) {
+		$cell.classList.add('small')
+	}
+	if (articleSetting=='def') {
 		$cell.append(getDefArticle(gender,number,word))
-	} else if (articlesSetting=='indef') {
+	} else if (articleSetting=='indef') {
 		$cell.append(getIndefArticle(gender,number,word))
 	}
 	const $word=document.createElement('a')
